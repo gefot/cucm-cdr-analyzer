@@ -3,8 +3,7 @@ import os
 from pathlib import Path
 
 ####################################################################################################
-# CDR filename is in UTC
-# Timestamps inside files are in client's time
+# CDR filename is in UTC. Timestamps inside CDR files are in client's CUCM timezone.
 
 # Starting from index 1:
 # 3:  globalCallID_callId
@@ -16,14 +15,16 @@ from pathlib import Path
 # 56: duration
 # 57: origDeviceName
 # 58: destDeviceName
-####################################################################################################
 
+
+####################################################################################################
 # MAIN #
 start = datetime.datetime.now()
 CDR_FOLDER= str(Path(__file__).parent) + '\cdr_data\\'      # Windows
-TEMP_FILENAME = 'data\\temp_cdr.txt'                        # Windows
+TEMP_FILENAME = 'data\\temp_cdr.txt'
+
 # CDR_FOLDER = '/home/cdr/cdr_data/'                        # Linux
-# TEMP_FILENAME = 'data/temp_cdr.txt'                       # Linux
+# TEMP_FILENAME = 'data/temp_cdr.txt'
 
 # List directory files only with CDR files
 cdr_file_list=[]

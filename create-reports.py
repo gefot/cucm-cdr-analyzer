@@ -2,16 +2,18 @@ import os
 import datetime
 from pathlib import Path
 
-# CDR filename is in UTC
-# Timestamps inside files are in client's time
+####################################################################################################
+# CDR filename is in UTC. Timestamps inside CDR files are in client's CUCM timezone.
 
-# Starting 1:
+# Starting from index 1:
 # 3:  globalCallID_callId
-# 5:  Date
+# 5:  Date (in UTC timezone)
 # 9:  calling number
 # 30: called number
 # 31: final called number
 # 50: lastRedirectDn
+# 56: duration
+# 57: origDeviceName
 # 56: duration
 
 # Business hours
@@ -20,7 +22,6 @@ from pathlib import Path
 # Lyndsey: M-F 11am - 8pm, S 1pm - 5pm
 # Lyndsey: Mon-Thu 8am-5pm, Fri 8am-4pm
 
-##################################################
 def is_cdr_date(date,target_unit):
     #print(date)
     hour = int(date.strftime('%H'))
@@ -41,7 +42,6 @@ def is_cdr_date(date,target_unit):
 
     return False
 
-##################################################
 def create_html_file(total_calls,answered_calls,aa_calls,unanswered_calls,total_calls_list,answered_calls_list,aa_calls_list,unanswered_calls_list,answered_calls_per_list,aa_calls_per_list,unanswered_calls_per_list,filename,current_date,clinic_names,start,end):
 
     html_text = """<HTML>
@@ -131,7 +131,6 @@ td {
 
     return 0;
 
-##################################################
 def create_csv_file(total_calls,answered_calls,aa_calls,unanswered_calls,total_calls_list,answered_calls_list,aa_calls_list,unanswered_calls_list,answered_calls_per_list,aa_calls_per_list,unanswered_calls_per_list,filename,current_date,clinic_names,start,end):
 
     csv_text = "%s Report\n" % current_date
@@ -185,25 +184,28 @@ def create_csv_file(total_calls,answered_calls,aa_calls,unanswered_calls,total_c
     return 0
 
 
-
-####################################################################################################
-####################################################################################################
 ####################################################################################################
 # MAIN #
 start = datetime.datetime.now()
 
-MONTHLY_REPORT_TXT_FILE = 'data\monthly_html.txt'
+MONTHLY_REPORT_TXT_FILE = 'data\monthly_html.txt'       # Windows
 MONTHLY_REPORT_CSV_FILE = 'data\monthly_report.csv'
 HOURLY_REPORT_TXT_FILE = 'data\hourly_html.txt'
 HOURLY_REPORT_CSV_FILE = 'data\hourly_report.csv'
+CDR_FOLDER = str(Path(__file__).parent) + '\\cdr_data\\'
+
+# MONTHLY_REPORT_TXT_FILE = 'data/monthly_html.txt'       # Linux
+# MONTHLY_REPORT_CSV_FILE = 'data/monthly_report.csv'
+# HOURLY_REPORT_TXT_FILE = 'data/hourly_html.txt'
+# HOURLY_REPORT_CSV_FILE = 'data/hourly_report.csv'
+# CDR_FOLDER = '/home/cdr/cdr_data/'
 
 # List directory files only with CDR files
-CDR_FOLDER = str(Path(__file__).parent) + '\\cdr_data\\'
 cdr_list=[]
 for x in os.listdir(CDR_FOLDER):
     if x.startswith("cdr_Stand"):
         cdr_list.append(x)
-print(cdr_list)
+# print(cdr_list)
 
 # Initialize Variables
 clinic_names = {'main':'Main Hospital','shannon':'1801 Clinic','lyndsey':'1200 Clinic'}
@@ -238,7 +240,8 @@ aa_calls_per_list_hourly = {'main':[0 for i in range(24)],'shannon':[0 for i in 
 unanswered_calls_per_list_hourly = {'main':[0 for i in range(24)],'shannon':[0 for i in range(24)],'lyndsey':[0 for i in range(24)]}
 
 
-# Parse CDR file
+####################################################################################################
+# Calculate CDR Statistics
 for file in cdr_list:
     fd = open(CDR_FOLDER+file, "r")
     # print(file)
@@ -357,36 +360,7 @@ for file in cdr_list:
             #print("General Exception")
             continue
 
-# CDR Statistics
-print("\n=======================================")
-for key in total_calls.keys():
-    print("\nTotal Results for",key)
-    print("total_calls =",total_calls[key])
-    print("answered_calls =",answered_calls[key])
-    print("aa_calls =",aa_calls[key])
-    print("unanswered_calls =",unanswered_calls[key])
-
-for key in total_calls_list.keys():
-    print("\nResults list for",key)
-    print("total_calls_list =",total_calls_list[key])
-    print("answered_calls_list =",answered_calls_list[key])
-    print("aa_calls_list =",aa_calls_list[key])
-    print("unanswered_calls_list =",unanswered_calls_list[key])
-
-for key in total_calls.keys():
-    print("\nTotal Results_hourly for",key)
-    print("total_calls_hourly =",total_calls_hourly[key])
-    print("answered_calls_hourly =",answered_calls_hourly[key])
-    print("aa_calls_hourly =",aa_calls_hourly[key])
-    print("unanswered_calls_hourly =",unanswered_calls_hourly[key])
-
-for key in total_calls_list.keys():
-    print("\nResults list for",key)
-    print("total_calls_list_hourly =",total_calls_list_hourly[key])
-    print("answered_calls_list_hourly =",answered_calls_list_hourly[key])
-    print("aa_calls_list_hourly =",aa_calls_list_hourly[key])
-    print("unanswered_calls_list_hourly =",unanswered_calls_list_hourly[key])
-
+####################################################################################################
 # Calculate Percentages
 for key in total_calls.keys():
     for i in range(1,32):
@@ -418,6 +392,39 @@ for key in total_calls.keys():
         else:
             unanswered_calls_per_list_hourly[key][i] = 0.0
 
+
+####################################################################################################
+# Print CDR Statistics
+print("\n=======================================")
+for key in total_calls.keys():
+    print("\nTotal Results for",key)
+    print("total_calls =",total_calls[key])
+    print("answered_calls =",answered_calls[key])
+    print("aa_calls =",aa_calls[key])
+    print("unanswered_calls =",unanswered_calls[key])
+
+for key in total_calls_list.keys():
+    print("\nResults list for",key)
+    print("total_calls_list =",total_calls_list[key])
+    print("answered_calls_list =",answered_calls_list[key])
+    print("aa_calls_list =",aa_calls_list[key])
+    print("unanswered_calls_list =",unanswered_calls_list[key])
+
+for key in total_calls.keys():
+    print("\nTotal Results_hourly for",key)
+    print("total_calls_hourly =",total_calls_hourly[key])
+    print("answered_calls_hourly =",answered_calls_hourly[key])
+    print("aa_calls_hourly =",aa_calls_hourly[key])
+    print("unanswered_calls_hourly =",unanswered_calls_hourly[key])
+
+for key in total_calls_list.keys():
+    print("\nResults list for",key)
+    print("total_calls_list_hourly =",total_calls_list_hourly[key])
+    print("answered_calls_list_hourly =",answered_calls_list_hourly[key])
+    print("aa_calls_list_hourly =",aa_calls_list_hourly[key])
+    print("unanswered_calls_list_hourly =",unanswered_calls_list_hourly[key])
+
+# Print CDR Percentages
 print("\n")
 for key in total_calls_list.keys():
     print("\nPercentage results list for",key)
@@ -433,8 +440,8 @@ for key in total_calls_list_hourly.keys():
     print("unanswered_calls_per_list_hourly =",unanswered_calls_per_list_hourly[key])
 
 
-# Prepare and send e-mails
-# Montly Report as THML
+####################################################################################################
+# Create files
 
 current_date = datetime.datetime.now().strftime('%B %Y')
 #current_date = "January 2018"
@@ -450,3 +457,5 @@ create_csv_file(total_calls_hourly,answered_calls_hourly,aa_calls_hourly,unanswe
 # Measure Script Execution
 print("\n\nRutime = ",datetime.datetime.now()-start)
 
+
+####################################################################################################
