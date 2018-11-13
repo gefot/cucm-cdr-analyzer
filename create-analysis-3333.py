@@ -20,11 +20,11 @@ from pathlib import Path
 ####################################################################################################
 # MAIN #
 start = datetime.datetime.now()
-CDR_FOLDER= str(Path(__file__).parent) + '\cdr_data\\'      # Windows
-TEMP_FILENAME = 'data\\temp_cdr.txt'
+# CDR_FOLDER= str(Path(__file__).parent) + '\cdr_data\\'      # Windows
+# TEMP_FILENAME = 'data\\temp_cdr.txt'
 
-# CDR_FOLDER = '/home/cdr/cdr_data/'                        # Linux
-# TEMP_FILENAME = 'data/temp_cdr.txt'
+CDR_FOLDER = '/home/cdr/cdr_data/'                        # Linux
+CDR_FILENAME = 'data/cdr-3333.txt'
 
 # List directory files only with CDR files
 cdr_file_list=[]
@@ -39,7 +39,7 @@ calls_unanswered = 0
 calls_answered = {'total': 0, '3891': 0, '3334': 0, '3730': 0, '2547': 0, '3686': 0}
 
 # Parse CDR file
-fd1 = open(TEMP_FILENAME, "w")
+fd1 = open(CDR_FILENAME, "w")
 try:
     for file in cdr_file_list:
         fd = open(CDR_FOLDER+file, "r")
@@ -51,7 +51,7 @@ try:
                 # hour = int(date.strftime('%H'))
                 # print(list)
                 if (list[29]) == "\"3333\"":
-                    fd1.write(line)
+                    fd1.write(date, list[8], list[29], list[30], list[49], list[55], list[57])
                     # print("\n---\n",date, list[8], list[29], list[30], list[49], list[55], list[57])
                     if(list[30]) == "\"5500\"":
                         calls_voicemail += 1
