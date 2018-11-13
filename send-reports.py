@@ -39,13 +39,13 @@ def send_mail(username, password, toaddr, subject, body, attachment):
 
 ####################################################################################################
 #  MAIN
-# subject = sys.argv[1]
-# body_file = sys.argv[2]
-# attachment = sys.argv[3]
+subject = sys.argv[1]
+body_file = sys.argv[2]
+attachment = sys.argv[3]
 
-subject = "per hour"
-body_file = 'data/hourly_html.txt'
-attachment = 'data/hourly_report.csv'
+# subject = "per hour"
+# body_file = 'data/hourly_html.txt'
+# attachment = 'data/hourly_report.csv'
 
 access = json.load(open('data/access.json'))
 USERNAME = str(access["gmail"]["username"])

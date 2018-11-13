@@ -21,7 +21,7 @@ from pathlib import Path
 # MAIN #
 start = datetime.datetime.now()
 # CDR_FOLDER= str(Path(__file__).parent) + '\cdr_data\\'      # Windows
-# TEMP_FILENAME = 'data\\temp_cdr.txt'
+# CDR_FILENAME = 'data\\cdr-3333.txt'
 
 CDR_FOLDER = '/home/cdr/cdr_data/'                        # Linux
 CDR_FILENAME = 'data/cdr-3333.txt'
@@ -51,8 +51,9 @@ try:
                 # hour = int(date.strftime('%H'))
                 # print(list)
                 if (list[29]) == "\"3333\"":
-                    fd1.write(date, list[8], list[29], list[30], list[49], list[55], list[57])
                     # print("\n---\n",date, list[8], list[29], list[30], list[49], list[55], list[57])
+                    temp = ' '.join([str(date), list[8], list[29], list[30], list[49], list[55], list[57], "\n"])
+                    fd1.write(temp)
                     if(list[30]) == "\"5500\"":
                         calls_voicemail += 1
                     elif (list[30]) == "\"3333\"" and list[55] is "0":
