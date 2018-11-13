@@ -22,13 +22,15 @@ from pathlib import Path
 start = datetime.datetime.now()
 CDR_FOLDER= str(Path(__file__).parent) + '\cdr_data\\'
 TEMP_FILENAME = 'data\\temp_cdr.txt'
+# CDR_FOLDER = '/home/cdr/cdr_data/'
+# TEMP_FILENAME = 'data/temp_cdr.txt'
 
 # List directory files only with CDR files
 cdr_file_list=[]
 for filename in os.listdir(CDR_FOLDER):
     if filename.startswith("cdr_Stand"):
         cdr_file_list.append(filename)
-print(cdr_file_list)
+# print(cdr_file_list)
 
 # Initialize Variables
 calls_voicemail = 0
