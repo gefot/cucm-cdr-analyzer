@@ -54,6 +54,7 @@ for filename in os.listdir(CDR_FOLDER):
     if filename.startswith("cdr_Stand"):
         cdr_file_list.append(filename)
 # print(cdr_file_list)
+cdr_file_list.sort()
 print("len = ",len(cdr_file_list))
 
 # Parse CDR file
