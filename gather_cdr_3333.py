@@ -48,7 +48,7 @@ print("len = ", len(os.listdir(CDR_SRC_FOLDER)))
 # print(cdr_file_list)
 print("len = ", len(cdr_file_list))
 
-command = 'rm ' + CDR_DST_FOLDER + '*'
+command = 'rm -rf ' + CDR_DST_FOLDER + '*'
 os.system(command)
 for a in cdr_file_list:
     command = 'cp ' + CDR_SRC_FOLDER+a + ' ' + CDR_DST_FOLDER+a
