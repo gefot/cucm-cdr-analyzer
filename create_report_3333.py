@@ -59,13 +59,13 @@ print("len = ",len(cdr_file_list))
 # Parse CDR file
 try:
     for file in cdr_file_list:
-        print("\n\n\n"+file)
+        # print("\n\n\n"+file)
         file_descriptor = open(CDR_FOLDER+file, "r")
         for line in file_descriptor:
             try:
                 list = line.split(',')
                 date = datetime.datetime.fromtimestamp(int(list[4]))
-                print(date, list[8], list[29], list[30], list[49], list[55], list[57])
+                # print(date, list[8], list[29], list[30], list[49], list[55], list[57])
                 if (list[29]) == "\"3333\"":
                     # print("\n---\n",date, list[8], list[29], list[30], list[49], list[55], list[57])
                     # temp = ' '.join([str(date), list[8], list[29], list[30], list[49], list[55], list[57], "\n"])
