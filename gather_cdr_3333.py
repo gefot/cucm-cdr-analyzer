@@ -24,14 +24,14 @@ print("prev_cdr_dates = ", prev_cdr_dates)
 # Append to the previous 4 days the hour, which is in CST-6. Working hours for 3333 are 9am-5pm.
 cdr_filenames = []
 for date in prev_cdr_dates:
-    cdr_filenames.append(date + "03")
-    cdr_filenames.append(date + "04")
-    cdr_filenames.append(date + "05")
-    cdr_filenames.append(date + "06")
-    cdr_filenames.append(date + "07")
-    cdr_filenames.append(date + "08")
-    cdr_filenames.append(date + "09")
-    cdr_filenames.append(date + "10")
+    cdr_filenames.append(date + "15")
+    cdr_filenames.append(date + "16")
+    cdr_filenames.append(date + "17")
+    cdr_filenames.append(date + "18")
+    cdr_filenames.append(date + "19")
+    cdr_filenames.append(date + "20")
+    cdr_filenames.append(date + "21")
+    cdr_filenames.append(date + "22")
 # print(cdr_filenames)
 
 # List directory files only with CDR files of interest
