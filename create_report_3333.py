@@ -58,6 +58,7 @@ print(cdr_file_list)
 # Parse CDR file
 try:
     for file in cdr_file_list:
+        print(file)
         file_descriptor = open(CDR_FOLDER+file, "r")
         for line in file_descriptor:
             try:
