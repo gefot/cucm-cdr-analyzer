@@ -4,7 +4,7 @@ import os
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
-# from email import Encoders    # Python2
+from email import encoders    # Python2
 
 
 def send_mail(username, password, toaddr, subject, body, attachments):
@@ -23,13 +23,20 @@ def send_mail(username, password, toaddr, subject, body, attachments):
     msg.attach(part1)
 
     # Attach e-mail attachments
-    part2 = MIMEBase('application', 'octet-stream')
     for attachment in attachments:
+        # my_attachment = open(attachment, "rb")
+        # file_name = os.path.basename(attachment)
+        part2 = MIMEBase('application', 'octet-stream')
         part2.set_payload(open(attachment, "rb").read())
-        # Encoders.encode_base64(part)
-        part2.add_header('Content-Disposition', 'attachment; filename="%s"' % os.path.basename(attachment))
-        # print(attachment)
+        part2.add_header('Content-Disposition', 'attachment', filename=os.path.basename(attachment))
+        encoders.encode_base64(part2)
         msg.attach(part2)
+        # part2.set_payload(open(attachment, "rb").read())
+        # print(attachment)
+        # part2.add_header('Content-Disposition', 'attachment; filename="%s"' % os.path.basename(attachment))
+        # encoders.encode_base64(part2)
+        # msg.attach(part2)
+        # print(part2)
 
     mailserver = smtplib.SMTP('smtp.gmail.com:587')
     #mailserver.ehlo()
@@ -37,4 +44,4 @@ def send_mail(username, password, toaddr, subject, body, attachments):
     #mailserver.ehlo()
     mailserver.login(username, password)
     mailserver.sendmail(fromaddr, toaddr, msg.as_string())
-    mailserver.close()
+    mailserver.quit()

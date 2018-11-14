@@ -2,8 +2,9 @@ import json
 import datetime
 import os
 from pathlib import Path
+import time
 
-import send_mail
+import _module_send_mail
 
 ####################################################################################################
 # CDR filename is in UTC. Timestamps inside CDR files are in client's CUCM timezone.
@@ -23,11 +24,12 @@ import send_mail
 ####################################################################################################
 # MAIN #
 start = datetime.datetime.now()
-CDR_FOLDER = 'cdr_data\\'                           # Windows
-DATA_FOLDER = 'data\\'
 
-# CDR_FOLDER = '/home/cdr/cdr_data/'                # Linux
-# CDR_FILENAME = 'data/cdr-3333.txt'
+CDR_FOLDER = str(Path(__file__).parent) + '\\cdr_data_3333\\'    # Windows - needs this because of os.listdir
+DATA_FOLDER = str(Path(__file__).parent) + '\\data\\'                                  # Windows
+
+# CDR_FOLDER = '/home/cdr/cdr_data_3333/'               # Linux
+# DATA_FOLDER = '/home/pbx/cucm-cdr-analyzer/data/'     # Linux
 
 CDR_FILENAMES = [DATA_FOLDER + fn for fn in \
                      ['cdr-3333-total.txt', 'cdr-3333-voicemail.txt', 'cdr-3333-unanswered.txt', \
@@ -104,6 +106,7 @@ try:
                 # print(ex)
                 continue
 
+    file_descriptor.close()
 
     print("calls_voicemail = ",calls_voicemail)
     print("calls_unanswered = ",calls_unanswered)
@@ -120,7 +123,7 @@ except Exception as ex:
 
 ####################################################################################################
 # Prepare report and send e-mail
-subject = "Weekly Report for x3333 (9am - 5pm)"
+subject = "Weekly Report for x3333 (Mon - Thu: 9am - 5pm)"
 # attachments = ['data/cdr-3333.txt']
 attachments = []
 
@@ -146,11 +149,9 @@ Call answered by Albert Lattimer (x3686): {}<br>
            calls_answered['2547'], calls_answered['3686'])
 
 print(body)
-
 toaddr = ['georgios.fotiadis@gmail.com']
-send_mail.send_mail(USERNAME, PASSWORD, toaddr, subject, body, CDR_FILENAMES)
+_module_send_mail.send_mail(USERNAME, PASSWORD, toaddr, subject, body, CDR_FILENAMES)
 
 
 # Measure Script Execution
 print("\n\nRutime = ",datetime.datetime.now()-start)
-
