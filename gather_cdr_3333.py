@@ -6,10 +6,10 @@ from pathlib import Path
 ####################################################################################################
 # MAIN #
 CDR_SRC_FOLDER = 'cdr_data\\'                   # Windows
-CDR_DST_FILENAME = 'cdr_3333\\'
+CDR_DST_FOLDER = 'cdr_3333\\'                   # Windows
 
 # CDR_SRC_FOLDER = '/home/cdr/cdr_data/'        # Linux
-# CDR_DST_FOLDER = '/home/cdr/cdr_3333/'
+# CDR_DST_FOLDER = '/home/cdr/cdr_3333/'        # Linux
 
 date = datetime.datetime.now()
 prev_dates = [date + datetime.timedelta(days=-i) for i in range(1,5)]
