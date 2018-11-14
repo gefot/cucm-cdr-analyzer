@@ -53,7 +53,7 @@ cdr_file_list=[]
 for filename in os.listdir(CDR_FOLDER):
     if filename.startswith("cdr_Stand"):
         cdr_file_list.append(filename)
-# print(cdr_file_list)
+print(cdr_file_list)
 
 # Parse CDR file
 try:
