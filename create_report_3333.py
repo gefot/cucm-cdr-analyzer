@@ -25,9 +25,11 @@ import _module_send_mail
 # MAIN #
 start = datetime.datetime.now()
 
+# access = json.load(open('data/access.json'))                            # Windows
 # CDR_FOLDER = str(Path(__file__).parent) + '\\cdr_data_3333\\'    # Windows
 # DATA_FOLDER = str(Path(__file__).parent) + '\\data\\'            # Windows
 
+access = json.load(open('/home/pbx/cucm-cdr-analyzer/data/access.json'))  # Linux
 CDR_FOLDER = '/home/cdr/cdr_data_3333/'               # Linux
 DATA_FOLDER = '/home/pbx/cucm-cdr-analyzer/data/'     # Linux
 
@@ -127,7 +129,6 @@ subject = "Weekly Report for x3333 (Mon - Thu: 9am - 5pm)"
 # attachments = ['data/cdr-3333.txt']
 attachments = []
 
-access = json.load(open('data/access.json'))
 USERNAME = str(access["gmail"]["username"])
 PASSWORD = str(access["gmail"]["password"])
 #calls_answered = {'total': 0, '3891': 0, '3334': 0, '3730': 0, '2547': 0, '3686': 0}
