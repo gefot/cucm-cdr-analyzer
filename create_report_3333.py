@@ -150,9 +150,9 @@ Call answered by Albert Lattimer (x3686): {}<br>
            calls_answered['2547'], calls_answered['3686'])
 
 print(body)
-# toaddr = ['georgios.fotiadis@gmail.com']
-# _module_send_mail.send_mail(USERNAME, PASSWORD, toaddr, subject, body, CDR_FILENAMES)
-#
-#
-# # Measure Script Execution
-# print("\n\nRutime = ",datetime.datetime.now()-start)
+toaddr = ['georgios.fotiadis@gmail.com']
+_module_send_mail.send_mail(USERNAME, PASSWORD, toaddr, subject, body, CDR_FILENAMES)
+
+
+# Measure Script Execution
+print("\n\nRutime = ",datetime.datetime.now()-start)
