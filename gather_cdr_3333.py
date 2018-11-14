@@ -41,10 +41,11 @@ for filename in os.listdir(CDR_SRC_FOLDER):
         for cdr in cdr_filenames:
             if cdr in filename:
                 cdr_file_list.append(filename)
+
 print("\n")
-print(os.listdir(CDR_SRC_FOLDER))
+# print(os.listdir(CDR_SRC_FOLDER))
 print("len = ", len(os.listdir(CDR_SRC_FOLDER)))
-print(cdr_file_list)
+# print(cdr_file_list)
 print("len = ", len(cdr_file_list))
 
 command = 'rm ' + CDR_DST_FOLDER + '*'
