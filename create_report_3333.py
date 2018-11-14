@@ -54,20 +54,18 @@ for filename in os.listdir(CDR_FOLDER):
     if filename.startswith("cdr_Stand"):
         cdr_file_list.append(filename)
 # print(cdr_file_list)
-print("len = ",cdr_file_list)
+print("len = ",len(cdr_file_list))
 
 # Parse CDR file
 try:
     for file in cdr_file_list:
-        print(file)
+        print("\n\n\n"+file)
         file_descriptor = open(CDR_FOLDER+file, "r")
         for line in file_descriptor:
             try:
                 list = line.split(',')
                 date = datetime.datetime.fromtimestamp(int(list[4]))
-                # day = int(date.strftime('%d'))
-                # hour = int(date.strftime('%H'))
-                # print(list)
+                print(date, list[8], list[29], list[30], list[49], list[55], list[57])
                 if (list[29]) == "\"3333\"":
                     # print("\n---\n",date, list[8], list[29], list[30], list[49], list[55], list[57])
                     # temp = ' '.join([str(date), list[8], list[29], list[30], list[49], list[55], list[57], "\n"])
@@ -152,9 +150,9 @@ Call answered by Albert Lattimer (x3686): {}<br>
            calls_answered['2547'], calls_answered['3686'])
 
 print(body)
-toaddr = ['georgios.fotiadis@gmail.com']
-_module_send_mail.send_mail(USERNAME, PASSWORD, toaddr, subject, body, CDR_FILENAMES)
-
-
-# Measure Script Execution
-print("\n\nRutime = ",datetime.datetime.now()-start)
+# toaddr = ['georgios.fotiadis@gmail.com']
+# _module_send_mail.send_mail(USERNAME, PASSWORD, toaddr, subject, body, CDR_FILENAMES)
+#
+#
+# # Measure Script Execution
+# print("\n\nRutime = ",datetime.datetime.now()-start)
