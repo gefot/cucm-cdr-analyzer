@@ -19,17 +19,19 @@ def send_mail(username, password, toaddr, subject, body, attachments):
     msg['From'] = fromaddr
     msg['Subject'] = subject
 
-    part = MIMEBase('application', 'octet-stream')
-    for attachment in attachments:
-        part.set_payload(open(attachment, "rb").read())
-        # Encoders.encode_base64(part)
-        part.add_header('Content-Disposition', 'attachment; filename="%s"' % os.path.basename(attachment))
-        msg.attach(part)
-
+    # Attach e-mail body
     #part1 = MIMEText(text, 'plain')
-    part2 = MIMEText(body, 'html')
-    #msg.attach(part1)
-    msg.attach(part2)
+    part1 = MIMEText(body, 'html')
+    msg.attach(part1)
+
+    # Attach e-mail attachments
+    part2 = MIMEBase('application', 'octet-stream')
+    for attachment in attachments:
+        part2.set_payload(open(attachment, "rb").read())
+        # Encoders.encode_base64(part)
+        part2.add_header('Content-Disposition', 'attachment; filename="%s"' % os.path.basename(attachment))
+        # print(attachment)
+        msg.attach(part2)
 
     mailserver = smtplib.SMTP('smtp.gmail.com:587')
     #mailserver.ehlo()

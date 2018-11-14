@@ -42,7 +42,7 @@ def is_cdr_date(date,target_unit):
 
     return False
 
-def create_html_file(total_calls,answered_calls,aa_calls,unanswered_calls,total_calls_list,answered_calls_list,aa_calls_list,unanswered_calls_list,answered_calls_per_list,aa_calls_per_list,unanswered_calls_per_list,filename,current_date,clinic_names,start,end):
+def create_html_file(total_calls,answered_calls,aa_calls,unanswered_calls,total_calls_list,answered_calls_list,aa_calls_list,unanswered_calls_list,answered_calls_per_list,aa_calls_per_list,unanswered_calls_per_list,filename,clinic_names,start,end):
 
     html_text = """<HTML>
 <HEAD>
@@ -54,8 +54,6 @@ td {
 </STYLE>
 </HEAD>
 <BODY>"""
-
-    html_text += """<b><font color="red">%s Report</font></b>\n""" % current_date
 
     for key in total_calls_list.keys():
         html_text += "<hr>"
@@ -131,12 +129,12 @@ td {
 
     return 0;
 
-def create_csv_file(total_calls,answered_calls,aa_calls,unanswered_calls,total_calls_list,answered_calls_list,aa_calls_list,unanswered_calls_list,answered_calls_per_list,aa_calls_per_list,unanswered_calls_per_list,filename,current_date,clinic_names,start,end):
+def create_csv_file(total_calls,answered_calls,aa_calls,unanswered_calls,total_calls_list,answered_calls_list,aa_calls_list,unanswered_calls_list,answered_calls_per_list,aa_calls_per_list,unanswered_calls_per_list,filename,clinic_names,start,end):
 
-    csv_text = "%s Report\n" % current_date
+    csv_text = ""
 
     for key in total_calls_list.keys():
-        csv_text += clinic_names[key]+"\n"
+        csv_text += "\n"+clinic_names[key]
 
         csv_text += ","
         for i in range(start,end):
@@ -188,17 +186,17 @@ def create_csv_file(total_calls,answered_calls,aa_calls,unanswered_calls,total_c
 # MAIN #
 start = datetime.datetime.now()
 
-CDR_FOLDER = str(Path(__file__).parent) + '\\cdr_data\\'        # Windows
-MONTHLY_REPORT_TXT_FILE = 'data\monthly_html.txt'
-MONTHLY_REPORT_CSV_FILE = 'data\monthly_report.csv'
-HOURLY_REPORT_TXT_FILE = 'data\hourly_html.txt'
-HOURLY_REPORT_CSV_FILE = 'data\hourly_report.csv'
+# CDR_FOLDER = str(Path(__file__).parent) + '\\cdr_data\\'    # Windows
+# MONTHLY_REPORT_TXT_FILE = 'data\daily_html.txt'
+# MONTHLY_REPORT_CSV_FILE = 'data\daily_report.csv'
+# HOURLY_REPORT_TXT_FILE = 'data\hourly_html.txt'
+# HOURLY_REPORT_CSV_FILE = 'data\hourly_report.csv'
 
-# CDR_FOLDER = '/home/cdr/cdr_data/'                            # Linux
-# MONTHLY_REPORT_TXT_FILE = 'data/monthly_html.txt'
-# MONTHLY_REPORT_CSV_FILE = 'data/monthly_report.csv'
-# HOURLY_REPORT_TXT_FILE = 'data/hourly_html.txt'
-# HOURLY_REPORT_CSV_FILE = 'data/hourly_report.csv'
+CDR_FOLDER = '/home/cdr/cdr_data/'                        # Linux
+MONTHLY_REPORT_TXT_FILE = 'data/daily_html.txt'
+MONTHLY_REPORT_CSV_FILE = 'data/daily_report.csv'
+HOURLY_REPORT_TXT_FILE = 'data/hourly_html.txt'
+HOURLY_REPORT_CSV_FILE = 'data/hourly_report.csv'
 
 # List directory files only with CDR files
 cdr_list=[]
@@ -442,16 +440,11 @@ for key in total_calls_list_hourly.keys():
 
 ####################################################################################################
 # Create files
+create_html_file(total_calls,answered_calls,aa_calls,unanswered_calls,total_calls_list,answered_calls_list,aa_calls_list,unanswered_calls_list,answered_calls_per_list,aa_calls_per_list,unanswered_calls_per_list,MONTHLY_REPORT_TXT_FILE,clinic_names,1,32)
+create_csv_file(total_calls,answered_calls,aa_calls,unanswered_calls,total_calls_list,answered_calls_list,aa_calls_list,unanswered_calls_list,answered_calls_per_list,aa_calls_per_list,unanswered_calls_per_list,MONTHLY_REPORT_CSV_FILE,clinic_names,1,32)
 
-current_date = datetime.datetime.now().strftime('%B %Y')
-#current_date = "January 2018"
-print(current_date)
-
-create_html_file(total_calls,answered_calls,aa_calls,unanswered_calls,total_calls_list,answered_calls_list,aa_calls_list,unanswered_calls_list,answered_calls_per_list,aa_calls_per_list,unanswered_calls_per_list,MONTHLY_REPORT_TXT_FILE,current_date,clinic_names,1,32)
-create_csv_file(total_calls,answered_calls,aa_calls,unanswered_calls,total_calls_list,answered_calls_list,aa_calls_list,unanswered_calls_list,answered_calls_per_list,aa_calls_per_list,unanswered_calls_per_list,MONTHLY_REPORT_CSV_FILE,current_date,clinic_names,1,32)
-
-create_html_file(total_calls_hourly,answered_calls_hourly,aa_calls_hourly,unanswered_calls_hourly,total_calls_list_hourly,answered_calls_list_hourly,aa_calls_list_hourly,unanswered_calls_list_hourly,answered_calls_per_list_hourly,aa_calls_per_list_hourly,unanswered_calls_per_list_hourly,HOURLY_REPORT_TXT_FILE,current_date,clinic_names,0,24)
-create_csv_file(total_calls_hourly,answered_calls_hourly,aa_calls_hourly,unanswered_calls_hourly,total_calls_list_hourly,answered_calls_list_hourly,aa_calls_list_hourly,unanswered_calls_list_hourly,answered_calls_per_list_hourly,aa_calls_per_list_hourly,unanswered_calls_per_list_hourly,HOURLY_REPORT_CSV_FILE,current_date,clinic_names,0,24)
+create_html_file(total_calls_hourly,answered_calls_hourly,aa_calls_hourly,unanswered_calls_hourly,total_calls_list_hourly,answered_calls_list_hourly,aa_calls_list_hourly,unanswered_calls_list_hourly,answered_calls_per_list_hourly,aa_calls_per_list_hourly,unanswered_calls_per_list_hourly,HOURLY_REPORT_TXT_FILE,clinic_names,0,24)
+create_csv_file(total_calls_hourly,answered_calls_hourly,aa_calls_hourly,unanswered_calls_hourly,total_calls_list_hourly,answered_calls_list_hourly,aa_calls_list_hourly,unanswered_calls_list_hourly,answered_calls_per_list_hourly,aa_calls_per_list_hourly,unanswered_calls_per_list_hourly,HOURLY_REPORT_CSV_FILE,clinic_names,0,24)
 
 
 # Measure Script Execution
