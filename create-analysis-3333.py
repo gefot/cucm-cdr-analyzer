@@ -1,6 +1,9 @@
+import json
 import datetime
 import os
 from pathlib import Path
+
+import send_mail
 
 ####################################################################################################
 # CDR filename is in UTC. Timestamps inside CDR files are in client's CUCM timezone.
@@ -83,6 +86,26 @@ try:
 
 except Exception as ex:
     print(ex)
+
+
+####################################################################################################
+# Prepare report and send e-mail
+subject = "Weekly Report for x3333 (9am - 5pm)"
+attachments = ['data/cdr-3333.txt']
+
+access = json.load(open('data/access.json'))
+USERNAME = str(access["gmail"]["username"])
+PASSWORD = str(access["gmail"]["password"])
+
+body = """
+Total calls to x3333: {}
+""".format(calls_answered['total'])
+
+print(body)
+
+toaddr = 'georgios.fotiadis@gmail.com'
+send_mail.send_mail(USERNAME, PASSWORD, toaddr, subject, body, attachments)
+
 
 # Measure Script Execution
 print("\n\nRutime = ",datetime.datetime.now()-start)

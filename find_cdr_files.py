@@ -38,6 +38,16 @@ print(cdr_filenames)
 # List directory files only with CDR files of interest
 cdr_file_list = []
 for filename in os.listdir(CDR_SRC_FOLDER):
-    if filename.startswith("cdr") and filename in cdr_filenames:
-        cdr_file_list.append(filename)
-print(cdr_file_list)
+    if filename.startswith("cdr"):
+        for cdr in cdr_filenames:
+            if cdr in filename:
+                cdr_file_list.append(filename)
+#print(cdr_file_list)
+command = 'rm ' + CDR_DST_FOLDER + '*'
+os.system(command)
+
+#for a in cdr_file_list:
+#   command = 'cp ' + CDR_SRC_FOLDER+a + ' ' + CDR_DST_FOLDER+a
+#   os.system(command)
+#   print(a)
+
