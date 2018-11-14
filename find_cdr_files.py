@@ -38,6 +38,6 @@ print(cdr_filenames)
 # List directory files only with CDR files of interest
 cdr_file_list = []
 for filename in os.listdir(CDR_SRC_FOLDER):
-    if filename in cdr_filenames:
+    if filename.startswith("cdr") and filename in cdr_filenames:
         cdr_file_list.append(filename)
 print(cdr_file_list)
