@@ -20,11 +20,11 @@ from pathlib import Path
 ####################################################################################################
 # MAIN #
 start = datetime.datetime.now()
-# CDR_FOLDER= str(Path(__file__).parent) + '\cdr_data\\'      # Windows
-# CDR_FILENAME = 'data\\cdr-3333.txt'
+CDR_FOLDER = 'cdr_data\\'                           # Windows
+CDR_FILENAME = 'data\\cdr-3333.txt'
 
-CDR_FOLDER = '/home/cdr/cdr_data/'                        # Linux
-CDR_FILENAME = 'data/cdr-3333.txt'
+# CDR_FOLDER = '/home/cdr/cdr_data/'                # Linux
+# CDR_FILENAME = 'data/cdr-3333.txt'
 
 # List directory files only with CDR files
 cdr_file_list=[]

@@ -12,7 +12,7 @@ from email.mime.base import MIMEBase
 def send_mail(username, password, toaddr, subject, body, attachment):
 
     fromaddr = username
-    #text = "This will be sent as text"
+    # text = "This will be sent as text"
 
     msg = MIMEMultipart()
     msg['To'] = ", ".join(toaddr)
