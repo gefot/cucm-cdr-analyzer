@@ -5,7 +5,9 @@ import _module_send_mail
 
 ####################################################################################################
 #  MAIN
-access = json.load(open('data/access.json'))
+# access = json.load(open('data/access.json'))                                # Windows
+access = json.load(open('/home/pbx/cucm-cdr-analyzer/data/access.json'))    # Linux
+
 USERNAME = str(access["gmail"]["username"])
 PASSWORD = str(access["gmail"]["password"])
 
