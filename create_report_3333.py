@@ -25,18 +25,20 @@ import _module_send_mail
 # MAIN #
 start = datetime.datetime.now()
 
-# access = json.load(open('data/access.json'))                            # Windows
-# CDR_FOLDER = str(Path(__file__).parent) + '\\cdr_data_3333\\'    # Windows
-# DATA_FOLDER = str(Path(__file__).parent) + '\\data\\'            # Windows
+access = json.load(open('data/access.json'))                     # Windows
+CDR_FOLDER = str(Path(__file__).parent) + '\\cdr_data_3333\\'    # Windows
+DATA_FOLDER = str(Path(__file__).parent) + '\\data\\'            # Windows
 
-access = json.load(open('/home/pbx/cucm-cdr-analyzer/data/access.json'))  # Linux
-CDR_FOLDER = '/home/cdr/cdr_data_3333/'               # Linux
-DATA_FOLDER = '/home/pbx/cucm-cdr-analyzer/data/'     # Linux
+# access = json.load(open('/home/pbx/cucm-cdr-analyzer/data/access.json'))  # Linux
+# CDR_FOLDER = '/home/cdr/cdr_data_3333/'               # Linux
+# DATA_FOLDER = '/home/pbx/cucm-cdr-analyzer/data/'     # Linux
 
 CDR_FILENAMES = [DATA_FOLDER + fn for fn in \
                      ['cdr-3333-total.txt', 'cdr-3333-voicemail.txt', 'cdr-3333-unanswered.txt', \
                       'cdr-calls-3691.txt', 'cdr-calls-3334.txt', 'cdr-calls-3730.txt', \
                       'cdr-calls-2547.txt', 'cdr-calls-3686.txt']]
+BODY_FILE = DATA_FOLDER + 'report-3333.txt'
+
 print(CDR_FILENAMES)
 
 # Initialize Variables
@@ -142,13 +144,16 @@ Calls answered by Voicemail: {}<br>
 Calls not answered: {}<br>
 ---------------------------------<br>
 Call answered by Jimmy DeAnda (x3891): {}<br>
-Call answered by Gilbert Tovar (x3334): {}<br>
-Call answered by ??? (x3730): {}<br>
-Call answered by ??? (x2547): {}<br>
+Call answered by Kim ? (x3334): {}<br>
+Call answered by Gilbert Tovar (x3730): {}<br>
+Call answered by Cordless Phone (x2547): {}<br>
 Call answered by Albert Lattimer (x3686): {}<br>
 ---------------------------------<br>
 """.format(calls_total, calls_answered['total'], calls_voicemail, calls_unanswered, calls_answered['3891'], calls_answered['3334'], calls_answered['3730'], \
            calls_answered['2547'], calls_answered['3686'])
+
+fd = open(BODY_FILE, "w")
+fd.write()
 
 print(body)
 toaddr = ['georgios.fotiadis@gmail.com']

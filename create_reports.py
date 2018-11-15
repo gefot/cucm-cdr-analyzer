@@ -186,17 +186,17 @@ def create_csv_file(total_calls,answered_calls,aa_calls,unanswered_calls,total_c
 # MAIN #
 start = datetime.datetime.now()
 
-CDR_FOLDER = str(Path(__file__).parent) + '\\cdr_data\\'    # Windows - needs this because of os.listdir
-MONTHLY_REPORT_TXT_FILE = 'data\daily_html.txt'
-MONTHLY_REPORT_CSV_FILE = 'data\daily_report.csv'
-HOURLY_REPORT_TXT_FILE = 'data\hourly_html.txt'
-HOURLY_REPORT_CSV_FILE = 'data\hourly_report.csv'
+# CDR_FOLDER = str(Path(__file__).parent) + '\\cdr_data\\'    # Windows - needs this because of os.listdir
+# MONTHLY_REPORT_TXT_FILE = 'data\daily_html.txt'
+# MONTHLY_REPORT_CSV_FILE = 'data\daily_report.csv'
+# HOURLY_REPORT_TXT_FILE = 'data\hourly_html.txt'
+# HOURLY_REPORT_CSV_FILE = 'data\hourly_report.csv'
 
-# CDR_FOLDER = '/home/cdr/cdr_data/'                        # Linux
-# MONTHLY_REPORT_TXT_FILE = '/home/pbx/cucm-cdr-analyzer/data/daily_html.txt'
-# MONTHLY_REPORT_CSV_FILE = '/home/pbx/cucm-cdr-analyzer/data/daily_report.csv'
-# HOURLY_REPORT_TXT_FILE = '/home/pbx/cucm-cdr-analyzer/data/hourly_html.txt'
-# HOURLY_REPORT_CSV_FILE = '/home/pbx/cucm-cdr-analyzer/data/hourly_report.csv'
+CDR_FOLDER = '/home/cdr/cdr_data/'                        # Linux
+MONTHLY_REPORT_TXT_FILE = '/home/pbx/cucm-cdr-analyzer/data/daily_html.txt'
+MONTHLY_REPORT_CSV_FILE = '/home/pbx/cucm-cdr-analyzer/data/daily_report.csv'
+HOURLY_REPORT_TXT_FILE = '/home/pbx/cucm-cdr-analyzer/data/hourly_html.txt'
+HOURLY_REPORT_CSV_FILE = '/home/pbx/cucm-cdr-analyzer/data/hourly_report.csv'
 
 # List directory files only with CDR files
 cdr_list=[]
