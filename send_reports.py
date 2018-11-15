@@ -26,7 +26,7 @@ fd1 = open(body_file1,'r')
 body1 = fd1.read()
 fd1.close()
 
-subject2 = "DailyCall Report - {}".format(current_date)
+subject2 = "Daily Call Report - {}".format(current_date)
 fd2 = open(body_file2,'r')
 body2 = fd2.read()
 fd2.close()
