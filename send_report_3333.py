@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-import _module_send_mail
+import _module_funcs
 
 ####################################################################################################
 #  MAIN
@@ -31,4 +31,4 @@ PASSWORD = str(access["gmail"]["password"])
 
 # toaddr = ['georgios.fotiadis@gmail.com']
 toaddr = ['val.king@whitehatvirtual.com', 'georgios.fotiadis@whitehatvirtual.com']
-_module_send_mail.send_mail(USERNAME, PASSWORD, toaddr, subject, body, attachments)
+_module_funcs.send_mail(USERNAME, PASSWORD, toaddr, subject, body, attachments)
