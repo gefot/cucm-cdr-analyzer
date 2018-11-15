@@ -20,13 +20,12 @@ from pathlib import Path
 
 ####################################################################################################
 # MAIN #
-start = datetime.datetime.now()
 
 # CDR_FOLDER = str(Path(__file__).parent) + '\\cdr_data_3333\\'    # Windows
-# DATA_FOLDER = str(Path(__file__).parent) + '\\data\\'            # Windows
+# DATA_FOLDER = str(Path(__file__).parent) + '\\data\\'
 
 CDR_FOLDER = '/home/cdr/cdr_data_3333/'               # Linux
-DATA_FOLDER = '/home/pbx/cucm-cdr-analyzer/data/'     # Linux
+DATA_FOLDER = '/home/pbx/cucm-cdr-analyzer/data/'
 
 REPORT_FILE = DATA_FOLDER + 'report-3333.txt'
 CDR_FILENAMES = [DATA_FOLDER + fn for fn in \
@@ -144,5 +143,3 @@ fd = open(REPORT_FILE, "w")
 fd.write(report)
 fd.close()
 
-# Measure Script Execution
-print("\n\nRutime = ",datetime.datetime.now()-start)

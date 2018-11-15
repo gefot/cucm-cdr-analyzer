@@ -4,7 +4,8 @@ import os
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
-from email import encoders    # Python2
+from email import encoders
+import ftplib
 
 
 def send_mail(username, password, toaddr, subject, body, attachments):
@@ -45,3 +46,18 @@ def send_mail(username, password, toaddr, subject, body, attachments):
     mailserver.login(username, password)
     mailserver.sendmail(fromaddr, toaddr, msg.as_string())
     mailserver.quit()
+
+
+def get_files_ftp(server, username, password, source_path, dest_path, pattern):
+
+    ftp = ftplib.FTP(server, username, password)
+    ftp.cwd(source_path)
+    file_list = ftp.nlst()
+
+    for file in file_list:
+        if pattern in file:
+            with open(dest_path + file, 'wb') as my_file:
+                op = ftp.retrbinary('RETR %s' % file, my_file.write)
+    ftp.quit()
+
+

@@ -192,7 +192,7 @@ start = datetime.datetime.now()
 # HOURLY_REPORT_TXT_FILE = 'data\hourly_html.txt'
 # HOURLY_REPORT_CSV_FILE = 'data\hourly_report.csv'
 
-CDR_FOLDER = '/home/cdr/cdr_data/'                        # Linux
+CDR_FOLDER = '/home/cdr/cdr_data/'                                              # Linux
 MONTHLY_REPORT_TXT_FILE = '/home/pbx/cucm-cdr-analyzer/data/daily_html.txt'
 MONTHLY_REPORT_CSV_FILE = '/home/pbx/cucm-cdr-analyzer/data/daily_report.csv'
 HOURLY_REPORT_TXT_FILE = '/home/pbx/cucm-cdr-analyzer/data/hourly_html.txt'

@@ -6,14 +6,13 @@ import _module_funcs
 ####################################################################################################
 #  MAIN
 
-# access = json.load(open('data/access.json'))                            # Windows
-# body_file = 'data/report-3333.txt'                                      # Windows
-# DATA_FOLDER = str(Path(__file__).parent) + '\\data\\'                   # Windows
+# access = json.load(open('access.json'))                            # Windows
+# body_file = 'data/report-3333.txt'
+# DATA_FOLDER = str(Path(__file__).parent) + '\\data\\'
 
-access = json.load(open('/home/pbx/cucm-cdr-analyzer/data/access.json'))  # Linux
-body_file = '/home/pbx/cucm-cdr-analyzer/data/report-3333.txt'            # Linux
-DATA_FOLDER = '/home/pbx/cucm-cdr-analyzer/data/'                         # Linux
-
+access = json.load(open('/home/pbx/cucm-cdr-analyzer/access.json'))  # Linux
+body_file = '/home/pbx/cucm-cdr-analyzer/data/report-3333.txt'
+DATA_FOLDER = '/home/pbx/cucm-cdr-analyzer/data/'
 
 attachments = [DATA_FOLDER + fn for fn in \
                      ['cdr-3333-total.txt', 'cdr-3333-voicemail.txt', 'cdr-3333-unanswered.txt', \
