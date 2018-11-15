@@ -31,6 +31,7 @@ fd2 = open(body_file2,'r')
 body2 = fd2.read()
 fd2.close()
 
+# Send e-mail
 USERNAME = str(access["gmail"]["username"])
 PASSWORD = str(access["gmail"]["password"])
 toaddr = ["abhijit.dhar@whitehatvirtual.com","val.king@whitehatvirtual.com","floyd.willis@vvrmc.org", \
