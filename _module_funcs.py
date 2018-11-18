@@ -1,6 +1,6 @@
 import smtplib
 import os
-
+import re
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
@@ -55,7 +55,7 @@ def get_files_ftp(server, username, password, source_path, dest_path, pattern):
     file_list = ftp.nlst()
 
     for file in file_list:
-        if pattern in file:
+        if re.match(pattern, file):
             with open(dest_path + file, 'wb') as my_file:
                 op = ftp.retrbinary('RETR %s' % file, my_file.write)
     ftp.quit()
