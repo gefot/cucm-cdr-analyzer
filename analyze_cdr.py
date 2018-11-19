@@ -3,7 +3,7 @@ import os
 import datetime
 import time
 import pytz
-import _module_funcs
+import module_funcs
 
 
 access = json.load(open('access.json'))                                # Windows
@@ -20,7 +20,7 @@ USERNAME = str(access["ftp"]["username"])
 PASSWORD = str(access["ftp"]["password"])
 
 # # Get files from FTP server
-_module_funcs.get_files_ftp(SERVER, USERNAME, PASSWORD, SRC_FOLDER, DST_FOLDER, PATTTERN)
+module_funcs.get_files_ftp(SERVER, USERNAME, PASSWORD, SRC_FOLDER, DST_FOLDER, PATTTERN)
 
 cst = pytz.timezone('US/Central')
 cdr_file_list=[]

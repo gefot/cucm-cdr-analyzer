@@ -1,7 +1,7 @@
 import json
 import datetime
 
-import _module_funcs
+import module_funcs
 
 ####################################################################################################
 #  MAIN
@@ -37,5 +37,5 @@ toaddr = ["abhijit.dhar@whitehatvirtual.com","val.king@whitehatvirtual.com","flo
           "john.lomas@vvrmc.org","dgalma01@vvrmc.org","maricela.sandoval@amistadmp.org","cgroom01@vvrmc.org", \
           "Albert.Lattimer@vvrmc.org","Ricardo.Gonzalez@vvrmc.org","letty.ortiz@vvrmc.org","georgios.fotiadis@whitehatvirtual.com"]
 # toaddr = ["georgios.fotiadis@gmail.com"]
-_module_funcs.send_mail(USERNAME, PASSWORD, toaddr, subject1, body1, attachments1)
-_module_funcs.send_mail(USERNAME, PASSWORD, toaddr, subject2, body2, attachments2)
+module_funcs.send_mail(USERNAME, PASSWORD, toaddr, subject1, body1, attachments1)
+module_funcs.send_mail(USERNAME, PASSWORD, toaddr, subject2, body2, attachments2)
