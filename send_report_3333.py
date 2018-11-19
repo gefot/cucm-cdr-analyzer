@@ -28,6 +28,6 @@ fd1.close()
 USERNAME = str(access["gmail"]["username"])
 PASSWORD = str(access["gmail"]["password"])
 
-toaddr = ['georgios.fotiadis@gmail.com']
-# toaddr = ['val.king@whitehatvirtual.com', 'georgios.fotiadis@whitehatvirtual.com']
+# toaddr = ['georgios.fotiadis@gmail.com']
+toaddr = ['val.king@whitehatvirtual.com', 'georgios.fotiadis@whitehatvirtual.com']
 _module_funcs.send_mail(USERNAME, PASSWORD, toaddr, subject, body, attachments)
