@@ -6,15 +6,15 @@ import _module_funcs
 ####################################################################################################
 #  MAIN
 
-# access = json.load(open('access.json'))                            # Windows
-# body_file = 'data/report-3333.txt'
-# DATA_FOLDER = str(Path(__file__).parent) + '\\data\\'
+# access = json.load(open('data\\access.json'))                            # Windows
+# body_file = 'data/output/report-3333.txt'
+# OUTPUT_FOLDER = str(Path(__file__).parent) + '\\data\\output\\'
 
-access = json.load(open('/home/pbx/cucm-cdr-analyzer/access.json'))  # Linux
-body_file = '/home/pbx/cucm-cdr-analyzer/data/report-3333.txt'
-DATA_FOLDER = '/home/pbx/cucm-cdr-analyzer/data/'
+access = json.load(open('/home/pbx/cucm-cdr-analyzer/data/access.json'))  # Linux
+body_file = '/home/pbx/cucm-cdr-analyzer/data/output/report-3333.txt'
+OUTPUT_FOLDER = '/home/pbx/cucm-cdr-analyzer/data/output/'
 
-attachments = [DATA_FOLDER + fn for fn in \
+attachments = [OUTPUT_FOLDER + fn for fn in \
                      ['cdr-3333-total.txt', 'cdr-3333-voicemail.txt', 'cdr-3333-unanswered.txt', \
                       'cdr-calls-3691.txt', 'cdr-calls-3334.txt', 'cdr-calls-3730.txt', \
                       'cdr-calls-2547.txt', 'cdr-calls-3686.txt']]
@@ -28,6 +28,6 @@ fd1.close()
 USERNAME = str(access["gmail"]["username"])
 PASSWORD = str(access["gmail"]["password"])
 
-# toaddr = ['georgios.fotiadis@gmail.com']
-toaddr = ['val.king@whitehatvirtual.com', 'georgios.fotiadis@whitehatvirtual.com']
+toaddr = ['georgios.fotiadis@gmail.com']
+# toaddr = ['val.king@whitehatvirtual.com', 'georgios.fotiadis@whitehatvirtual.com']
 _module_funcs.send_mail(USERNAME, PASSWORD, toaddr, subject, body, attachments)

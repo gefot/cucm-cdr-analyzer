@@ -8,11 +8,11 @@ import _module_funcs
 
 access = json.load(open('access.json'))                                # Windows
 SRC_FOLDER = '/home/cdr/cdr_data/'
-DST_FOLDER = 'ftp_files/'
+DST_FOLDER = 'data/ftp_files/'
 
-# access = json.load(open('/home/pbx/cucm-cdr-analyzer/access.json'))  # Linux
+# access = json.load(open('/home/pbx/cucm-cdr-analyzer/data/access.json'))  # Linux
 # SRC_FOLDER = '/home/cdr/cdr_data/'
-# DST_FOLDER = '/home/pbx/cucm-cdr-analyzer/ftp_files/'
+# DST_FOLDER = '/home/pbx/cucm-cdr-analyzer/data/ftp_files/'
 
 PATTTERN = 'cdr_\w*_\d\d_20181116'
 SERVER = str(access["ftp"]["server"])

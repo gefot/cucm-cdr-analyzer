@@ -21,14 +21,14 @@ from pathlib import Path
 ####################################################################################################
 # MAIN #
 
-# CDR_FOLDER = str(Path(__file__).parent) + '\\cdr_data_3333\\'    # Windows
-# DATA_FOLDER = str(Path(__file__).parent) + '\\data\\'
+# CDR_FOLDER = str(Path(__file__).parent) + '\\data\\cdr_data_3333\\'    # Windows
+# OUTPUT_FOLDER = str(Path(__file__).parent) + '\\data\\output\\'
 
 CDR_FOLDER = '/home/cdr/cdr_data_3333/'               # Linux
-DATA_FOLDER = '/home/pbx/cucm-cdr-analyzer/data/'
+OUTPUT_FOLDER = '/home/pbx/cucm-cdr-analyzer/data/output/'
 
-REPORT_FILE = DATA_FOLDER + 'report-3333.txt'
-CDR_FILENAMES = [DATA_FOLDER + fn for fn in \
+REPORT_FILE = OUTPUT_FOLDER + 'report-3333.txt'
+CDR_FILENAMES = [OUTPUT_FOLDER + fn for fn in \
                      ['cdr-3333-total.txt', 'cdr-3333-voicemail.txt', 'cdr-3333-unanswered.txt', \
                       'cdr-calls-3691.txt', 'cdr-calls-3334.txt', 'cdr-calls-3730.txt', \
                       'cdr-calls-2547.txt', 'cdr-calls-3686.txt']]
