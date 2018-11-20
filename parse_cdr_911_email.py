@@ -47,7 +47,7 @@ for line in fd:
         if list[29] == "\"5500\"":
             print(date, list[2], list[8], list[29], list[30], list[49], time.strftime("%M:%S", time.gmtime(int(int(list[55])))), list[57])
             date = datetime.datetime.fromtimestamp(int(list[4]))
-            temp =  list[8].replace("\"","") + " dialed 911 at " + str(date) + "<br>"
+            temp =  "Extension <b>" + list[8].replace("\"","") + "<b>  dialed 911  at <b>" + str(date) + "<b><br>"
             body += temp
     except Exception as ex:
         pass
