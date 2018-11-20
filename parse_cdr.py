@@ -16,7 +16,7 @@ import module_funcs
 # 57: origDeviceName
 # 58: destDeviceName
 
-access = json.load(open('access.json'))                                # Windows
+access = json.load(open('data/access.json'))                                # Windows
 SRC_FOLDER = '/home/cdr/cdr_data/'
 DST_FOLDER = 'data/ftp_files/'
 
@@ -25,7 +25,7 @@ DST_FOLDER = 'data/ftp_files/'
 # DST_FOLDER = '/home/pbx/cucm-cdr-analyzer/data/ftp_files/'
 
 
-PATTTERN = 'cdr_\w*_\d\d_20181116'
+PATTTERN = 'cdr_\w*_\d\d_2018112011'
 SERVER = str(access["ftp"]["server"])
 USERNAME = str(access["ftp"]["username"])
 PASSWORD = str(access["ftp"]["password"])

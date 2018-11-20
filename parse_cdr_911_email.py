@@ -31,7 +31,7 @@ today = date.strftime('%Y')+date.strftime('%m')+date.strftime('%d')
 
 # os.chdir(CDR_FOLDER)        # Windows
 # files = glob.glob("cdr*")   # Windows
-files = glob.glob(CDR_FOLDER+"cdr*{}*".format(today))     # Linux
+files = glob.glob(CDR_FOLDER+"cdr*_01_*{}*".format(today))     # Linux
 
 # print(files)
 newest = max(files, key = os.path.getctime)
