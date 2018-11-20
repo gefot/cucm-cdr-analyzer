@@ -14,7 +14,8 @@ from pathlib import Path
 # 50: lastRedirectDn
 # 56: duration
 # 57: origDeviceName
-# 56: duration
+# 58: destDeviceName
+
 
 # Business hours
 # Main: Mon-Sun 6am - 22:30pm
