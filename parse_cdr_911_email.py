@@ -44,7 +44,7 @@ for line in fd:
         list = line.split(',')
         #print(list)
         # print(date, list[2], list[8], list[29], list[30], list[49], time.strftime("%M:%S", time.gmtime(int(int(list[55])))), list[57])
-        if list[29] == "\"5500\"":
+        if list[29] == "\"911\"":
             print(date, list[2], list[8], list[29], list[30], list[49], time.strftime("%M:%S", time.gmtime(int(int(list[55])))), list[57])
             date = datetime.datetime.fromtimestamp(int(list[4]))
             temp =  "Extension <b>" + list[8].replace("\"","") + "</b> <u>dialed 911</u> at <b>" + str(date) + "</b><br>"
@@ -58,5 +58,7 @@ if body is not "":
     attachments = []
     USERNAME = str(access["gmail"]["username"])
     PASSWORD = str(access["gmail"]["password"])
-    toaddr = ["georgios.fotiadis@gmail.com"]
+    # toaddr = ["georgios.fotiadis@gmail.com"]
+    toaddr = ["val.king@whitehatvirtual.com", "bryon.miller@whitehatvirtual.com", "Albert.Lattimer@vvrmc.org", \
+              "georgios.fotiadis@whitehatvirtual.com"]
     module_funcs.send_mail(USERNAME, PASSWORD, toaddr, subject, body, attachments)
