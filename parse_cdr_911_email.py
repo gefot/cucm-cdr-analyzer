@@ -21,7 +21,7 @@ import module_funcs
 # access = json.load(open('data\\access.json'))                               # Windows
 # CDR_FOLDER = "E:\\PyCharmProjects\\cucm-cdr-analyzer\\data\\cdr_data\\"
 
-access = json.load(open('/home/pbx/cucm-cdr-analyzer/data/access.json'))  # Linux
+access = json.load(open('/home/pbx/cucm-cdr-analyzer/data/access.json'))      # Linux
 CDR_FOLDER = "/home/cdr/cdr_data/"      # Linux
 
 date = datetime.datetime.now()
