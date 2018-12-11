@@ -33,12 +33,11 @@ def is_cdr_date(date,target_unit):
         return True
 
     # Shannon Clinic Business Hours
-    if (target_unit == "shannon" and (((weekday == 0 or weekday == 1 or weekday == 2 or weekday == 3) and(hour >= 8 and hour <= 17)) or ((weekday == 4) and (hour >= 8 and hour <= 16)))):
+    if (target_unit == "shannon" and (((weekday == 0 or weekday == 1 or weekday == 2 or weekday == 3) and(hour >= 8 and hour <= 16)) or ((weekday == 4) and (hour >= 8 and hour <= 15)))):
         return True
 
     # Lyndsey Clinic Business Hours
-    #if (target_unit == "lyndsey" and (((weekday == 0 or weekday == 1 or weekday == 2 or weekday == 3 or weekday == 4) and (hour >= 11 and hour <= 20)) or ((weekday == 5) and (hour >= 13 and hour <= 17)))):
-    if (target_unit == "lyndsey" and (((weekday == 0 or weekday == 1 or weekday == 2 or weekday == 3) and (hour >= 8 and hour <= 17)) or ((weekday == 4) and (hour >= 8 and hour <= 16)))):
+    if (target_unit == "lyndsey" and (((weekday == 0 or weekday == 1 or weekday == 2 or weekday == 3) and (hour >= 8 and hour <= 16)) or ((weekday == 4) and (hour >= 8 and hour <= 15)))):
         return True
 
     return False
