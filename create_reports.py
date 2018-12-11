@@ -19,8 +19,7 @@ from pathlib import Path
 
 # Business hours
 # Main: Mon-Sun 6am - 22:30pm
-# Shannon: M-T 8am - 5pm, F 8am - 4pm
-# Lyndsey: M-F 11am - 8pm, S 1pm - 5pm
+# Shannon: Mon-Thu 8am-5pm, Fri 8am-4pm
 # Lyndsey: Mon-Thu 8am-5pm, Fri 8am-4pm
 
 
@@ -30,7 +29,7 @@ def is_cdr_date(date,target_unit):
     weekday = date.weekday()
 
     # Main Hospital Business Hours
-    if (target_unit == "main" and (weekday == 0 or weekday == 1 or weekday == 2 or weekday == 3 or weekday == 4 or weekday == 5 or weekday == 6) and (hour >= 6 and hour <= 22)):
+    if (target_unit == "main" and (weekday == 0 or weekday == 1 or weekday == 2 or weekday == 3 or weekday == 4 or weekday == 5 or weekday == 6) and (hour >= 6 and hour <= 21)):
         return True
 
     # Shannon Clinic Business Hours
