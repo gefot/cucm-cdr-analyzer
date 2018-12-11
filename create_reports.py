@@ -16,7 +16,6 @@ from pathlib import Path
 # 57: origDeviceName
 # 58: destDeviceName
 
-
 # Business hours
 # Main: Mon-Sun 6am-10pm
 # Shannon: Mon-Thu 8am-5pm, Fri 8am-4pm
