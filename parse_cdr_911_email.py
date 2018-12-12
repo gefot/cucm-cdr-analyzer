@@ -56,9 +56,10 @@ print(body)
 if body is not "":
     subject = "911 Report"
     attachments = []
-    USERNAME = str(access["gmail"]["username"])
-    PASSWORD = str(access["gmail"]["password"])
+    USERNAME = str(access["o365"]["username"])
+    PASSWORD = str(access["o365"]["password"])
+    MAIL_SERVER = str(access["o365"]["mail_server"])
     # toaddr = ["georgios.fotiadis@gmail.com"]
     toaddr = ["val.king@whitehatvirtual.com", "bryon.miller@whitehatvirtual.com", "Albert.Lattimer@vvrmc.org", \
               "georgios.fotiadis@whitehatvirtual.com"]
-    module_funcs.send_mail(USERNAME, PASSWORD, toaddr, subject, body, attachments)
+    module_funcs.send_mail(USERNAME, PASSWORD, MAIL_SERVER, toaddr, subject, body, attachments, False, False)

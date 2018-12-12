@@ -8,7 +8,7 @@ from email import encoders
 import ftplib
 
 
-def send_mail(username, password, mail_server, toaddr, subject, body, attachments):
+def send_mail(username, password, mail_server, toaddr, subject, body, attachments, login, tls):
 
     fromaddr = username
     # text = "This will be sent as text"
@@ -40,11 +40,12 @@ def send_mail(username, password, mail_server, toaddr, subject, body, attachment
         # print(part2)
 
     mailserver = smtplib.SMTP(mail_server)
-	# starttls and login are used in GMAIL
     ##mailserver.ehlo()
-    #mailserver.starttls()
+    if tls:
+        mailserver.starttls()
     ##mailserver.ehlo()
-    #mailserver.login(username, password)
+    if login:
+        mailserver.login(username, password)
     mailserver.sendmail(fromaddr, toaddr, msg.as_string())
     mailserver.quit()
 
