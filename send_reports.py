@@ -31,11 +31,12 @@ body2 = fd2.read()
 fd2.close()
 
 # Send e-mail
-USERNAME = str(access["gmail"]["username"])
-PASSWORD = str(access["gmail"]["password"])
-toaddr = ["abhijit.dhar@whitehatvirtual.com","val.king@whitehatvirtual.com","floyd.willis@vvrmc.org", \
-          "john.lomas@vvrmc.org","dgalma01@vvrmc.org","maricela.sandoval@amistadmp.org","cgroom01@vvrmc.org", \
-          "Albert.Lattimer@vvrmc.org","Ricardo.Gonzalez@vvrmc.org","letty.ortiz@vvrmc.org","georgios.fotiadis@whitehatvirtual.com"]
-# toaddr = ["georgios.fotiadis@gmail.com"]
-module_funcs.send_mail(USERNAME, PASSWORD, toaddr, subject1, body1, attachments1)
-module_funcs.send_mail(USERNAME, PASSWORD, toaddr, subject2, body2, attachments2)
+USERNAME = str(access["o365"]["username"])
+PASSWORD = str(access["o365"]["password"])
+MAIL_SERVER = str(access["o365"]["mail_server"])
+#toaddr = ["abhijit.dhar@whitehatvirtual.com","val.king@whitehatvirtual.com","floyd.willis@vvrmc.org", \
+#          "john.lomas@vvrmc.org","dgalma01@vvrmc.org","maricela.sandoval@amistadmp.org","cgroom01@vvrmc.org", \
+#          "Albert.Lattimer@vvrmc.org","Ricardo.Gonzalez@vvrmc.org","letty.ortiz@vvrmc.org","georgios.fotiadis@whitehatvirtual.com"]
+toaddr = ["georgios.fotiadis@gmail.com"]
+module_funcs.send_mail(USERNAME, PASSWORD, MAIL_SERVER, toaddr, subject1, body1, attachments1)
+module_funcs.send_mail(USERNAME, PASSWORD, MAIL_SERVER, toaddr, subject2, body2, attachments2)
