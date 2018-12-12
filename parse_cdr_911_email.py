@@ -61,5 +61,5 @@ if body is not "":
     MAIL_SERVER = str(access["o365"]["mail_server"])
     # toaddr = ["georgios.fotiadis@gmail.com"]
     toaddr = ["val.king@whitehatvirtual.com", "bryon.miller@whitehatvirtual.com", "Albert.Lattimer@vvrmc.org", \
-              "georgios.fotiadis@whitehatvirtual.com"]
+              "Brittany.Harle@vvrmc.org", "malachi.fisher@vvrmc.org", "georgios.fotiadis@whitehatvirtual.com"]
     module_funcs.send_mail(USERNAME, PASSWORD, MAIL_SERVER, toaddr, subject, body, attachments, False, False)

@@ -25,7 +25,7 @@ DST_FOLDER = 'data/ftp_files/'
 # DST_FOLDER = '/home/pbx/cucm-cdr-analyzer/data/ftp_files/'
 
 
-PATTTERN = 'cdr_\w*_\d\d_2018120318'
+PATTTERN = 'cdr_\w*_\d\d_2018121220'
 SERVER = str(access["ftp"]["server"])
 USERNAME = str(access["ftp"]["username"])
 PASSWORD = str(access["ftp"]["password"])
