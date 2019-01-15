@@ -20,7 +20,7 @@ import module_funcs
 
 
 access = json.load(open('/home/gfot/cucm-cdr-analyzer/data/access.json'))      # Linux
-CDR_FOLDER = "/home/cdr/cdr_data/"      # Linux
+CDR_FOLDER = "/home/gfot/cdr/cdr_data/"      # Linux
 
 date = datetime.datetime.now()
 today = date.strftime('%Y')+date.strftime('%m')+date.strftime('%d')

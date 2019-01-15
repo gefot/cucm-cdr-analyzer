@@ -1,7 +1,6 @@
 import datetime
 import time
 import os
-from pathlib import Path
 
 
 ####################################################################################################
@@ -21,12 +20,9 @@ from pathlib import Path
 
 ####################################################################################################
 # MAIN #
-
-# CDR_FOLDER = str(Path(__file__).parent) + '\\data\\cdr_data_3333\\'    # Windows
-# OUTPUT_FOLDER = str(Path(__file__).parent) + '\\data\\output\\'
-
-CDR_FOLDER = '/home/cdr/cdr_data_3333/'               # Linux
+CDR_FOLDER = '/home/gfot/cdr/cdr_data_3333/'               # Linux
 OUTPUT_FOLDER = '/home/gfot/cucm-cdr-analyzer/data/output/'
+
 
 REPORT_FILE = OUTPUT_FOLDER + 'report-3333.txt'
 CDR_FILENAMES = [OUTPUT_FOLDER + fn for fn in \
