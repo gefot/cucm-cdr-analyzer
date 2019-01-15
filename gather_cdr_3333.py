@@ -5,15 +5,12 @@ from pathlib import Path
 ####################################################################################################
 # MAIN #
 
-# CDR_SRC_FOLDER = 'data\\cdr_data\\'               # Windows
-# CDR_DST_FOLDER = 'data\\cdr_data_3333\\'
-
 CDR_SRC_FOLDER = '/home/cdr/cdr_data/'        # Linux
 CDR_DST_FOLDER = '/home/cdr/cdr_data_3333/'
 
 date = datetime.datetime.now()
-prev_dates = [date + datetime.timedelta(days=-i) for i in range(1,5)]
-prev_cdr_dates = [date.strftime('%Y')+date.strftime('%m')+date.strftime('%d') for date in prev_dates]
+prev_dates = [date + datetime.timedelta(days=-i) for i in range(1, 5)]
+prev_cdr_dates = [date.strftime('%Y') + date.strftime('%m') + date.strftime('%d') for date in prev_dates]
 # print("prev_dates = ", prev_dates)
 print("prev_cdr_dates = ", prev_cdr_dates)
 

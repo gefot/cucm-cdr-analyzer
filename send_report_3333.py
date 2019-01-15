@@ -1,14 +1,10 @@
+
 import json
-from pathlib import Path
 
 import module_funcs
 
 ####################################################################################################
 #  MAIN
-
-# access = json.load(open('data\\access.json'))                            # Windows
-# body_file = 'data/output/report-3333.txt'
-# OUTPUT_FOLDER = str(Path(__file__).parent) + '\\data\\output\\'
 
 access = json.load(open('/home/pbx/cucm-cdr-analyzer/data/access.json'))  # Linux
 body_file = '/home/pbx/cucm-cdr-analyzer/data/output/report-3333.txt'
@@ -20,7 +16,7 @@ attachments = [OUTPUT_FOLDER + fn for fn in \
                       'cdr-calls-2547.txt', 'cdr-calls-3686.txt']]
 
 subject = "Weekly Report for x3333 (Mon - Thu: 9am - 5pm)"
-fd1 = open(body_file,'r')
+fd1 = open(body_file, 'r')
 body = fd1.read()
 fd1.close()
 

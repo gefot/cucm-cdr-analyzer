@@ -1,7 +1,8 @@
 
 import json
 import os
-import time, datetime
+import time
+import datetime
 import glob
 
 import module_funcs
@@ -34,7 +35,7 @@ today = date.strftime('%Y')+date.strftime('%m')+date.strftime('%d')
 files = glob.glob(CDR_FOLDER+"cdr*_01_*{}*".format(today))     # Linux
 
 # print(files)
-newest = max(files, key = os.path.getctime)
+newest = max(files, key=os.path.getctime)
 print(newest)
 
 body = ""
@@ -42,12 +43,12 @@ fd = open(newest, "r")
 for line in fd:
     try:
         list = line.split(',')
-        #print(list)
+        # print(list)
         # print(date, list[2], list[8], list[29], list[30], list[49], time.strftime("%M:%S", time.gmtime(int(int(list[55])))), list[57])
         if list[29] == "\"911\"":
             print(date, list[2], list[8], list[29], list[30], list[49], time.strftime("%M:%S", time.gmtime(int(int(list[55])))), list[57])
             date = datetime.datetime.fromtimestamp(int(list[4]))
-            temp =  "Extension <b>" + list[8].replace("\"","") + "</b> <u>dialed 911</u> at <b>" + str(date) + "</b><br>"
+            temp =  "Extension <b>" + list[8].replace("\"", "") + "</b> <u>dialed 911</u> at <b>" + str(date) + "</b><br>"
             body += temp
     except Exception as ex:
         pass

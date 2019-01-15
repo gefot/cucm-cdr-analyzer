@@ -3,6 +3,7 @@ import time
 import os
 from pathlib import Path
 
+
 ####################################################################################################
 # CDR filename is in UTC. Timestamps inside CDR files are in client's CUCM timezone.
 

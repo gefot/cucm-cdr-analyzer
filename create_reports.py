@@ -22,8 +22,8 @@ from pathlib import Path
 # Lyndsey: Mon-Thu 8am-5pm, Fri 8am-4pm
 
 
-def is_cdr_date(date,target_unit):
-    #print(date)
+def is_cdr_date(date, target_unit):
+    # print(date)
     hour = int(date.strftime('%H'))
     weekday = date.weekday()
 
@@ -40,6 +40,7 @@ def is_cdr_date(date,target_unit):
         return True
 
     return False
+
 
 def create_html_file(total_calls,answered_calls,aa_calls,unanswered_calls,total_calls_list,answered_calls_list,aa_calls_list,unanswered_calls_list,answered_calls_per_list,aa_calls_per_list,unanswered_calls_per_list,filename,clinic_names,start,end):
 
@@ -121,14 +122,14 @@ td {
         html_text += "\n</BODY>\n</HTML>\n"
     html_text += "<hr>"
 
-
     fd = open(filename,"w")
     fd.write(html_text)
     fd.close()
 
-    return 0;
+    return 0
 
-def create_csv_file(total_calls,answered_calls,aa_calls,unanswered_calls,total_calls_list,answered_calls_list,aa_calls_list,unanswered_calls_list,answered_calls_per_list,aa_calls_per_list,unanswered_calls_per_list,filename,clinic_names,start,end):
+
+def create_csv_file(total_calls, answered_calls, aa_calls, unanswered_calls, total_calls_list, answered_calls_list, aa_calls_list, unanswered_calls_list, answered_calls_per_list, aa_calls_per_list, unanswered_calls_per_list, filename, clinic_names, start, end):
 
     csv_text = ""
 
@@ -172,8 +173,6 @@ def create_csv_file(total_calls,answered_calls,aa_calls,unanswered_calls,total_c
             csv_text += str(total_calls_list[key][i])+","
         csv_text += str(total_calls[key])+"\n"
 
-
-
     fd = open(filename,"w")
     fd.write(csv_text)
     fd.close()
@@ -185,12 +184,6 @@ def create_csv_file(total_calls,answered_calls,aa_calls,unanswered_calls,total_c
 # MAIN #
 start = datetime.datetime.now()
 
-# CDR_FOLDER = str(Path(__file__).parent) + '\\data\\cdr_data\\'    # Windows - needs this because of os.listdir
-# MONTHLY_REPORT_TXT_FILE = 'data\\output\\daily_html.txt'
-# MONTHLY_REPORT_CSV_FILE = 'data\\output\\daily_report.csv'
-# HOURLY_REPORT_TXT_FILE = 'data\\output\\hourly_html.txt'
-# HOURLY_REPORT_CSV_FILE = 'data\\output\\hourly_report.csv'
-
 CDR_FOLDER = '/home/cdr/cdr_data/'                              # Linux
 MONTHLY_REPORT_TXT_FILE = '/home/pbx/cucm-cdr-analyzer/data/output/daily_html.txt'
 MONTHLY_REPORT_CSV_FILE = '/home/pbx/cucm-cdr-analyzer/data/output/daily_report.csv'
@@ -198,14 +191,14 @@ HOURLY_REPORT_TXT_FILE = '/home/pbx/cucm-cdr-analyzer/data/output/hourly_html.tx
 HOURLY_REPORT_CSV_FILE = '/home/pbx/cucm-cdr-analyzer/data/output/hourly_report.csv'
 
 # List directory files only with CDR files
-cdr_list=[]
+cdr_list = []
 for x in os.listdir(CDR_FOLDER):
     if x.startswith("cdr_Stand"):
         cdr_list.append(x)
 # print(cdr_list)
 
 # Initialize Variables
-clinic_names = {'main':'Main Hospital','shannon':'1801 Clinic','lyndsey':'1200 Clinic'}
+clinic_names = {'main': 'Main Hospital', 'shannon': '1801 Clinic', 'lyndsey': '1200 Clinic'}
 
 total_calls = {'main':0,'shannon':0,'lyndsey':0}
 answered_calls = {'main':0,'shannon':0,'lyndsey':0}
@@ -220,7 +213,6 @@ unanswered_calls_list = {'main':[0 for i in range(32)],'shannon':[0 for i in ran
 answered_calls_per_list = {'main':[0 for i in range(32)],'shannon':[0 for i in range(32)],'lyndsey':[0 for i in range(32)]}
 aa_calls_per_list = {'main':[0 for i in range(32)],'shannon':[0 for i in range(32)],'lyndsey':[0 for i in range(32)]}
 unanswered_calls_per_list = {'main':[0 for i in range(32)],'shannon':[0 for i in range(32)],'lyndsey':[0 for i in range(32)]}
-
 
 total_calls_hourly = {'main':0,'shannon':0,'lyndsey':0}
 answered_calls_hourly = {'main':0,'shannon':0,'lyndsey':0}
@@ -248,12 +240,12 @@ for file in cdr_list:
             date = datetime.datetime.fromtimestamp(int(list[4]))
             day = int(date.strftime('%d'))
             hour = int(date.strftime('%H'))
-            ##############
+
             # Main Hospital
             if (len(list[8]) == 12 and "\"1001\"" in list[29]):
                 key = 'main'
                 if is_cdr_date(date,"main"):
-                    #print("\n---\n",list[4], list[29], list[30], list[49], list[55])
+                    # print("\n---\n",list[4], list[29], list[30], list[49], list[55])
                     total_calls[key] += 1
                     total_calls_list[key][day] += 1
 
@@ -284,7 +276,7 @@ for file in cdr_list:
 
                         answered_calls_hourly[key] += 1
                         answered_calls_list_hourly[key][hour] += 1
-            ################
+
             # Shannon Clinic
             elif (len(list[8]) == 12 and "\"5810\"" in list[29]):
                 key = 'shannon'
@@ -354,38 +346,38 @@ for file in cdr_list:
                         answered_calls_list_hourly[key][hour] += 1
 
         except:
-            #print("General Exception")
+            # print("General Exception")
             continue
 
 ####################################################################################################
 # Calculate Percentages
 for key in total_calls.keys():
-    for i in range(1,32):
+    for i in range(1, 32):
         if(answered_calls_list[key][i]) > 0:
-            answered_calls_per_list[key][i] = round(float(answered_calls_list[key][i]) / total_calls_list[key][i] * 100,1)
+            answered_calls_per_list[key][i] = round(float(answered_calls_list[key][i]) / total_calls_list[key][i] * 100, 1)
         else:
             answered_calls_per_list[key][i] = 0.0
         if(aa_calls_list[key][i]) > 0:
-            aa_calls_per_list[key][i] = round(float(aa_calls_list[key][i]) / total_calls_list[key][i] * 100,1)
+            aa_calls_per_list[key][i] = round(float(aa_calls_list[key][i]) / total_calls_list[key][i] * 100, 1)
         else:
             aa_calls_per_list[key][i] = 0.0
         if(unanswered_calls_list[key][i]) > 0:
-            unanswered_calls_per_list[key][i] = round(float(unanswered_calls_list[key][i]) / total_calls_list[key][i] * 100,1)
+            unanswered_calls_per_list[key][i] = round(float(unanswered_calls_list[key][i]) / total_calls_list[key][i] * 100, 1)
         else:
             unanswered_calls_per_list[key][i] = 0.0
 
 for key in total_calls.keys():
     for i in range(0,23):
         if(answered_calls_list_hourly[key][i]) > 0:
-            answered_calls_per_list_hourly[key][i] = round(float(answered_calls_list_hourly[key][i]) / total_calls_list_hourly[key][i] * 100,1)
+            answered_calls_per_list_hourly[key][i] = round(float(answered_calls_list_hourly[key][i]) / total_calls_list_hourly[key][i] * 100, 1)
         else:
             answered_calls_per_list_hourly[key][i] = 0.0
         if(aa_calls_list_hourly[key][i]) > 0:
-            aa_calls_per_list_hourly[key][i] = round(float(aa_calls_list_hourly[key][i]) / total_calls_list_hourly[key][i] * 100,1)
+            aa_calls_per_list_hourly[key][i] = round(float(aa_calls_list_hourly[key][i]) / total_calls_list_hourly[key][i] * 100, 1)
         else:
             aa_calls_per_list_hourly[key][i] = 0.0
         if(unanswered_calls_list_hourly[key][i]) > 0:
-            unanswered_calls_per_list_hourly[key][i] = round(float(unanswered_calls_list_hourly[key][i]) / total_calls_list_hourly[key][i] * 100,1)
+            unanswered_calls_per_list_hourly[key][i] = round(float(unanswered_calls_list_hourly[key][i]) / total_calls_list_hourly[key][i] * 100, 1)
         else:
             unanswered_calls_per_list_hourly[key][i] = 0.0
 
@@ -447,7 +439,6 @@ create_csv_file(total_calls_hourly,answered_calls_hourly,aa_calls_hourly,unanswe
 
 
 # Measure Script Execution
-print("\n\nRutime = ",datetime.datetime.now()-start)
-
+print("\n\nRutime = ", datetime.datetime.now()-start)
 
 ####################################################################################################
