@@ -6,9 +6,9 @@ import module_funcs
 ####################################################################################################
 #  MAIN
 
-access = json.load(open('/home/pbx/cucm-cdr-analyzer/data/access.json'))  # Linux
-body_file = '/home/pbx/cucm-cdr-analyzer/data/output/report-3333.txt'
-OUTPUT_FOLDER = '/home/pbx/cucm-cdr-analyzer/data/output/'
+access = json.load(open('/home/gfot/cucm-cdr-analyzer/data/access.json'))  # Linux
+body_file = '/home/gfot/cucm-cdr-analyzer/data/output/report-3333.txt'
+OUTPUT_FOLDER = '/home/gfot/cucm-cdr-analyzer/data/output/'
 
 attachments = [OUTPUT_FOLDER + fn for fn in \
                      ['cdr-3333-total.txt', 'cdr-3333-voicemail.txt', 'cdr-3333-unanswered.txt', \

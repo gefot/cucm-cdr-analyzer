@@ -26,7 +26,7 @@ from pathlib import Path
 # OUTPUT_FOLDER = str(Path(__file__).parent) + '\\data\\output\\'
 
 CDR_FOLDER = '/home/cdr/cdr_data_3333/'               # Linux
-OUTPUT_FOLDER = '/home/pbx/cucm-cdr-analyzer/data/output/'
+OUTPUT_FOLDER = '/home/gfot/cucm-cdr-analyzer/data/output/'
 
 REPORT_FILE = OUTPUT_FOLDER + 'report-3333.txt'
 CDR_FILENAMES = [OUTPUT_FOLDER + fn for fn in \

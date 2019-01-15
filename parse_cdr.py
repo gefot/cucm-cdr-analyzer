@@ -20,9 +20,9 @@ access = json.load(open('data/access.json'))                                # Wi
 SRC_FOLDER = '/home/cdr/cdr_data/'
 DST_FOLDER = 'data/ftp_files/'
 
-# access = json.load(open('/home/pbx/cucm-cdr-analyzer/data/access.json'))  # Linux
-# SRC_FOLDER = '/home/cdr/cdr_data/'
-# DST_FOLDER = '/home/pbx/cucm-cdr-analyzer/data/ftp_files/'
+# access = json.load(open('/home/gfot/cucm-cdr-analyzer/data/access.json'))  # Linux
+# SRC_FOLDER = '/home/gfot/cdr_data/'
+# DST_FOLDER = '/home/gfot/cucm-cdr-analyzer/data/ftp_files/'
 
 
 PATTTERN = 'cdr_\w*_\d\d_2018121220'

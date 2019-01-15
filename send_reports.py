@@ -6,11 +6,11 @@ import module_funcs
 ####################################################################################################
 #  MAIN
 
-access = json.load(open('/home/pbx/cucm-cdr-analyzer/data/access.json'))  # Linux
-body_file1 = '/home/pbx/cucm-cdr-analyzer/data/output/hourly_html.txt'
-attachments1 = ['/home/pbx/cucm-cdr-analyzer/data/output/hourly_report.csv']
-body_file2 = '/home/pbx/cucm-cdr-analyzer/data/output/daily_html.txt'
-attachments2 = ['/home/pbx/cucm-cdr-analyzer/data/output/daily_report.csv']
+access = json.load(open('/home/gfot/cucm-cdr-analyzer/data/access.json'))  # Linux
+body_file1 = '/home/gfot/cucm-cdr-analyzer/data/output/hourly_html.txt'
+attachments1 = ['/home/gfot/cucm-cdr-analyzer/data/output/hourly_report.csv']
+body_file2 = '/home/gfot/cucm-cdr-analyzer/data/output/daily_html.txt'
+attachments2 = ['/home/gfot/cucm-cdr-analyzer/data/output/daily_report.csv']
 
 current_date = datetime.datetime.now().strftime('%B %Y')
 
