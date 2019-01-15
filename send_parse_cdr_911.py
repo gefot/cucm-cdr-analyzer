@@ -19,9 +19,6 @@ import module_funcs
 # 58: destDeviceName
 
 
-# access = json.load(open('data\\access.json'))                               # Windows
-# CDR_FOLDER = "E:\\PyCharmProjects\\cucm-cdr-analyzer\\data\\cdr_data\\"
-
 access = json.load(open('/home/gfot/cucm-cdr-analyzer/data/access.json'))      # Linux
 CDR_FOLDER = "/home/cdr/cdr_data/"      # Linux
 
