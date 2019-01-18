@@ -12,7 +12,7 @@ OUTPUT_FOLDER = '/home/gfot/cucm-cdr-analyzer/data/output/'
 
 attachments = [OUTPUT_FOLDER + fn for fn in \
                      ['cdr-3333-total.txt', 'cdr-3333-voicemail.txt', 'cdr-3333-unanswered.txt', \
-                      'cdr-calls-3691.txt', 'cdr-calls-3334.txt', 'cdr-calls-3730.txt', \
+                      'cdr-calls-3891.txt', 'cdr-calls-3334.txt', 'cdr-calls-3730.txt', \
                       'cdr-calls-2547.txt', 'cdr-calls-3686.txt']]
 
 subject = "Weekly Report for x3333 (Mon - Thu: 9am - 5pm)"

@@ -27,7 +27,7 @@ OUTPUT_FOLDER = '/home/gfot/cucm-cdr-analyzer/data/output/'
 REPORT_FILE = OUTPUT_FOLDER + 'report-3333.txt'
 CDR_FILENAMES = [OUTPUT_FOLDER + fn for fn in \
                      ['cdr-3333-total.txt', 'cdr-3333-voicemail.txt', 'cdr-3333-unanswered.txt', \
-                      'cdr-calls-3691.txt', 'cdr-calls-3334.txt', 'cdr-calls-3730.txt', \
+                      'cdr-calls-3891.txt', 'cdr-calls-3334.txt', 'cdr-calls-3730.txt', \
                       'cdr-calls-2547.txt', 'cdr-calls-3686.txt']]
 
 print(CDR_FILENAMES)
