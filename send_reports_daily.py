@@ -12,18 +12,19 @@ attachments1 = ['/home/gfot/cucm-cdr-analyzer/data/output/pd_hourly_report.csv']
 body_file2 = '/home/gfot/cucm-cdr-analyzer/data/output/pd_daily_html.txt'
 attachments2 = ['/home/gfot/cucm-cdr-analyzer/data/output/pd_daily_report.csv']
 
-# current_date = datetime.datetime.now().strftime('%B %Y')
+# current_date = datetime.datetime(2019, 1, 30, 9, 0).strftime('%Y-%m-%d')
 current_date = datetime.datetime.now().strftime('%Y-%m-%d')
 
 subject1 = "Hourly Call Report (daily) - {}".format(current_date)
+print(subject1)
 fd1 = open(body_file1, 'r')
 body1 = fd1.read()
 fd1.close()
 
-subject2 = "Daily Call Report - {}".format(current_date)
-fd2 = open(body_file2, 'r')
-body2 = fd2.read()
-fd2.close()
+# subject2 = "Daily Call Report - {}".format(current_date)
+# fd2 = open(body_file2, 'r')
+# body2 = fd2.read()
+# fd2.close()
 
 # Send e-mail
 USERNAME = str(access["o365"]["username"])

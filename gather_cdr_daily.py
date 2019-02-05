@@ -8,8 +8,8 @@ from pathlib import Path
 CDR_SRC_FOLDER = '/home/gfot/cdr/cdr_data/'        # Linux
 CDR_DST_FOLDER = '/home/gfot/cdr/cdr_data_daily/'
 
-# date = datetime.datetime.now()
-date = datetime.datetime.now() + datetime.timedelta(days=-3)
+date = datetime.datetime.now()
+# date = datetime.datetime.now() + datetime.timedelta(days=-1)
 cur_date = date.strftime('%Y') + date.strftime('%m') + date.strftime('%d')
 next = date + datetime.timedelta(days=1)
 next_date = next.strftime('%Y') + next.strftime('%m') + next.strftime('%d')
