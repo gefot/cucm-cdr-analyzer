@@ -87,7 +87,10 @@ td {
         html_text += "\n<TD>Calls Answered %</TD>"
         for i in range(start, end):
             html_text += "<TD>" + str(answered_calls_per_list[key][i]) + "%</TD>"
-        html_text += "<TD>" + str(round(float(answered_calls[key]) / total_calls[key] * 100, 1)) + "%</TD>"
+        if total_calls[key] > 0:
+            html_text += "<TD>" + str(round(float(answered_calls[key]) / total_calls[key] * 100, 1)) + "%</TD>"
+        else:
+            html_text += "<TD>" + "0.0" + "%</TD>"
         html_text += "\n</TR>\n"
 
         html_text += "<TR>"
@@ -101,7 +104,10 @@ td {
         html_text += "\n<TD>Auto Attendant %</TD>"
         for i in range(start, end):
             html_text += "<TD>" + str(aa_calls_per_list[key][i]) + "%</TD>"
-        html_text += "<TD>" + str(round(float(aa_calls[key]) / total_calls[key] * 100, 1)) + "%</TD>"
+        if total_calls[key] > 0:
+            html_text += "<TD>" + str(round(float(aa_calls[key]) / total_calls[key] * 100, 1)) + "%</TD>"
+        else:
+            html_text += "<TD>" + "0.0" + "%</TD>"
         html_text += "\n</TR>\n"
 
         html_text += "<TR>"
@@ -115,7 +121,10 @@ td {
         html_text += "\n<TD>Calls Unanswered %</TD>"
         for i in range(start, end):
             html_text += "<TD>" + str(unanswered_calls_per_list[key][i]) + "%</TD>"
-        html_text += "<TD>" + str(round(float(unanswered_calls[key]) / total_calls[key] * 100, 1)) + "%</TD>"
+        if total_calls[key] > 0:
+            html_text += "<TD>" + str(round(float(unanswered_calls[key]) / total_calls[key] * 100, 1)) + "%</TD>"
+        else:
+            html_text += "<TD>" + "0.0" + "%</TD>"
         html_text += "\n</TR>\n"
 
         html_text += "<TR>"
@@ -157,7 +166,10 @@ def create_csv_file(total_calls, answered_calls, aa_calls, unanswered_calls, tot
         csv_text += "Calls Answered %,"
         for i in range(start, end):
             csv_text += str(answered_calls_per_list[key][i]) + ","
-        csv_text += str(round(float(answered_calls[key]) / total_calls[key] * 100, 1)) + "\n"
+        if total_calls[key] > 0:
+            csv_text += str(round(float(answered_calls[key]) / total_calls[key] * 100, 1)) + "\n"
+        else:
+            csv_text += "<TD>" + "0.0" + "%</TD>"
 
         csv_text += "Auto Attendant #,"
         for i in range(start, end):
@@ -166,7 +178,10 @@ def create_csv_file(total_calls, answered_calls, aa_calls, unanswered_calls, tot
         csv_text += "Auto Attendant %,"
         for i in range(start, end):
             csv_text += str(aa_calls_per_list[key][i]) + ","
-        csv_text += str(round(float(aa_calls[key]) / total_calls[key] * 100, 1)) + "\n"
+        if total_calls[key] > 0:
+            csv_text += str(round(float(aa_calls[key]) / total_calls[key] * 100, 1)) + "\n"
+        else:
+            csv_text += "<TD>" + "0.0" + "%</TD>"
 
         csv_text += "Calls Unanswered #,"
         for i in range(start, end):
@@ -175,7 +190,10 @@ def create_csv_file(total_calls, answered_calls, aa_calls, unanswered_calls, tot
         csv_text += "Calls Unanswered %,"
         for i in range(start, end):
             csv_text += str(unanswered_calls_per_list[key][i]) + ","
-        csv_text += str(round(float(unanswered_calls[key]) / total_calls[key] * 100, 1)) + "\n"
+        if total_calls[key] > 0:
+            csv_text += str(round(float(unanswered_calls[key]) / total_calls[key] * 100, 1)) + "\n"
+        else:
+            csv_text += "<TD>" + "0.0" + "%</TD>"
 
         csv_text += "Call Volume,"
         for i in range(start, end):
