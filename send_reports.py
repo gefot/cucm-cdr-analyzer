@@ -33,6 +33,5 @@ toaddr = ["abhijit.dhar@whitehatvirtual.com", "val.king@whitehatvirtual.com", "f
           "Albert.Lattimer@vvrmc.org", "Ricardo.Gonzalez@vvrmc.org", "letty.ortiz@vvrmc.org",
           "georgios.fotiadis@whitehatvirtual.com"]
 # toaddr = ["georgios.fotiadis@whitehatvirtual.com"]
-# toaddr = ["melanie.torres@vvrmc.org"]
 module_funcs.send_mail(USERNAME, PASSWORD, MAIL_SERVER, toaddr, subject1, body1, attachments1, False, False)
 module_funcs.send_mail(USERNAME, PASSWORD, MAIL_SERVER, toaddr, subject2, body2, attachments2, False, False)

@@ -194,6 +194,7 @@ def create_csv_file(total_calls, answered_calls, aa_calls, unanswered_calls, tot
 start = datetime.datetime.now()
 
 CDR_FOLDER = '/home/gfot/cdr/cdr_data/'  # Linux
+# CDR_FOLDER = '/home/gfot/cdr/cdr_temp/'  # Linux
 MONTHLY_REPORT_TXT_FILE = '/home/gfot/cucm-cdr-analyzer/data/output/daily_html.txt'
 MONTHLY_REPORT_CSV_FILE = '/home/gfot/cucm-cdr-analyzer/data/output/daily_report.csv'
 HOURLY_REPORT_TXT_FILE = '/home/gfot/cucm-cdr-analyzer/data/output/hourly_html.txt'
