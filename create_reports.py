@@ -19,7 +19,7 @@ from pathlib import Path
 
 # Business hours
 # Main: Mon-Sun 6am-10pm
-# Shannon: Mon-Thu 8am-5pm, Fri 8am-4pm
+# Shannon: Mon-Thu 8am-5pm, Fri 8am-12pm & 1pm-4pm
 # Lyndsey: Mon-Thu 8am-5pm, Fri 8am-4pm
 
 
