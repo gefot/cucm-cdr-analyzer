@@ -225,48 +225,58 @@ for x in os.listdir(CDR_FOLDER):
 # print(cdr_list)
 
 # Initialize Variables
-clinic_names = {'main': 'Main Hospital', 'shannon': '1801 Clinic', 'lyndsey': '1200 Clinic'}
+# clinic_names = {'main': 'Main Hospital', 'shannon': '1801 Clinic', 'lyndsey': '1200 Clinic'}
+clinic_names = {'main': 'Main Hospital', 'shannon': '1801 Clinic'}
 
-total_calls = {'main': 0, 'shannon': 0, 'lyndsey': 0}
-answered_calls = {'main': 0, 'shannon': 0, 'lyndsey': 0}
-aa_calls = {'main': 0, 'shannon': 0, 'lyndsey': 0}
-unanswered_calls = {'main': 0, 'shannon': 0, 'lyndsey': 0}
+# total_calls = {'main': 0, 'shannon': 0, 'lyndsey': 0}
+total_calls = {'main': 0, 'shannon': 0}
+# answered_calls = {'main': 0, 'shannon': 0, 'lyndsey': 0}
+answered_calls = {'main': 0, 'shannon': 0}
+# aa_calls = {'main': 0, 'shannon': 0, 'lyndsey': 0}
+aa_calls = {'main': 0, 'shannon': 0}
+# unanswered_calls = {'main': 0, 'shannon': 0, 'lyndsey': 0}
+unanswered_calls = {'main': 0, 'shannon': 0}
 
-total_calls_list = {'main': [0 for i in range(32)], 'shannon': [0 for i in range(32)],
-                    'lyndsey': [0 for i in range(32)]}
-answered_calls_list = {'main': [0 for i in range(32)], 'shannon': [0 for i in range(32)],
-                       'lyndsey': [0 for i in range(32)]}
-aa_calls_list = {'main': [0 for i in range(32)], 'shannon': [0 for i in range(32)], 'lyndsey': [0 for i in range(32)]}
-unanswered_calls_list = {'main': [0 for i in range(32)], 'shannon': [0 for i in range(32)],
-                         'lyndsey': [0 for i in range(32)]}
+# total_calls_list = {'main': [0 for i in range(32)], 'shannon': [0 for i in range(32)], 'lyndsey': [0 for i in range(32)]}
+total_calls_list = {'main': [0 for i in range(32)], 'shannon': [0 for i in range(32)]}
+# answered_calls_list = {'main': [0 for i in range(32)], 'shannon': [0 for i in range(32)], 'lyndsey': [0 for i in range(32)]}
+answered_calls_list = {'main': [0 for i in range(32)], 'shannon': [0 for i in range(32)]}
+# aa_calls_list = {'main': [0 for i in range(32)], 'shannon': [0 for i in range(32)], 'lyndsey': [0 for i in range(32)]}
+aa_calls_list = {'main': [0 for i in range(32)], 'shannon': [0 for i in range(32)]}
+# unanswered_calls_list = {'main': [0 for i in range(32)], 'shannon': [0 for i in range(32)], 'lyndsey': [0 for i in range(32)]}
+unanswered_calls_list = {'main': [0 for i in range(32)], 'shannon': [0 for i in range(32)]}
 
-answered_calls_per_list = {'main': [0 for i in range(32)], 'shannon': [0 for i in range(32)],
-                           'lyndsey': [0 for i in range(32)]}
-aa_calls_per_list = {'main': [0 for i in range(32)], 'shannon': [0 for i in range(32)],
-                     'lyndsey': [0 for i in range(32)]}
-unanswered_calls_per_list = {'main': [0 for i in range(32)], 'shannon': [0 for i in range(32)],
-                             'lyndsey': [0 for i in range(32)]}
+# answered_calls_per_list = {'main': [0 for i in range(32)], 'shannon': [0 for i in range(32)], 'lyndsey': [0 for i in range(32)]}
+answered_calls_per_list = {'main': [0 for i in range(32)], 'shannon': [0 for i in range(32)]}
+# aa_calls_per_list = {'main': [0 for i in range(32)], 'shannon': [0 for i in range(32)], 'lyndsey': [0 for i in range(32)]}
+aa_calls_per_list = {'main': [0 for i in range(32)], 'shannon': [0 for i in range(32)]}
+# unanswered_calls_per_list = {'main': [0 for i in range(32)], 'shannon': [0 for i in range(32)], 'lyndsey': [0 for i in range(32)]}
+unanswered_calls_per_list = {'main': [0 for i in range(32)], 'shannon': [0 for i in range(32)]}
 
-total_calls_hourly = {'main': 0, 'shannon': 0, 'lyndsey': 0}
-answered_calls_hourly = {'main': 0, 'shannon': 0, 'lyndsey': 0}
-aa_calls_hourly = {'main': 0, 'shannon': 0, 'lyndsey': 0}
-unanswered_calls_hourly = {'main': 0, 'shannon': 0, 'lyndsey': 0}
+# total_calls_hourly = {'main': 0, 'shannon': 0, 'lyndsey': 0}
+total_calls_hourly = {'main': 0, 'shannon': 0}
+# answered_calls_hourly = {'main': 0, 'shannon': 0, 'lyndsey': 0}
+answered_calls_hourly = {'main': 0, 'shannon': 0}
+# aa_calls_hourly = {'main': 0, 'shannon': 0, 'lyndsey': 0}
+aa_calls_hourly = {'main': 0, 'shannon': 0}
+# unanswered_calls_hourly = {'main': 0, 'shannon': 0, 'lyndsey': 0}
+unanswered_calls_hourly = {'main': 0, 'shannon': 0}
 
-total_calls_list_hourly = {'main': [0 for i in range(24)], 'shannon': [0 for i in range(24)],
-                           'lyndsey': [0 for i in range(24)]}
-answered_calls_list_hourly = {'main': [0 for i in range(24)], 'shannon': [0 for i in range(24)],
-                              'lyndsey': [0 for i in range(24)]}
-aa_calls_list_hourly = {'main': [0 for i in range(24)], 'shannon': [0 for i in range(24)],
-                        'lyndsey': [0 for i in range(24)]}
-unanswered_calls_list_hourly = {'main': [0 for i in range(24)], 'shannon': [0 for i in range(24)],
-                                'lyndsey': [0 for i in range(24)]}
+# total_calls_list_hourly = {'main': [0 for i in range(24)], 'shannon': [0 for i in range(24)], 'lyndsey': [0 for i in range(24)]}
+total_calls_list_hourly = {'main': [0 for i in range(24)], 'shannon': [0 for i in range(24)]}
+# answered_calls_list_hourly = {'main': [0 for i in range(24)], 'shannon': [0 for i in range(24)], 'lyndsey': [0 for i in range(24)]}
+answered_calls_list_hourly = {'main': [0 for i in range(24)], 'shannon': [0 for i in range(24)]}
+# aa_calls_list_hourly = {'main': [0 for i in range(24)], 'shannon': [0 for i in range(24)], 'lyndsey': [0 for i in range(24)]}
+aa_calls_list_hourly = {'main': [0 for i in range(24)], 'shannon': [0 for i in range(24)]}
+# unanswered_calls_list_hourly = {'main': [0 for i in range(24)], 'shannon': [0 for i in range(24)], 'lyndsey': [0 for i in range(24)]}
+unanswered_calls_list_hourly = {'main': [0 for i in range(24)], 'shannon': [0 for i in range(24)]}
 
-answered_calls_per_list_hourly = {'main': [0 for i in range(24)], 'shannon': [0 for i in range(24)],
-                                  'lyndsey': [0 for i in range(24)]}
-aa_calls_per_list_hourly = {'main': [0 for i in range(24)], 'shannon': [0 for i in range(24)],
-                            'lyndsey': [0 for i in range(24)]}
-unanswered_calls_per_list_hourly = {'main': [0 for i in range(24)], 'shannon': [0 for i in range(24)],
-                                    'lyndsey': [0 for i in range(24)]}
+# answered_calls_per_list_hourly = {'main': [0 for i in range(24)], 'shannon': [0 for i in range(24)], 'lyndsey': [0 for i in range(24)]}
+answered_calls_per_list_hourly = {'main': [0 for i in range(24)], 'shannon': [0 for i in range(24)]}
+# aa_calls_per_list_hourly = {'main': [0 for i in range(24)], 'shannon': [0 for i in range(24)], 'lyndsey': [0 for i in range(24)]}
+aa_calls_per_list_hourly = {'main': [0 for i in range(24)], 'shannon': [0 for i in range(24)]}
+# unanswered_calls_per_list_hourly = {'main': [0 for i in range(24)], 'shannon': [0 for i in range(24)], 'lyndsey': [0 for i in range(24)]}
+unanswered_calls_per_list_hourly = {'main': [0 for i in range(24)], 'shannon': [0 for i in range(24)]}
 
 ####################################################################################################
 # Calculate CDR Statistics
