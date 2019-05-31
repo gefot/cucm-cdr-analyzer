@@ -14,7 +14,7 @@ cur_date = date.strftime('%Y') + date.strftime('%m') + date.strftime('%d')
 next = date + datetime.timedelta(days=1)
 next_date = next.strftime('%Y') + next.strftime('%m') + next.strftime('%d')
 
-# Append to the previous 4 days the hour, which is in CST-6. Working hours for 3333 are 8am-10pm.
+# Append to the previous 4 days the hour, which is in CST-6.
 cdr_filenames = []
 # for date in prev_cdr_dates:
 cdr_filenames.append(cur_date + "12")
