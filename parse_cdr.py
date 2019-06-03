@@ -18,8 +18,9 @@ import module_funcs
 # 58: destDeviceName
 
 CDR_CURRENT = '/home/gfot/cdr/cdr_data/'
+CDR_ARCHIVE = '/home/gfot/cdr/cdr_archive/'
 EXTENSION = "\"4208\""
-STARTDATE = "201906291200"
+STARTDATE = "201904291200"
 ENDDATE = "201906291500"
 TIMEZONE = +5
 
@@ -29,21 +30,27 @@ print(nowdate)
 
 # Shift dates to GMT so as to much CDR
 print("local time = ", STARTDATE)
+startdate_short = re.search(r'(\d{6})', STARTDATE).group(1)
 startdate_obj = datetime.datetime.strptime(STARTDATE, '%Y%m%d%H%M')
 startdate_obj_new = startdate_obj + datetime.timedelta(hours=TIMEZONE)
 startdate_new = datetime.datetime.strftime(startdate_obj_new, '%Y%m%d%H%M')
 print("GMT time = ", startdate_new)
 
 print("local time = ", ENDDATE)
+enddate_short = re.search(r'(\d{6})', ENDDATE).group(1)
 enddate_obj = datetime.datetime.strptime(ENDDATE, '%Y%m%d%H%M')
 enddate_obj_new = enddate_obj + datetime.timedelta(hours=TIMEZONE)
 enddate_new = datetime.datetime.strftime(enddate_obj_new, '%Y%m%d%H%M')
 print("GMT time = ", enddate_new)
 
+print(startdate_short)
+print(enddate_short)
 # Construct CDR folder
 cdr_folder = []
 if nowdate in startdate_new or nowdate in enddate_new:
     cdr_folder.append(CDR_CURRENT)
+for folder in os.listdir(CDR_ARCHIVE):
+    print("folder = {}".format(folder))
 
 print("CDR_FOLDER = {}".format(cdr_folder))
 
