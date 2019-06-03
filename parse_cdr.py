@@ -17,20 +17,15 @@ import module_funcs
 # 57: origDeviceName
 # 58: destDeviceName
 
-CDR_FOLDER = '/home/gfot/cdr/cdr_data/'
+CDR_CURRENT = '/home/gfot/cdr/cdr_data/'
 EXTENSION = "\"4208\""
-STARTDATE = "201905291200"
-ENDDATE = "201905291500"
+STARTDATE = "201906291200"
+ENDDATE = "201906291500"
 TIMEZONE = +5
 
-# Get files from FTP server
-# access = json.load(open('/home/gfot/cucm-cdr-analyzer/data/access.json'))  # Linux
-# SERVER = str(access["ftp"]["server"])
-# USERNAME = str(access["ftp"]["username"])
-# PASSWORD = str(access["ftp"]["password"])
-# DST_FOLDER = '/home/gfot/cucm-cdr-analyzer/data/ftp_files/'
-# module_funcs.get_files_ftp(SERVER, USERNAME, PASSWORD, CDR_FOLDER, DST_FOLDER, PATTTERN)
-
+now = datetime.datetime.now()
+nowdate = now.strftime("%Y%m")
+print(nowdate)
 
 # Shift dates to GMT so as to much CDR
 print("local time = ", STARTDATE)
@@ -45,13 +40,21 @@ enddate_obj_new = enddate_obj + datetime.timedelta(hours=TIMEZONE)
 enddate_new = datetime.datetime.strftime(enddate_obj_new, '%Y%m%d%H%M')
 print("GMT time = ", enddate_new)
 
+# Construct CDR folder
+cdr_folder = []
+if nowdate in startdate_new or nowdate in enddate_new:
+    cdr_folder.append(CDR_CURRENT)
+
+print("CDR_FOLDER = {}".format(cdr_folder))
+
 # Get CDR files according to start and end dates
 cdr_file_list = []
-for filename in os.listdir(CDR_FOLDER):
-    if filename.startswith("cdr") and "_01_" in filename:
-        cdr_pattern = re.search(r'cdr_\w*_\d\d_(\d\d\d\d\d\d\d\d\d\d\d\d)', filename).group(1)
-        if int(cdr_pattern) > int(startdate_new) and int(cdr_pattern) < int(enddate_new):
-            cdr_file_list.append(filename)
+for my_folder in cdr_folder:
+    for filename in os.listdir(my_folder):
+        if filename.startswith("cdr") and "_01_" in filename:
+            cdr_pattern = re.search(r'cdr_\w*_\d\d_(\d\d\d\d\d\d\d\d\d\d\d\d)', filename).group(1)
+            if int(cdr_pattern) > int(startdate_new) and int(cdr_pattern) < int(enddate_new):
+                cdr_file_list.append(cdr_folder + filename)
 cdr_file_list.sort()
 print(cdr_file_list)
 print("len = ", len(cdr_file_list))
@@ -60,11 +63,12 @@ print("len = ", len(cdr_file_list))
 try:
     for file in cdr_file_list:
         # print("\n\n\n {}".format(file))
-        fd = open(CDR_FOLDER + file, "r")
+        fd = open(file, "r")
         for line in fd:
             try:
                 list = line.split(',')
-                if list[8] == EXTENSION or list[29] == EXTENSION:
+                # if list[8] == EXTENSION or list[29] == EXTENSION:
+                if 1 == 1:
                     date = datetime.datetime.fromtimestamp(int(list[4]))
                     print(list[2], date, list[8], list[29], list[30], list[49],
                           time.strftime("%M:%S", time.gmtime(int(int(list[55])))), list[56], list[57])
