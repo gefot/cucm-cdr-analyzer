@@ -23,6 +23,7 @@ from pathlib import Path
 # Lyndsey: Mon-Thu 8am-5pm, Fri 8am-4pm
 
 
+
 def is_cdr_date(date, target_unit):
     # print(date)
     hour = int(date.strftime('%H'))

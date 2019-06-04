@@ -20,6 +20,7 @@ ENDDATE = "201906050000"
 # EXTENSION_LIST = ["*"]
 EXTENSION_LIST = ["5122290591"]
 
+
 cdr_file_list = module_funcs.get_cdr_files(STARTDATE, ENDDATE)
 
 # Parse CDR file
