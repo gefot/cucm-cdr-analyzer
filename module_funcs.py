@@ -10,6 +10,32 @@ import ftplib
 import datetime
 
 
+def is_cdr_date(date, clinic):
+
+    # print(date)
+    hour = int(date.strftime('%H'))
+    weekday = date.weekday()
+
+    # Main Hospital Business Hours
+    if (clinic == "main" and (
+            weekday == 0 or weekday == 1 or weekday == 2 or weekday == 3 or weekday == 4 or weekday == 5 or weekday == 6) and (
+            hour >= 6 and hour <= 21)):
+        return True
+
+    # Shannon Clinic Business Hours
+    if (clinic == "shannon" and (
+            ((weekday == 0 or weekday == 1 or weekday == 2 or weekday == 3) and (hour >= 8 and hour <= 16)) or (
+            (weekday == 4) and (hour >= 8 and hour <= 11)))):
+        return True
+
+    # Lyndsey Clinic Business Hours
+    if (clinic == "lyndsey" and (
+            ((weekday == 0 or weekday == 1 or weekday == 2 or weekday == 3) and (hour >= 8 and hour <= 16)) or (
+            (weekday == 4) and (hour >= 8 and hour <= 15)))):
+        return True
+
+    return False
+
 def send_mail(username, password, mail_server, toaddr, subject, body, attachments, login, tls):
     fromaddr = username
     # text = "This will be sent as text"
