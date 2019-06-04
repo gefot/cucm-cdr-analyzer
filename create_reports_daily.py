@@ -2,6 +2,7 @@ import os
 import datetime
 from pathlib import Path
 
+import module_funcs
 
 ####################################################################################################
 # CDR filename is in UTC. Timestamps inside CDR files are in client's CUCM timezone.
@@ -21,191 +22,6 @@ from pathlib import Path
 # Main: Mon-Sun 6am-10pm
 # Shannon: Mon-Thu 8am-5pm, Fri 8am-12pm
 # Lyndsey: Mon-Thu 8am-5pm, Fri 8am-4pm
-
-
-
-def is_cdr_date(date, target_unit):
-    # print(date)
-    hour = int(date.strftime('%H'))
-    weekday = date.weekday()
-
-    # Main Hospital Business Hours
-    if (target_unit == "main" and (
-            weekday == 0 or weekday == 1 or weekday == 2 or weekday == 3 or weekday == 4 or weekday == 5 or weekday == 6) and (
-            hour >= 6 and hour <= 21)):
-        return True
-
-    # Shannon Clinic Business Hours
-    if (target_unit == "shannon" and (
-            ((weekday == 0 or weekday == 1 or weekday == 2 or weekday == 3) and (hour >= 8 and hour <= 16)) or (
-            (weekday == 4) and (hour >= 8 and hour <= 11)))):
-        return True
-
-    # Lyndsey Clinic Business Hours
-    if (target_unit == "lyndsey" and (
-            ((weekday == 0 or weekday == 1 or weekday == 2 or weekday == 3) and (hour >= 8 and hour <= 16)) or (
-            (weekday == 4) and (hour >= 8 and hour <= 15)))):
-        return True
-
-    return False
-
-
-def create_html_file(total_calls, answered_calls, aa_calls, unanswered_calls, total_calls_list, answered_calls_list,
-                     aa_calls_list, unanswered_calls_list, answered_calls_per_list, aa_calls_per_list,
-                     unanswered_calls_per_list, filename, clinic_names, start, end):
-    html_text = """<HTML>
-<HEAD>
-<STYLE>
-td {
-    text-align:center;
-    padding:4px;
-}
-</STYLE>
-</HEAD>
-<BODY>"""
-
-    for key in total_calls_list.keys():
-        html_text += "<hr>"
-        html_text += "<p>" + clinic_names[key] + "</p>\n"
-
-        html_text += "<TABLE>\n"
-
-        html_text += "<TR>\n"
-        html_text += "<TD><b></b></TD>"
-        for i in range(start, end):
-            html_text += "<TD><b>" + str(i) + "</b></TD>"
-        html_text += "<TD><b>Total</b></TD>"
-        html_text += "\n</TR>\n"
-
-        html_text += "<TR>"
-        html_text += "\n<TD>Calls Answered #</TD>"
-        for i in range(start, end):
-            html_text += "<TD>" + str(answered_calls_list[key][i]) + "</TD>"
-        html_text += "<TD>" + str(answered_calls[key]) + "</TD>"
-        html_text += "\n</TR>\n"
-
-        html_text += "<TR>"
-        html_text += "\n<TD>Calls Answered %</TD>"
-        for i in range(start, end):
-            html_text += "<TD>" + str(answered_calls_per_list[key][i]) + "%</TD>"
-        if total_calls[key] > 0:
-            html_text += "<TD>" + str(round(float(answered_calls[key]) / total_calls[key] * 100, 1)) + "%</TD>"
-        else:
-            html_text += "<TD>" + "0.0" + "%</TD>"
-        html_text += "\n</TR>\n"
-
-        html_text += "<TR>"
-        html_text += "\n<TD>Auto Attendant #</TD>"
-        for i in range(start, end):
-            html_text += "<TD>" + str(aa_calls_list[key][i]) + "</TD>"
-        html_text += "<TD>" + str(aa_calls[key]) + "</TD>"
-        html_text += "\n</TR>\n"
-
-        html_text += "<TR>"
-        html_text += "\n<TD>Auto Attendant %</TD>"
-        for i in range(start, end):
-            html_text += "<TD>" + str(aa_calls_per_list[key][i]) + "%</TD>"
-        if total_calls[key] > 0:
-            html_text += "<TD>" + str(round(float(aa_calls[key]) / total_calls[key] * 100, 1)) + "%</TD>"
-        else:
-            html_text += "<TD>" + "0.0" + "%</TD>"
-        html_text += "\n</TR>\n"
-
-        html_text += "<TR>"
-        html_text += "\n<TD>Calls Unanswered #</TD>"
-        for i in range(start, end):
-            html_text += "<TD>" + str(unanswered_calls_list[key][i]) + "</TD>"
-        html_text += "<TD>" + str(unanswered_calls[key]) + "</TD>"
-        html_text += "\n</TR>\n"
-
-        html_text += "<TR>"
-        html_text += "\n<TD>Calls Unanswered %</TD>"
-        for i in range(start, end):
-            html_text += "<TD>" + str(unanswered_calls_per_list[key][i]) + "%</TD>"
-        if total_calls[key] > 0:
-            html_text += "<TD>" + str(round(float(unanswered_calls[key]) / total_calls[key] * 100, 1)) + "%</TD>"
-        else:
-            html_text += "<TD>" + "0.0" + "%</TD>"
-        html_text += "\n</TR>\n"
-
-        html_text += "<TR>"
-        html_text += "\n<TD><b>Call Volume</b></TD>"
-        for i in range(start, end):
-            html_text += "<TD><b>" + str(total_calls_list[key][i]) + "</b></TD>"
-        html_text += "<TD><b>" + str(total_calls[key]) + "</b></TD>"
-        html_text += "\n</TR>\n"
-
-        html_text += "</TABLE>\n"
-
-        html_text += "\n</BODY>\n</HTML>\n"
-    html_text += "<hr>"
-
-    fd = open(filename, "w")
-    fd.write(html_text)
-    fd.close()
-
-    return 0
-
-
-def create_csv_file(total_calls, answered_calls, aa_calls, unanswered_calls, total_calls_list, answered_calls_list,
-                    aa_calls_list, unanswered_calls_list, answered_calls_per_list, aa_calls_per_list,
-                    unanswered_calls_per_list, filename, clinic_names, start, end):
-    csv_text = ""
-
-    for key in total_calls_list.keys():
-        csv_text += "\n" + clinic_names[key]
-
-        csv_text += ","
-        for i in range(start, end):
-            csv_text += str(i) + ","
-        csv_text += "Total\n"
-
-        csv_text += "Calls Answered #,"
-        for i in range(start, end):
-            csv_text += str(answered_calls_list[key][i]) + ","
-        csv_text += str(answered_calls[key]) + "\n"
-        csv_text += "Calls Answered %,"
-        for i in range(start, end):
-            csv_text += str(answered_calls_per_list[key][i]) + ","
-        if total_calls[key] > 0:
-            csv_text += str(round(float(answered_calls[key]) / total_calls[key] * 100, 1)) + "\n"
-        else:
-            csv_text += "<TD>" + "0.0" + "%</TD>"
-
-        csv_text += "Auto Attendant #,"
-        for i in range(start, end):
-            csv_text += str(aa_calls_list[key][i]) + ","
-        csv_text += str(aa_calls[key]) + "\n"
-        csv_text += "Auto Attendant %,"
-        for i in range(start, end):
-            csv_text += str(aa_calls_per_list[key][i]) + ","
-        if total_calls[key] > 0:
-            csv_text += str(round(float(aa_calls[key]) / total_calls[key] * 100, 1)) + "\n"
-        else:
-            csv_text += "<TD>" + "0.0" + "%</TD>"
-
-        csv_text += "Calls Unanswered #,"
-        for i in range(start, end):
-            csv_text += str(unanswered_calls_list[key][i]) + ","
-        csv_text += str(unanswered_calls[key]) + "\n"
-        csv_text += "Calls Unanswered %,"
-        for i in range(start, end):
-            csv_text += str(unanswered_calls_per_list[key][i]) + ","
-        if total_calls[key] > 0:
-            csv_text += str(round(float(unanswered_calls[key]) / total_calls[key] * 100, 1)) + "\n"
-        else:
-            csv_text += "<TD>" + "0.0" + "%</TD>"
-
-        csv_text += "Call Volume,"
-        for i in range(start, end):
-            csv_text += str(total_calls_list[key][i]) + ","
-        csv_text += str(total_calls[key]) + "\n"
-
-    fd = open(filename, "w")
-    fd.write(csv_text)
-    fd.close()
-
-    return 0
 
 
 ####################################################################################################
@@ -294,7 +110,7 @@ for file in cdr_list:
             # Main Hospital
             if (len(list[8]) == 12 and "\"1001\"" in list[29]):
                 key = 'main'
-                if is_cdr_date(date, "main"):
+                if module_funcs.is_cdr_date(date, "main"):
                     # print("\n---\n",list[4], list[29], list[30], list[49], list[55])
                     total_calls[key] += 1
                     total_calls_list[key][day] += 1
@@ -331,7 +147,7 @@ for file in cdr_list:
             # Shannon Clinic
             elif (len(list[8]) == 12 and "\"5810\"" in list[29]):
                 key = 'shannon'
-                if is_cdr_date(date, "shannon"):
+                if module_funcs.is_cdr_date(date, "shannon"):
                     total_calls[key] += 1
                     total_calls_list[key][day] += 1
 
@@ -367,7 +183,7 @@ for file in cdr_list:
                     "\"5850\"" in list[29] or "8307742505" in list[29] or "8307757555" in list[29] or "8303137138" in
                     list[29])):
                 key = 'lyndsey'
-                if (is_cdr_date(date, "lyndsey")):
+                if module_funcs.is_cdr_date(date, "lyndsey"):
                     total_calls[key] += 1
                     total_calls_list[key][day] += 1
 
@@ -488,18 +304,18 @@ for key in total_calls_list_hourly.keys():
 
 ####################################################################################################
 # Create files
-create_html_file(total_calls, answered_calls, aa_calls, unanswered_calls, total_calls_list, answered_calls_list,
+module_funcs.create_html_file(total_calls, answered_calls, aa_calls, unanswered_calls, total_calls_list, answered_calls_list,
                  aa_calls_list, unanswered_calls_list, answered_calls_per_list, aa_calls_per_list,
                  unanswered_calls_per_list, MONTHLY_REPORT_TXT_FILE, clinic_names, 1, 32)
-create_csv_file(total_calls, answered_calls, aa_calls, unanswered_calls, total_calls_list, answered_calls_list,
+module_funcs.create_csv_file(total_calls, answered_calls, aa_calls, unanswered_calls, total_calls_list, answered_calls_list,
                 aa_calls_list, unanswered_calls_list, answered_calls_per_list, aa_calls_per_list,
                 unanswered_calls_per_list, MONTHLY_REPORT_CSV_FILE, clinic_names, 1, 32)
 
-create_html_file(total_calls_hourly, answered_calls_hourly, aa_calls_hourly, unanswered_calls_hourly,
+module_funcs.create_html_file(total_calls_hourly, answered_calls_hourly, aa_calls_hourly, unanswered_calls_hourly,
                  total_calls_list_hourly, answered_calls_list_hourly, aa_calls_list_hourly,
                  unanswered_calls_list_hourly, answered_calls_per_list_hourly, aa_calls_per_list_hourly,
                  unanswered_calls_per_list_hourly, HOURLY_REPORT_TXT_FILE, clinic_names, 0, 24)
-create_csv_file(total_calls_hourly, answered_calls_hourly, aa_calls_hourly, unanswered_calls_hourly,
+module_funcs.create_csv_file(total_calls_hourly, answered_calls_hourly, aa_calls_hourly, unanswered_calls_hourly,
                 total_calls_list_hourly, answered_calls_list_hourly, aa_calls_list_hourly, unanswered_calls_list_hourly,
                 answered_calls_per_list_hourly, aa_calls_per_list_hourly, unanswered_calls_per_list_hourly,
                 HOURLY_REPORT_CSV_FILE, clinic_names, 0, 24)

@@ -10,6 +10,7 @@ import ftplib
 import datetime
 
 
+###########################################################################################################################################
 def is_cdr_date(date, clinic):
 
     # print(date)
@@ -18,77 +19,173 @@ def is_cdr_date(date, clinic):
 
     # Main Hospital Business Hours
     if (clinic == "main" and (
-            weekday == 0 or weekday == 1 or weekday == 2 or weekday == 3 or weekday == 4 or weekday == 5 or weekday == 6) and (
-            hour >= 6 and hour <= 21)):
+            weekday == 0 or weekday == 1 or weekday == 2 or weekday == 3 or weekday == 4 or weekday == 5 or weekday == 6) and (hour >= 6 and hour <= 21)):
         return True
 
     # Shannon Clinic Business Hours
     if (clinic == "shannon" and (
-            ((weekday == 0 or weekday == 1 or weekday == 2 or weekday == 3) and (hour >= 8 and hour <= 16)) or (
-            (weekday == 4) and (hour >= 8 and hour <= 11)))):
+            ((weekday == 0 or weekday == 1 or weekday == 2 or weekday == 3) and (hour >= 8 and hour <= 16)) or ((weekday == 4) and (hour >= 8 and hour <= 11)))):
         return True
 
     # Lyndsey Clinic Business Hours
-    if (clinic == "lyndsey" and (
-            ((weekday == 0 or weekday == 1 or weekday == 2 or weekday == 3) and (hour >= 8 and hour <= 16)) or (
-            (weekday == 4) and (hour >= 8 and hour <= 15)))):
+    if (clinic == "lyndsey" and (((weekday == 0 or weekday == 1 or weekday == 2 or weekday == 3) and (hour >= 8 and hour <= 16)) or ((weekday == 4) and (hour >= 8 and hour <= 15)))):
         return True
 
     return False
 
-def send_mail(username, password, mail_server, toaddr, subject, body, attachments, login, tls):
-    fromaddr = username
-    # text = "This will be sent as text"
 
-    msg = MIMEMultipart()
-    msg['To'] = ", ".join(toaddr)
-    msg['From'] = fromaddr
-    msg['Subject'] = subject
+###########################################################################################################################################
+def create_html_file(total_calls, answered_calls, aa_calls, unanswered_calls, total_calls_list, answered_calls_list,
+                     aa_calls_list, unanswered_calls_list, answered_calls_per_list, aa_calls_per_list,
+                     unanswered_calls_per_list, filename, clinic_names, start, end):
+    html_text = """<HTML>
+<HEAD>
+<STYLE>
+td {
+    text-align:center;
+    padding:4px;
+}
+</STYLE>
+</HEAD>
+<BODY>"""
 
-    ### Attach e-mail body
-    # part1 = MIMEText(text, 'plain')
-    part1 = MIMEText(body, 'html')
-    msg.attach(part1)
+    for key in total_calls_list.keys():
+        html_text += "<hr>"
+        html_text += "<p>" + clinic_names[key] + "</p>\n"
 
-    ### Attach e-mail attachments
-    for attachment in attachments:
-        # my_attachment = open(attachment, "rb")
-        # file_name = os.path.basename(attachment)
-        part2 = MIMEBase('application', 'octet-stream')
-        part2.set_payload(open(attachment, "rb").read())
-        part2.add_header('Content-Disposition', 'attachment', filename=os.path.basename(attachment))
-        encoders.encode_base64(part2)
-        msg.attach(part2)
-        # part2.set_payload(open(attachment, "rb").read())
-        # print(attachment)
-        # part2.add_header('Content-Disposition', 'attachment; filename="%s"' % os.path.basename(attachment))
-        # encoders.encode_base64(part2)
-        # msg.attach(part2)
-        # print(part2)
+        html_text += "<TABLE>\n"
 
-    mailserver = smtplib.SMTP(mail_server)
-    ##mailserver.ehlo()
-    if tls:
-        mailserver.starttls()
-    ##mailserver.ehlo()
-    if login:
-        mailserver.login(username, password)
-    mailserver.sendmail(fromaddr, toaddr, msg.as_string())
-    mailserver.quit()
+        html_text += "<TR>\n"
+        html_text += "<TD><b></b></TD>"
+        for i in range(start, end):
+            html_text += "<TD><b>" + str(i) + "</b></TD>"
+        html_text += "<TD><b>Total</b></TD>"
+        html_text += "\n</TR>\n"
+
+        html_text += "<TR>"
+        html_text += "\n<TD>Calls Answered #</TD>"
+        for i in range(start, end):
+            html_text += "<TD>" + str(answered_calls_list[key][i]) + "</TD>"
+        html_text += "<TD>" + str(answered_calls[key]) + "</TD>"
+        html_text += "\n</TR>\n"
+
+        html_text += "<TR>"
+        html_text += "\n<TD>Calls Answered %</TD>"
+        for i in range(start, end):
+            html_text += "<TD>" + str(answered_calls_per_list[key][i]) + "%</TD>"
+        html_text += "<TD>" + str(round(float(answered_calls[key]) / total_calls[key] * 100, 1)) + "%</TD>"
+        html_text += "\n</TR>\n"
+
+        html_text += "<TR>"
+        html_text += "\n<TD>Auto Attendant #</TD>"
+        for i in range(start, end):
+            html_text += "<TD>" + str(aa_calls_list[key][i]) + "</TD>"
+        html_text += "<TD>" + str(aa_calls[key]) + "</TD>"
+        html_text += "\n</TR>\n"
+
+        html_text += "<TR>"
+        html_text += "\n<TD>Auto Attendant %</TD>"
+        for i in range(start, end):
+            html_text += "<TD>" + str(aa_calls_per_list[key][i]) + "%</TD>"
+        html_text += "<TD>" + str(round(float(aa_calls[key]) / total_calls[key] * 100, 1)) + "%</TD>"
+        html_text += "\n</TR>\n"
+
+        html_text += "<TR>"
+        html_text += "\n<TD>Calls Unanswered #</TD>"
+        for i in range(start, end):
+            html_text += "<TD>" + str(unanswered_calls_list[key][i]) + "</TD>"
+        html_text += "<TD>" + str(unanswered_calls[key]) + "</TD>"
+        html_text += "\n</TR>\n"
+
+        html_text += "<TR>"
+        html_text += "\n<TD>Calls Unanswered %</TD>"
+        for i in range(start, end):
+            html_text += "<TD>" + str(unanswered_calls_per_list[key][i]) + "%</TD>"
+        html_text += "<TD>" + str(round(float(unanswered_calls[key]) / total_calls[key] * 100, 1)) + "%</TD>"
+        html_text += "\n</TR>\n"
+
+        html_text += "<TR>"
+        html_text += "\n<TD><b>Call Volume</b></TD>"
+        for i in range(start, end):
+            html_text += "<TD><b>" + str(total_calls_list[key][i]) + "</b></TD>"
+        html_text += "<TD><b>" + str(total_calls[key]) + "</b></TD>"
+        html_text += "\n</TR>\n"
+
+        html_text += "</TABLE>\n"
+
+        html_text += "\n</BODY>\n</HTML>\n"
+    html_text += "<hr>"
+
+    fd = open(filename, "w")
+    fd.write(html_text)
+    fd.close()
+
+    return 0
 
 
-def get_files_ftp(server, username, password, source_path, dest_path, pattern):
-    ftp = ftplib.FTP(server, username, password)
-    ftp.cwd(source_path)
-    file_list = ftp.nlst()
+###########################################################################################################################################
+def create_csv_file(total_calls, answered_calls, aa_calls, unanswered_calls, total_calls_list, answered_calls_list,
+                    aa_calls_list, unanswered_calls_list, answered_calls_per_list, aa_calls_per_list,
+                    unanswered_calls_per_list, filename, clinic_names, start, end):
+    csv_text = ""
 
-    for file in file_list:
-        if re.match(pattern, file):
-            with open(dest_path + file, 'wb') as my_file:
-                op = ftp.retrbinary('RETR %s' % file, my_file.write)
-    ftp.quit()
+    for key in total_calls_list.keys():
+        csv_text += "\n" + clinic_names[key]
+
+        csv_text += ","
+        for i in range(start, end):
+            csv_text += str(i) + ","
+        csv_text += "Total\n"
+
+        csv_text += "Calls Answered #,"
+        for i in range(start, end):
+            csv_text += str(answered_calls_list[key][i]) + ","
+        csv_text += str(answered_calls[key]) + "\n"
+        csv_text += "Calls Answered %,"
+        for i in range(start, end):
+            csv_text += str(answered_calls_per_list[key][i]) + ","
+        if total_calls[key] > 0:
+            csv_text += str(round(float(answered_calls[key]) / total_calls[key] * 100, 1)) + "\n"
+        else:
+            csv_text += "<TD>" + "0.0" + "%</TD>"
+
+        csv_text += "Auto Attendant #,"
+        for i in range(start, end):
+            csv_text += str(aa_calls_list[key][i]) + ","
+        csv_text += str(aa_calls[key]) + "\n"
+        csv_text += "Auto Attendant %,"
+        for i in range(start, end):
+            csv_text += str(aa_calls_per_list[key][i]) + ","
+        if total_calls[key] > 0:
+            csv_text += str(round(float(aa_calls[key]) / total_calls[key] * 100, 1)) + "\n"
+        else:
+            csv_text += "<TD>" + "0.0" + "%</TD>"
+
+        csv_text += "Calls Unanswered #,"
+        for i in range(start, end):
+            csv_text += str(unanswered_calls_list[key][i]) + ","
+        csv_text += str(unanswered_calls[key]) + "\n"
+        csv_text += "Calls Unanswered %,"
+        for i in range(start, end):
+            csv_text += str(unanswered_calls_per_list[key][i]) + ","
+        if total_calls[key] > 0:
+            csv_text += str(round(float(unanswered_calls[key]) / total_calls[key] * 100, 1)) + "\n"
+        else:
+            csv_text += "<TD>" + "0.0" + "%</TD>"
+
+        csv_text += "Call Volume,"
+        for i in range(start, end):
+            csv_text += str(total_calls_list[key][i]) + ","
+        csv_text += str(total_calls[key]) + "\n"
+
+    fd = open(filename, "w")
+    fd.write(csv_text)
+    fd.close()
+
+    return 0
 
 
+###########################################################################################################################################
 def get_cdr_files(startdate, enddate):
     CDR_CURRENT = '/home/gfot/cdr/cdr_data/'
     CDR_ARCHIVE = '/home/gfot/cdr/cdr_archive/'
@@ -132,3 +229,61 @@ def get_cdr_files(startdate, enddate):
     cdr_file_list.sort()
 
     return cdr_file_list
+
+
+###########################################################################################################################################
+def send_mail(username, password, mail_server, toaddr, subject, body, attachments, login, tls):
+    fromaddr = username
+    # text = "This will be sent as text"
+
+    msg = MIMEMultipart()
+    msg['To'] = ", ".join(toaddr)
+    msg['From'] = fromaddr
+    msg['Subject'] = subject
+
+    ### Attach e-mail body
+    # part1 = MIMEText(text, 'plain')
+    part1 = MIMEText(body, 'html')
+    msg.attach(part1)
+
+    ### Attach e-mail attachments
+    for attachment in attachments:
+        # my_attachment = open(attachment, "rb")
+        # file_name = os.path.basename(attachment)
+        part2 = MIMEBase('application', 'octet-stream')
+        part2.set_payload(open(attachment, "rb").read())
+        part2.add_header('Content-Disposition', 'attachment', filename=os.path.basename(attachment))
+        encoders.encode_base64(part2)
+        msg.attach(part2)
+        # part2.set_payload(open(attachment, "rb").read())
+        # print(attachment)
+        # part2.add_header('Content-Disposition', 'attachment; filename="%s"' % os.path.basename(attachment))
+        # encoders.encode_base64(part2)
+        # msg.attach(part2)
+        # print(part2)
+
+    mailserver = smtplib.SMTP(mail_server)
+    ##mailserver.ehlo()
+    if tls:
+        mailserver.starttls()
+    ##mailserver.ehlo()
+    if login:
+        mailserver.login(username, password)
+    mailserver.sendmail(fromaddr, toaddr, msg.as_string())
+    mailserver.quit()
+
+
+###########################################################################################################################################
+def get_files_ftp(server, username, password, source_path, dest_path, pattern):
+    ftp = ftplib.FTP(server, username, password)
+    ftp.cwd(source_path)
+    file_list = ftp.nlst()
+
+    for file in file_list:
+        if re.match(pattern, file):
+            with open(dest_path + file, 'wb') as my_file:
+                op = ftp.retrbinary('RETR %s' % file, my_file.write)
+    ftp.quit()
+
+
+###########################################################################################################################################
