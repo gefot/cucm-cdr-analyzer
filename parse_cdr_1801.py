@@ -2,6 +2,7 @@ import datetime
 import time
 
 import module_funcs
+import classes
 
 # Starting from index 1:
 # 3:  globalCallID_callId
@@ -38,8 +39,8 @@ try:
                 origDeviceName = list[56].strip("\"")
                 destDeviceName = list[57].strip("\"")
 
-                print("{} - {} - {} - {} - {} - {} - {} - {} - {}".format(global_id, date, calling_num, called_num, final_called_num, last_redirect_num,
-                                                                          duration, origDeviceName, destDeviceName))
+                cdr_record = classes.CDRRecord(global_id, date, calling_num, called_num, final_called_num, last_redirect_num, duration, origDeviceName, destDeviceName)
+                print(cdr_record)
 
             except Exception as ex:
                 # Catch exception for file headers
