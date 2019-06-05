@@ -1,3 +1,4 @@
+import time
 
 class CDRRecord:
 
@@ -16,5 +17,5 @@ class CDRRecord:
     def __str__(self):
         return "{}, {}, {}, {}, {}, {}, {}, {}, {}".format(self.global_id, self.date, self.calling_num, self.called_num,
                                                            self.final_called_num, self.last_redirect_num,
-                                                           self.duration, self.origDeviceName, self.destDeviceName)
+                                                           time.strftime("%M:%S", time.gmtime(int(int(self.duration)))), self.origDeviceName, self.destDeviceName)
 

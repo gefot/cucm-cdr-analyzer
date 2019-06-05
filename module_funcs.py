@@ -12,7 +12,6 @@ import datetime
 
 ###########################################################################################################################################
 def is_cdr_date(date, clinic):
-
     # print(date)
     hour = int(date.strftime('%H'))
     weekday = date.weekday()
@@ -28,10 +27,93 @@ def is_cdr_date(date, clinic):
         return True
 
     # Lyndsey Clinic Business Hours
-    if (clinic == "lyndsey" and (((weekday == 0 or weekday == 1 or weekday == 2 or weekday == 3) and (hour >= 8 and hour <= 16)) or ((weekday == 4) and (hour >= 8 and hour <= 15)))):
+    if (clinic == "lyndsey" and (
+            ((weekday == 0 or weekday == 1 or weekday == 2 or weekday == 3) and (hour >= 8 and hour <= 16)) or ((weekday == 4) and (hour >= 8 and hour <= 15)))):
         return True
 
     return False
+
+
+###########################################################################################################################################
+def is_call_tree_option(hunt_pilot):
+
+    aa_option = -1
+
+    # 1801 AA options
+    if hunt_pilot == "5819":
+        aa_option = 0
+    if hunt_pilot == "5816":
+        aa_option = 2
+    elif hunt_pilot == "5823":
+        aa_option = 3
+    elif hunt_pilot == "5817":
+        aa_option = 4
+    elif hunt_pilot == "5818":
+        aa_option = 5
+    elif hunt_pilot == "5820":
+        aa_option = 6
+    elif hunt_pilot == "5822":
+        aa_option = 7
+
+    return aa_option
+
+
+###########################################################################################################################################
+def categorize_cdr(cdr_record):
+    """
+    This function differentiates between clinic
+    """
+
+    cdr_call = {}
+
+    # 1801 Call Tree
+    if is_cdr_date(cdr_record.date, "shannon"):
+        if cdr_record.called_num == "5810":
+            if cdr_record.called_num == "5810" and cdr_record.final_called_num == "5810" and cdr_record.last_redirect_num == "5810" and int(cdr_record.duration) == 0:
+                cdr_call['type'] = "1st level"
+                cdr_call['handle'] = "unanswered"
+                cdr_call['answered_by'] = "None"
+            elif cdr_record.called_num == "5810" and cdr_record.final_called_num == "5810" and cdr_record.last_redirect_num == "5810" and int(cdr_record.duration) > 0:
+                cdr_call['type'] = "1st level"
+                cdr_call['handle'] = "answered"
+                cdr_call['answered_by'] = cdr_record.destDeviceName
+            elif cdr_record.called_num == "5810" and cdr_record.final_called_num == "5500" and cdr_record.last_redirect_num == "5811":
+                cdr_call['type'] = "aa"
+                cdr_call['handle'] = "unanswered"
+                cdr_call['answered_by'] = "None"
+            # print("\n")
+            # print(cdr_record)
+            # print(cdr_call)
+    return cdr_call
+
+
+def categorize_cdr_aa(cdr_record):
+    """
+    This function categorizes depending on Hunt Pilot
+    """
+
+    cdr_call = {}
+
+    # 1801 AA Call further categorization
+    if is_call_tree_option(cdr_record.called_num) > -1:
+        if is_call_tree_option(cdr_record.called_num) > -1 and is_call_tree_option(cdr_record.final_called_num) > -1 and cdr_record.last_redirect_num == "5500" and int(cdr_record.duration) == 0:
+            cdr_call['type'] = "aa"
+            cdr_call['handle'] = "unanswered"
+            cdr_call['answered_by'] = "None"
+        elif is_call_tree_option(cdr_record.called_num) > -1 and is_call_tree_option(cdr_record.final_called_num) > -1 and cdr_record.last_redirect_num == "5500" and int(cdr_record.duration) > 0:
+            cdr_call['type'] = "aa"
+            cdr_call['handle'] = "answered"
+            cdr_call['answered_by'] = cdr_record.destDeviceName
+            cdr_call['option'] = is_call_tree_option(cdr_record.called_num)
+        elif is_call_tree_option(cdr_record.called_num) > -1 and cdr_record.final_called_num == "5500":
+            cdr_call['type'] = "aa"
+            cdr_call['handle'] = "unanswered"
+            cdr_call['answered_by'] = "VM" + cdr_record.last_redirect_num
+            cdr_call['option'] = is_call_tree_option(cdr_record.called_num)
+        # print("\n")
+        # print(cdr_record)
+        # print(cdr_call)
+    return cdr_call
 
 
 ###########################################################################################################################################
@@ -284,6 +366,5 @@ def get_files_ftp(server, username, password, source_path, dest_path, pattern):
             with open(dest_path + file, 'wb') as my_file:
                 op = ftp.retrbinary('RETR %s' % file, my_file.write)
     ftp.quit()
-
 
 ###########################################################################################################################################
