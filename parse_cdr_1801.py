@@ -14,12 +14,8 @@ import module_funcs
 # 57: origDeviceName
 # 58: destDeviceName
 
-STARTDATE = "201906040000"
-ENDDATE = "201906050000"
-# EXTENSION_LIST = ["5810", "5811", "5500"]
-# EXTENSION_LIST = ["*"]
-EXTENSION_LIST = ["5122290591"]
-
+STARTDATE = "201906040900"
+ENDDATE =   "201906041100"
 
 cdr_file_list = module_funcs.get_cdr_files(STARTDATE, ENDDATE)
 
@@ -31,18 +27,27 @@ try:
         for line in fd:
             try:
                 list = line.split(',')
-                for extension in EXTENSION_LIST:
-                    if extension == "*":
-                        date = datetime.datetime.fromtimestamp(int(list[4]))
-                        print(list[2], date, list[8], list[29], list[30], list[49], time.strftime("%M:%S", time.gmtime(int(int(list[55])))), list[56], list[57])
-                        break
-                    elif list[8] == "\"" + extension + "\"" or list[29] == "\"" + extension + "\"":
-                        date = datetime.datetime.fromtimestamp(int(list[4]))
-                        print(list[2], date, list[8], list[29], list[30], list[49], time.strftime("%M:%S", time.gmtime(int(int(list[55])))), list[56], list[57])
+
+                global_id = list[2]
+                date = datetime.datetime.fromtimestamp(int(list[4]))
+                calling_num = list[8].strip("\"")
+                called_num = list[29].strip("\"")
+                final_called_num = list[30].strip("\"")
+                last_redirect_num = list[49].strip("\"")
+                duration = time.strftime("%M:%S", time.gmtime(int(int(list[55]))))
+                origDeviceName = list[56].strip("\"")
+                destDeviceName = list[57].strip("\"")
+
+                print("{} - {} - {} - {} - {} - {} - {} - {} - {}".format(global_id, date, calling_num, called_num, final_called_num, last_redirect_num,
+                                                                          duration, origDeviceName, destDeviceName))
+
             except Exception as ex:
+                # Catch exception for file headers
+                # print("Error parsing: {}".format(line))
                 pass
                 # break
         fd.close()
 
 except Exception as ex:
     print(ex)
+
