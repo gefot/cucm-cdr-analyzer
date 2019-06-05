@@ -35,13 +35,14 @@ try:
                 categorized_call = module_funcs.categorize_cdr(cdr_record)
                 if categorized_call != {}:
                     categorized_call['cdr_record'] = cdr_record
-                    print("categorized_call = {}".format(categorized_call))
+                    categorized_call['cdr_record_aa'] = ""
+                    # print("categorized_call = {}".format(categorized_call))
                     categorized_calls.append(categorized_call)
 
                 # Further categorize CDR calls
                 if categorized_call['type'] == "aa":
-                    print("\nFound an AA call!!")
-                    print(cdr_record)
+                    # print("\nFound an AA call!!")
+                    # print(cdr_record)
 
                     fd_tmp = open(file, "r")
                     found_1st = False
@@ -68,11 +69,11 @@ try:
                                                            list_tmp[30].strip("\""), list_tmp[49].strip("\""),
                                                            list_tmp[55], list_tmp[56].strip("\""), list_tmp[57].strip("\""))
                         categorized_call_tmp = module_funcs.categorize_cdr_aa(cdr_record_tmp)
-                        print(cdr_record_tmp)
-                        print(categorized_call_tmp)
+                        # print(cdr_record_tmp)
+                        # print(categorized_call_tmp)
 
                         categorized_call = dict(categorized_call_tmp)
-                        categorized_call['cdr_record'] = cdr_record
+                        categorized_call['cdr_record_aa'] = cdr_record_tmp
 
             except Exception as ex:
                 pass
@@ -84,4 +85,8 @@ except Exception as ex:
 
 
 print("\n\n\n\n\n")
-print(categorized_calls)
+for call in categorized_calls:
+    print("\n")
+    print(call)
+    print(call['cdr_record'])
+    print(call['cdr_record_aa'])
