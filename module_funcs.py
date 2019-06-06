@@ -257,12 +257,16 @@ def create_daily_report(startdate, enddate, categorized_calls):
     print(startdate)
     print(enddate)
 
-    # for call in categorized_calls:
-    #     date = call['date']
-    #     day = int(date.strftime('%d'))
-    #     hour = int(date.strftime('%H'))
-    #
-    #     print(day)
+    for call in categorized_calls:
+        date = call.cdr_record.date
+        hour = int(date.strftime('%H'))
+        day = int(date.strftime('%d'))
+        weekday = date.weekday()
+
+        # print(date)
+        # print(hour)
+        # print(day)
+        # print(weekday)
 
 
 ###########################################################################################################################################
