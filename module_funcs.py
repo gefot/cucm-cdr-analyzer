@@ -1,32 +1,45 @@
-import smtplib
 import os
 import re
+import datetime
+
+import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
 from email import encoders
 import ftplib
 
-import datetime
+import classes
+
+
+# Starting from index 1:
+# 3:  globalCallID_callId
+# 5:  Date (in UTC timezone)
+# 9:  calling number
+# 30: called number
+# 31: final called number
+# 50: lastRedirectDn
+# 56: duration
+# 57: origDeviceName
+# 58: destDeviceName
 
 
 ###########################################################################################################################################
 def is_cdr_date(date, clinic):
-    # print(date)
     hour = int(date.strftime('%H'))
     weekday = date.weekday()
 
-    # Main Hospital Business Hours
+    ### Main Hospital Business Hours
     if (clinic == "main" and (
             weekday == 0 or weekday == 1 or weekday == 2 or weekday == 3 or weekday == 4 or weekday == 5 or weekday == 6) and (hour >= 6 and hour <= 21)):
         return True
 
-    # Shannon Clinic Business Hours
+    ### Shannon Clinic Business Hours
     if (clinic == "shannon" and (
             ((weekday == 0 or weekday == 1 or weekday == 2 or weekday == 3) and (hour >= 8 and hour <= 16)) or ((weekday == 4) and (hour >= 8 and hour <= 11)))):
         return True
 
-    # Lyndsey Clinic Business Hours
+    ### Lyndsey Clinic Business Hours
     if (clinic == "lyndsey" and (
             ((weekday == 0 or weekday == 1 or weekday == 2 or weekday == 3) and (hour >= 8 and hour <= 16)) or ((weekday == 4) and (hour >= 8 and hour <= 15)))):
         return True
@@ -36,10 +49,14 @@ def is_cdr_date(date, clinic):
 
 ###########################################################################################################################################
 def is_call_tree_option(hunt_pilot):
+    """
+    :param hunt_pilot: Hunt-pilot to categorize; it has to be unique so as to differentiate call trees
+    :return: call tree option selected
+    """
 
     aa_option = -1
 
-    # 1801 AA options
+    ### 1801 AA options
     if hunt_pilot == "5819":
         aa_option = 0
     if hunt_pilot == "5816":
@@ -59,34 +76,62 @@ def is_call_tree_option(hunt_pilot):
 
 
 ###########################################################################################################################################
-def categorize_cdr(cdr_record):
+def categorize_cdr(cdr_record, call_tree):
     """
-    This function differentiates between clinic
+    :param cdr_record: the CDR record to analyze
+    :param call_tree: the call tree (eg. main, shannon, lyndsey)
+    :return:
     """
+
+    date = cdr_record.date
+    called_num = cdr_record.called_num
+    final_called_num = cdr_record.final_called_num
+    last_redirect_num = cdr_record.last_redirect_num
+    duration = cdr_record.duration
 
     cdr_call = {}
 
-    # 1801 Call Tree
-    if is_cdr_date(cdr_record.date, "shannon"):
-        if cdr_record.called_num == "5810":
-            if cdr_record.called_num == "5810" and cdr_record.final_called_num == "5810" and cdr_record.last_redirect_num == "5810" and int(cdr_record.duration) == 0:
-                cdr_call['type'] = "1st level"
-                cdr_call['handle'] = "unanswered"
-                cdr_call['answered_by'] = "None"
-            elif cdr_record.called_num == "5810" and cdr_record.final_called_num == "5810" and cdr_record.last_redirect_num == "5810" and int(cdr_record.duration) > 0:
-                cdr_call['type'] = "1st level"
-                cdr_call['handle'] = "answered"
-                cdr_call['answered_by'] = cdr_record.destDeviceName
-            elif cdr_record.called_num == "5810" and cdr_record.final_called_num == "5500" and cdr_record.last_redirect_num == "5811":
-                cdr_call['type'] = "aa"
-                cdr_call['handle'] = "unanswered"
-                cdr_call['answered_by'] = "None"
-            # print("\n")
-            # print(cdr_record)
-            # print(cdr_call)
+    ### Main Call Tree
+    if call_tree == "main":
+        if is_cdr_date(date, call_tree):
+            if called_num == "1001":
+                if int(duration) == 0:
+                    print("1: ", cdr_record)
+                    cdr_call['type'] = "1st level"
+                    cdr_call['handle'] = "unanswered"
+                    cdr_call['answered_by'] = "None"
+                elif (final_called_num == "1001" or final_called_num == "5701" or final_called_num == "5702" or final_called_num == "5703" or final_called_num == "5704" or final_called_num == "5705") and int(duration) > 0:
+                    print("2: ", cdr_record)
+                    cdr_call['type'] = "1st level"
+                    cdr_call['handle'] = "answered"
+                    cdr_call['answered_by'] = cdr_record.destDeviceName
+                elif final_called_num == "5500" and last_redirect_num == "5800" and int(duration) > 0:
+                    print("3: ", cdr_record)
+                    cdr_call['type'] = "aa"
+                    cdr_call['handle'] = "unanswered"
+                    cdr_call['answered_by'] = "None"
+
+    ### 1801 Call Tree
+    elif call_tree == "shannon":
+        if is_cdr_date(date, call_tree):
+            if called_num == "5810":
+                if called_num == "5810" and final_called_num == "5810" and last_redirect_num == "5810" and int(duration) == 0:
+                    cdr_call['type'] = "1st level"
+                    cdr_call['handle'] = "unanswered"
+                    cdr_call['answered_by'] = "None"
+                elif called_num == "5810" and final_called_num == "5810" and last_redirect_num == "5810" and int(duration) > 0:
+                    cdr_call['type'] = "1st level"
+                    cdr_call['handle'] = "answered"
+                    cdr_call['answered_by'] = cdr_record.destDeviceName
+                elif called_num == "5810" and final_called_num == "5500" and last_redirect_num == "5811":
+                    cdr_call['type'] = "aa"
+                    cdr_call['handle'] = "unanswered"
+                    cdr_call['answered_by'] = "None"
+
     return cdr_call
 
 
+###########################################################################################################################################
 def categorize_cdr_aa(cdr_record):
     """
     This function categorizes depending on Hunt Pilot
@@ -94,13 +139,14 @@ def categorize_cdr_aa(cdr_record):
 
     cdr_call = {}
 
-    # 1801 AA Call further categorization
     if is_call_tree_option(cdr_record.called_num) > -1:
-        if is_call_tree_option(cdr_record.called_num) > -1 and is_call_tree_option(cdr_record.final_called_num) > -1 and cdr_record.last_redirect_num == "5500" and int(cdr_record.duration) == 0:
+        if is_call_tree_option(cdr_record.called_num) > -1 and is_call_tree_option(cdr_record.final_called_num) > -1 and cdr_record.last_redirect_num == "5500" and int(
+                cdr_record.duration) == 0:
             cdr_call['type'] = "aa"
             cdr_call['handle'] = "unanswered"
             cdr_call['answered_by'] = "None"
-        elif is_call_tree_option(cdr_record.called_num) > -1 and is_call_tree_option(cdr_record.final_called_num) > -1 and cdr_record.last_redirect_num == "5500" and int(cdr_record.duration) > 0:
+        elif is_call_tree_option(cdr_record.called_num) > -1 and is_call_tree_option(cdr_record.final_called_num) > -1 and cdr_record.last_redirect_num == "5500" and int(
+                cdr_record.duration) > 0:
             cdr_call['type'] = "aa"
             cdr_call['handle'] = "answered"
             cdr_call['answered_by'] = cdr_record.destDeviceName
@@ -110,10 +156,109 @@ def categorize_cdr_aa(cdr_record):
             cdr_call['handle'] = "unanswered"
             cdr_call['answered_by'] = "VM" + cdr_record.last_redirect_num
             cdr_call['option'] = is_call_tree_option(cdr_record.called_num)
-        # print("\n")
-        # print(cdr_record)
-        # print(cdr_call)
+
     return cdr_call
+
+
+###########################################################################################################################################
+def categorize_cdr_general(cdr_file_list, call_tree):
+    categorized_calls = []
+    try:
+        for file in cdr_file_list:
+            fd = open(file, "r")
+            for line in fd:
+                try:
+                    list = line.split(',')
+                    cdr_record = classes.CDRRecord(list[2], datetime.datetime.fromtimestamp(int(list[4])), list[8].strip("\""), list[29].strip("\""),
+                                                   list[30].strip("\""), list[49].strip("\""),
+                                                   list[55], list[56].strip("\""), list[57].strip("\""))
+                    categorized_call = categorize_cdr(cdr_record, call_tree)
+                    if categorized_call != {}:
+                        categorized_call['cdr_record'] = cdr_record
+                        # print("categorized_call = {}".format(categorized_call))
+                        categorized_calls.append(categorized_call)
+
+                    ### Further categorize CDR calls, that where answered by call-tree
+                    ### Presently it is done only for Shannon
+                    if call_tree == "shannon":
+                        if categorized_call['type'] == "aa":
+                            # print(cdr_record)
+                            fd_tmp = open(file, "r")
+                            found_1st_time = False
+                            found_2nd_time = False
+                            my_line = ""
+                            # Re-parse CDR file to search for AA global ID
+                            for line_tmp in fd_tmp:
+                                try:
+                                    list_tmp = line_tmp.split(',')
+                                    if list_tmp[2] == list[2] and not found_1st_time and not found_2nd_time:
+                                        found_1st_time = True
+                                        continue
+                                    if list_tmp[2] == list[2] and found_1st_time and not found_2nd_time:
+                                        found_2nd_time = True
+                                        my_line = line_tmp
+                                        break
+                                except Exception as ex:
+                                    pass
+                            fd_tmp.close()
+
+                            if found_2nd_time:
+                                # print("my_line = {}".format(my_line))
+                                list_tmp = my_line.split(',')
+                                cdr_record_tmp = classes.CDRRecord(list_tmp[2], datetime.datetime.fromtimestamp(int(list_tmp[4])), list_tmp[8].strip("\""), list_tmp[29].strip("\""),
+                                                                   list_tmp[30].strip("\""), list_tmp[49].strip("\""),
+                                                                   list_tmp[55], list_tmp[56].strip("\""), list_tmp[57].strip("\""))
+                                categorized_call_tmp = categorize_cdr_aa(cdr_record_tmp)
+                                # print(cdr_record_tmp)
+                                # print(categorized_call_tmp)
+
+                                categorized_call = dict(categorized_call_tmp)
+                                categorized_call['cdr_record_aa'] = cdr_record_tmp
+
+                except Exception as ex:
+                    pass
+                    # break
+            fd.close()
+
+    except Exception as ex:
+        print(ex)
+
+    return categorized_calls
+
+
+###########################################################################################################################################
+def get_cdr_records(cdr_file_list, filters):
+    extensions = filters['extensions']
+
+    cdr_records = []
+
+    ### Parse CDR file
+    try:
+        for cdr_file in cdr_file_list:
+            # print("\n\n\n {}".format(file))
+            fd = open(cdr_file, "r")
+            for line in fd:
+                try:
+                    list = line.split(',')
+                    for extension in extensions:
+                        if extension == "*":
+                            cdr_record = classes.CDRRecord(list[2], datetime.datetime.fromtimestamp(int(list[4])), list[8].strip("\""), list[29].strip("\""),
+                                                           list[30].strip("\""), list[49].strip("\""),
+                                                           list[55], list[56].strip("\""), list[57].strip("\""))
+                            cdr_records.append(cdr_record)
+                        elif list[8] == "\"" + extension + "\"" or list[29] == "\"" + extension + "\"":
+                            cdr_record = classes.CDRRecord(list[2], datetime.datetime.fromtimestamp(int(list[4])), list[8].strip("\""), list[29].strip("\""),
+                                                           list[30].strip("\""), list[49].strip("\""),
+                                                           list[55], list[56].strip("\""), list[57].strip("\""))
+                            cdr_records.append(cdr_record)
+                except Exception as ex:
+                    pass
+                    # break
+            fd.close()
+    except Exception as ex:
+        print(ex)
+
+    return cdr_records
 
 
 ###########################################################################################################################################
@@ -345,10 +490,10 @@ def send_mail(username, password, mail_server, toaddr, subject, body, attachment
         # print(part2)
 
     mailserver = smtplib.SMTP(mail_server)
-    ##mailserver.ehlo()
+    # mailserver.ehlo()
     if tls:
         mailserver.starttls()
-    ##mailserver.ehlo()
+    # mailserver.ehlo()
     if login:
         mailserver.login(username, password)
     mailserver.sendmail(fromaddr, toaddr, msg.as_string())
