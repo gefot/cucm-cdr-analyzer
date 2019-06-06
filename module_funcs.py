@@ -83,50 +83,61 @@ def categorize_cdr(cdr_record, call_tree):
     :return:
     """
 
+    cdr_call = None
+
     date = cdr_record.date
     called_num = cdr_record.called_num
     final_called_num = cdr_record.final_called_num
     last_redirect_num = cdr_record.last_redirect_num
     duration = cdr_record.duration
 
-    cdr_call = {}
-
     ### Main Call Tree
     if call_tree == "main":
         if is_cdr_date(date, call_tree):
             if called_num == "1001":
                 if int(duration) == 0:
-                    print("1: ", cdr_record)
-                    cdr_call['type'] = "1st level"
-                    cdr_call['handle'] = "unanswered"
-                    cdr_call['answered_by'] = "None"
+                    cdr_call = classes.CategorizedCall("1st level", "unanswered")
+                    cdr_call.cdr_record = cdr_record
+                    # cdr_call['type'] = "1st level"
+                    # cdr_call['handle'] = "unanswered"
+                    # cdr_call['answered_by'] = "None"
                 elif (final_called_num == "1001" or final_called_num == "5701" or final_called_num == "5702" or final_called_num == "5703" or final_called_num == "5704" or final_called_num == "5705") and int(duration) > 0:
-                    print("2: ", cdr_record)
-                    cdr_call['type'] = "1st level"
-                    cdr_call['handle'] = "answered"
-                    cdr_call['answered_by'] = cdr_record.destDeviceName
+                    cdr_call = classes.CategorizedCall("1st level", "answered")
+                    cdr_call.answered_by = cdr_record.destDeviceName
+                    cdr_call.cdr_record = cdr_record
+                    # cdr_call['type'] = "1st level"
+                    # cdr_call['handle'] = "answered"
+                    # cdr_call['answered_by'] = cdr_record.destDeviceName
                 elif final_called_num == "5500" and last_redirect_num == "5800" and int(duration) > 0:
-                    print("3: ", cdr_record)
-                    cdr_call['type'] = "aa"
-                    cdr_call['handle'] = "unanswered"
-                    cdr_call['answered_by'] = "None"
+                    cdr_call = classes.CategorizedCall("aa", "unanswered")
+                    cdr_call.cdr_record = cdr_record
+                    # cdr_call['type'] = "aa"
+                    # cdr_call['handle'] = "unanswered"
+                    # cdr_call['answered_by'] = "None"
 
     ### 1801 Call Tree
     elif call_tree == "shannon":
         if is_cdr_date(date, call_tree):
             if called_num == "5810":
                 if called_num == "5810" and final_called_num == "5810" and last_redirect_num == "5810" and int(duration) == 0:
-                    cdr_call['type'] = "1st level"
-                    cdr_call['handle'] = "unanswered"
-                    cdr_call['answered_by'] = "None"
+                    cdr_call = classes.CategorizedCall("1st level", "unanswered")
+                    cdr_call.cdr_record = cdr_record
+                    # cdr_call['type'] = "1st level"
+                    # cdr_call['handle'] = "unanswered"
+                    # cdr_call['answered_by'] = "None"
                 elif called_num == "5810" and final_called_num == "5810" and last_redirect_num == "5810" and int(duration) > 0:
-                    cdr_call['type'] = "1st level"
-                    cdr_call['handle'] = "answered"
-                    cdr_call['answered_by'] = cdr_record.destDeviceName
+                    cdr_call = classes.CategorizedCall("1st level", "answered")
+                    cdr_call.answered_by = cdr_record.destDeviceName
+                    cdr_call.cdr_record = cdr_record
+                    # cdr_call['type'] = "1st level"
+                    # cdr_call['handle'] = "answered"
+                    # cdr_call['answered_by'] = cdr_record.destDeviceName
                 elif called_num == "5810" and final_called_num == "5500" and last_redirect_num == "5811":
-                    cdr_call['type'] = "aa"
-                    cdr_call['handle'] = "unanswered"
-                    cdr_call['answered_by'] = "None"
+                    cdr_call = classes.CategorizedCall("aa", "unanswered")
+                    cdr_call.cdr_record = cdr_record
+                    # cdr_call['type'] = "aa"
+                    # cdr_call['handle'] = "unanswered"
+                    # cdr_call['answered_by'] = "None"
 
     return cdr_call
 
@@ -134,34 +145,50 @@ def categorize_cdr(cdr_record, call_tree):
 ###########################################################################################################################################
 def categorize_cdr_aa(cdr_record):
     """
-    This function categorizes depending on Hunt Pilot
+    :param cdr_record: class CDRRecord
+    :return: the call info as dictionary (fields: type, handle, answered_by, option
     """
 
-    cdr_call = {}
+    cdr_call = None
 
     if is_call_tree_option(cdr_record.called_num) > -1:
         if is_call_tree_option(cdr_record.called_num) > -1 and is_call_tree_option(cdr_record.final_called_num) > -1 and cdr_record.last_redirect_num == "5500" and int(
                 cdr_record.duration) == 0:
-            cdr_call['type'] = "aa"
-            cdr_call['handle'] = "unanswered"
-            cdr_call['answered_by'] = "None"
+            cdr_call = classes.CategorizedCall("aa", "unanswered")
+            cdr_call.cdr_record_aa = cdr_record
+            # cdr_call['type'] = "aa"
+            # cdr_call['handle'] = "unanswered"
         elif is_call_tree_option(cdr_record.called_num) > -1 and is_call_tree_option(cdr_record.final_called_num) > -1 and cdr_record.last_redirect_num == "5500" and int(
                 cdr_record.duration) > 0:
-            cdr_call['type'] = "aa"
-            cdr_call['handle'] = "answered"
-            cdr_call['answered_by'] = cdr_record.destDeviceName
-            cdr_call['option'] = is_call_tree_option(cdr_record.called_num)
+            cdr_call = classes.CategorizedCall("aa", "answered")
+            cdr_call.answered_by = cdr_record.destDeviceName
+            cdr_call.option = is_call_tree_option(cdr_record.called_num)
+            cdr_call.cdr_record_aa = cdr_record
+            # cdr_call['type'] = "aa"
+            # cdr_call['handle'] = "answered"
+            # cdr_call['answered_by'] = cdr_record.destDeviceName
+            # cdr_call['option'] = is_call_tree_option(cdr_record.called_num)
         elif is_call_tree_option(cdr_record.called_num) > -1 and cdr_record.final_called_num == "5500":
-            cdr_call['type'] = "aa"
-            cdr_call['handle'] = "unanswered"
-            cdr_call['answered_by'] = "VM" + cdr_record.last_redirect_num
-            cdr_call['option'] = is_call_tree_option(cdr_record.called_num)
+            cdr_call = classes.CategorizedCall("aa", "unanswered")
+            cdr_call.answered_by = "VM" + cdr_record.last_redirect_num
+            cdr_call.option = is_call_tree_option(cdr_record.called_num)
+            cdr_call.cdr_record_aa = cdr_record
+            # cdr_call['type'] = "aa"
+            # cdr_call['handle'] = "unanswered"
+            # cdr_call['answered_by'] = "VM" + cdr_record.last_redirect_num
+            # cdr_call['option'] = is_call_tree_option(cdr_record.called_num)
 
     return cdr_call
 
 
 ###########################################################################################################################################
 def categorize_cdr_general(cdr_file_list, call_tree):
+    """
+    :param cdr_file_list: files of files with cdr records
+    :param call_tree:
+    :return: list CategorizedCall objects
+    """
+
     categorized_calls = []
     try:
         for file in cdr_file_list:
@@ -173,21 +200,20 @@ def categorize_cdr_general(cdr_file_list, call_tree):
                                                    list[30].strip("\""), list[49].strip("\""),
                                                    list[55], list[56].strip("\""), list[57].strip("\""))
                     categorized_call = categorize_cdr(cdr_record, call_tree)
-                    if categorized_call != {}:
-                        categorized_call['cdr_record'] = cdr_record
-                        # print("categorized_call = {}".format(categorized_call))
+
+                    if categorized_call is not None:
                         categorized_calls.append(categorized_call)
+
 
                     ### Further categorize CDR calls, that where answered by call-tree
                     ### Presently it is done only for Shannon
                     if call_tree == "shannon":
-                        if categorized_call['type'] == "aa":
-                            # print(cdr_record)
+                        if categorized_call.type == "aa":
                             fd_tmp = open(file, "r")
                             found_1st_time = False
                             found_2nd_time = False
                             my_line = ""
-                            # Re-parse CDR file to search for AA global ID
+                            ### Re-parse CDR file to search for AA global ID
                             for line_tmp in fd_tmp:
                                 try:
                                     list_tmp = line_tmp.split(',')
@@ -203,17 +229,17 @@ def categorize_cdr_general(cdr_file_list, call_tree):
                             fd_tmp.close()
 
                             if found_2nd_time:
-                                # print("my_line = {}".format(my_line))
                                 list_tmp = my_line.split(',')
-                                cdr_record_tmp = classes.CDRRecord(list_tmp[2], datetime.datetime.fromtimestamp(int(list_tmp[4])), list_tmp[8].strip("\""), list_tmp[29].strip("\""),
+                                cdr_record_tmp = classes.CDRRecord(list_tmp[2], datetime.datetime.fromtimestamp(int(list_tmp[4])), list_tmp[8].strip("\""),
+                                                                   list_tmp[29].strip("\""),
                                                                    list_tmp[30].strip("\""), list_tmp[49].strip("\""),
                                                                    list_tmp[55], list_tmp[56].strip("\""), list_tmp[57].strip("\""))
                                 categorized_call_tmp = categorize_cdr_aa(cdr_record_tmp)
-                                # print(cdr_record_tmp)
-                                # print(categorized_call_tmp)
 
-                                categorized_call = dict(categorized_call_tmp)
-                                categorized_call['cdr_record_aa'] = cdr_record_tmp
+                                categorized_call.handle = categorized_call_tmp.handle
+                                categorized_call.answered_by = categorized_call_tmp.answered_by
+                                categorized_call.option = categorized_call_tmp.option
+                                categorized_call.cdr_record_aa = categorized_call_tmp.cdr_record_aa
 
                 except Exception as ex:
                     pass
@@ -224,6 +250,19 @@ def categorize_cdr_general(cdr_file_list, call_tree):
         print(ex)
 
     return categorized_calls
+
+
+###########################################################################################################################################
+def create_daily_report(startdate, enddate, categorized_calls):
+    print(startdate)
+    print(enddate)
+
+    # for call in categorized_calls:
+    #     date = call['date']
+    #     day = int(date.strftime('%d'))
+    #     hour = int(date.strftime('%H'))
+    #
+    #     print(day)
 
 
 ###########################################################################################################################################
