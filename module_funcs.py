@@ -284,6 +284,7 @@ def generate_reports(startdate, enddate, categorized_calls):
 
 ###########################################################################################################################################
 def create_reports_csv(filename, type, counted_calls):
+
     print(counted_calls['total'])
 
     csv_text = ""
