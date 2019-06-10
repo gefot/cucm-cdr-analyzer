@@ -10,6 +10,7 @@ from email import encoders
 import ftplib
 
 import classes
+import csv
 
 
 # Starting from index 1:
@@ -226,9 +227,7 @@ def categorize_cdr_general(cdr_file_list, call_tree):
 
 
 ###########################################################################################################################################
-def generate_reports(startdate, enddate, categorized_calls):
-    print(startdate)
-    print(enddate)
+def count_categorized_calls(categorized_calls):
 
     counted_calls_daily = {'total': [0 for i in range(32)], 'answered_1st': [0 for i in range(32)], 'answered_aa': [0 for i in range(32)],
                            'missed': [0 for i in range(32)], 'missed_aa_vm': [0 for i in range(32)]}
@@ -239,7 +238,6 @@ def generate_reports(startdate, enddate, categorized_calls):
         date = call.cdr_record.date
         hour = int(date.strftime('%H'))
         day = int(date.strftime('%d'))
-        weekday = date.weekday()
 
         counted_calls_daily['total'][day] += 1
         counted_calls_daily['total'][0] += 1
@@ -283,24 +281,160 @@ def generate_reports(startdate, enddate, categorized_calls):
 
 
 ###########################################################################################################################################
-def create_reports_csv(filename, type, counted_calls):
+def create_reports_csv(filename, report_type, counted_calls):
 
-    print(counted_calls['total'])
+    # print(counted_calls['answered_1st'])
+    # print(counted_calls['answered_aa'])
+    # print(counted_calls['missed'])
+    # print(counted_calls['missed_aa_vm'])
+    # print(counted_calls['total'])
 
-    csv_text = ""
 
-    for i, val in enumerate(counted_calls['total']):
-        csv_text += "{}, ".format(i)
-        # print(counted_calls['answered_1st'][i])
-        # print(counted_calls['answered_aa'][i])
-        # print(counted_calls['missed'][i])
-        # print(counted_calls['missed_aa_vm'][i])
+    ### Daily Reports
+    if report_type == "daily":
+        header = list(range(0, 33))
+        header[0] = ""
+        header[32] = "Total"
+        print(header)
 
-    print(csv_text)
+        # Answered 1st
+        a1 = ["Answered 1st"] + counted_calls['answered_1st'][1:31] + counted_calls['answered_1st'][0:1]
+        a1_tmp = list(range(0, 33))
+        for i in range(32):
+            try:
+                a1_tmp[i] = int((counted_calls['answered_1st'][i] / counted_calls['total'][i])*100)
+            except:
+                a1_tmp[i] = 0
+        a1_percent = ["Answered 1st (%)"] + a1_tmp[1:31] + a1_tmp[0:1]
+        print(a1)
+        print(a1_percent)
 
-    # fd = open(filename, "w")
-    # fd.write(csv_text)
-    # fd.close()
+        # Answered AA
+        a2 = ["Answered AA"] + counted_calls['answered_aa'][1:31] + counted_calls['answered_aa'][0:1]
+        a2_tmp = list(range(0, 33))
+        for i in range(32):
+            try:
+                a2_tmp[i] = int((counted_calls['answered_aa'][i] / counted_calls['total'][i])*100)
+            except:
+                a2_tmp[i] = 0
+        a2_percent = ["Answered AA(%)"] + a2_tmp[1:31] + a2_tmp[0:1]
+        print(a2)
+        print(a2_percent)
+
+        # Missed
+        a3 = ["Missed"] + counted_calls['missed'][1:31] + counted_calls['missed'][0:1]
+        a3_tmp = list(range(0, 33))
+        for i in range(32):
+            try:
+                a3_tmp[i] = int((counted_calls['missed'][i] / counted_calls['total'][i])*100)
+            except:
+                a3_tmp[i] = 0
+        a3_percent = ["Missed"] + a3_tmp[1:31] + a3_tmp[0:1]
+        print(a3)
+        print(a3_percent)
+
+        # Missed AA VM
+        a4 = ["Missed AA VM"] + counted_calls['missed_aa_vm'][1:31] + counted_calls['missed_aa_vm'][0:1]
+        a4_tmp = list(range(0, 33))
+        for i in range(32):
+            try:
+                a4_tmp[i] = int((counted_calls['missed_aa_vm'][i] / counted_calls['total'][i])*100)
+            except:
+                a4_tmp[i] = 0
+        a4_percent = ["Missed AA VM(%)"] + a4_tmp[1:31] + a4_tmp[0:1]
+        print(a4)
+        print(a4_percent)
+
+        a5 = ["Total"] + counted_calls['total'][1:31] + counted_calls['total'][0:1]
+        print(a5)
+
+        fd = open(filename, "w")
+        csv.register_dialect('myDialect', quoting=csv.QUOTE_NONE, skipinitialspace=True)
+        writer = csv.writer(fd, dialect='myDialect')
+        writer.writerow(header)
+        writer.writerow(a1)
+        writer.writerow(a1_percent)
+        writer.writerow(a2)
+        writer.writerow(a2_percent)
+        writer.writerow(a3)
+        writer.writerow(a3_percent)
+        writer.writerow(a4)
+        writer.writerow(a4_percent)
+        writer.writerow(a5)
+        fd.close()
+
+    ### Hourly Reports
+    if report_type == "hourly":
+        header = list(range(0, 26))
+        header[0] = ""
+        header[25] = "Total"
+        print(header)
+
+        # Answered 1st
+        a1 = ["Answered 1st"] + counted_calls['answered_1st'][1:24] + counted_calls['answered_1st'][0:1]
+        a1_tmp = list(range(0, 26))
+        for i in range(25):
+            try:
+                a1_tmp[i] = int((counted_calls['answered_1st'][i] / counted_calls['total'][i])*100)
+            except:
+                a1_tmp[i] = 0
+        a1_percent = ["Answered 1st (%)"] + a1_tmp[1:24] + a1_tmp[0:1]
+        print(a1)
+        print(a1_percent)
+
+        # Answered AA
+        a2 = ["Answered AA"] + counted_calls['answered_aa'][1:24] + counted_calls['answered_aa'][0:1]
+        a2_tmp = list(range(0, 26))
+        for i in range(25):
+            try:
+                a2_tmp[i] = int((counted_calls['answered_aa'][i] / counted_calls['total'][i])*100)
+            except:
+                a2_tmp[i] = 0
+        a2_percent = ["Answered AA(%)"] + a2_tmp[1:24] + a2_tmp[0:1]
+        print(a2)
+        print(a2_percent)
+
+        # Missed
+        a3 = ["Missed"] + counted_calls['missed'][1:24] + counted_calls['missed'][0:1]
+        a3_tmp = list(range(0, 26))
+        for i in range(25):
+            try:
+                a3_tmp[i] = int((counted_calls['missed'][i] / counted_calls['total'][i])*100)
+            except:
+                a3_tmp[i] = 0
+        a3_percent = ["Missed"] + a3_tmp[1:24] + a3_tmp[0:1]
+        print(a3)
+        print(a3_percent)
+
+        # Missed AA VM
+        a4 = ["Missed AA VM"] + counted_calls['missed_aa_vm'][1:24] + counted_calls['missed_aa_vm'][0:1]
+        a4_tmp = list(range(0, 26))
+        for i in range(25):
+            try:
+                a4_tmp[i] = int((counted_calls['missed_aa_vm'][i] / counted_calls['total'][i])*100)
+            except:
+                a4_tmp[i] = 0
+        a4_percent = ["Missed AA VM(%)"] + a4_tmp[1:24] + a4_tmp[0:1]
+        print(a4)
+        print(a4_percent)
+
+        a5 = ["Total"] + counted_calls['total'][1:24] + counted_calls['total'][0:1]
+        print(a5)
+
+        fd = open(filename, "w")
+        csv.register_dialect('myDialect', quoting=csv.QUOTE_NONE, skipinitialspace=True)
+        writer = csv.writer(fd, dialect='myDialect')
+        writer.writerow(header)
+        writer.writerow(a1)
+        writer.writerow(a1_percent)
+        writer.writerow(a2)
+        writer.writerow(a2_percent)
+        writer.writerow(a3)
+        writer.writerow(a3_percent)
+        writer.writerow(a4)
+        writer.writerow(a4_percent)
+        writer.writerow(a5)
+        fd.close()
 
 
 ###########################################################################################################################################
