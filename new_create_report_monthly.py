@@ -19,7 +19,7 @@ filename2_1 = "/home/gfot/cucm-cdr-analyzer/data/output/" + call_tree1 + "_daily
 filename2_2 = "/home/gfot/cucm-cdr-analyzer/data/output/" + call_tree1 + "_hourly_" + my_month + "_" + my_year + ".csv"
 
 STARTDATE = "201905010001"
-ENDDATE = "201905102359"
+ENDDATE = "201905312359"
 
 cdr_file_list = module_funcs.get_cdr_files(STARTDATE, ENDDATE)
 
