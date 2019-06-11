@@ -14,7 +14,7 @@ attachments2 = ['/home/gfot/cucm-cdr-analyzer/data/output/pd_daily_report.csv']
 
 # current_date = datetime.datetime(2019, 2, 5, 9, 0).strftime('%Y-%m-%d')
 current_date = datetime.datetime.now().strftime('%Y-%m-%d')
-
+# current_date = "2019-06-10 (correct)"
 subject1 = "Hourly Call Report (daily) - {}".format(current_date)
 print(subject1)
 fd1 = open(body_file1, 'r')
