@@ -23,14 +23,8 @@ access = json.load(open('/home/gfot/cucm-cdr-analyzer/data/access.json'))      #
 CDR_FOLDER = "/home/gfot/cdr/cdr_data/"      # Linux
 
 date = datetime.datetime.now()
-today = date.strftime('%Y')+date.strftime('%m')+date.strftime('%d')
-# today = "20181119"
-# print(today)
 
-# os.chdir(CDR_FOLDER)        # Windows
-# files = glob.glob("cdr*")   # Windows
-files = glob.glob(CDR_FOLDER+"cdr*_01_*{}*".format(today))     # Linux
-
+files = glob.glob(CDR_FOLDER+"cdr*_01_*")     # Linux
 # print(files)
 newest = max(files, key=os.path.getctime)
 print(newest)
@@ -45,7 +39,7 @@ for line in fd:
         if list[29] == "\"911\"":
             print(date, list[2], list[8], list[29], list[30], list[49], time.strftime("%M:%S", time.gmtime(int(int(list[55])))), list[57])
             date = datetime.datetime.fromtimestamp(int(list[4]))
-            temp =  "Extension <b>" + list[8].replace("\"", "") + "</b> <u>dialed 911</u> at <b>" + str(date) + "</b><br>"
+            temp = "Extension <b>" + list[8].replace("\"", "") + "</b> <u>dialed 911</u> at <b>" + str(date) + "</b><br>"
             body += temp
     except Exception as ex:
         pass
@@ -58,7 +52,6 @@ if body is not "":
     PASSWORD = str(access["o365"]["password"])
     MAIL_SERVER = str(access["o365"]["mail_server"])
     # toaddr = ["georgios.fotiadis@whitehatvirtual.com"]
-
     toaddr = ["val.king@whitehatvirtual.com", "Albert.Lattimer@vvrmc.org", \
-              "Brittany.Harle@vvrmc.org", "malachi.fisher@vvrmc.org"]
+              "Brittany.Harle@vvrmc.org", "malachi.fisher@vvrmc.org", "georgios.fotiadis@whitehatvirtual.com"]
     module_funcs.send_mail(USERNAME, PASSWORD, MAIL_SERVER, toaddr, subject, body, attachments, False, False)
