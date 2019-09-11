@@ -35,8 +35,8 @@ def is_cdr_date(date, clinic):
             weekday == 0 or weekday == 1 or weekday == 2 or weekday == 3 or weekday == 4 or weekday == 5 or weekday == 6) and (hour >= 6 and hour <= 21)):
         return True
 
-    ### Shannon Clinic Business Hours
-    if (clinic == "shannon" and (
+    ### 1801 Clinic Business Hours
+    if (clinic == "1801" and (
             ((weekday == 0 or weekday == 1 or weekday == 2 or weekday == 3) and (hour >= 8 and hour <= 16)) or ((weekday == 4) and (hour >= 8 and hour <= 11)))):
         return True
 
@@ -80,7 +80,7 @@ def is_call_tree_option(hunt_pilot):
 def categorize_cdr(cdr_record, call_tree):
     """
     :param cdr_record: the CDR record to analyze
-    :param call_tree: the call tree (eg. main, shannon, lyndsey)
+    :param call_tree: the call tree (eg. main, 1801, lyndsey)
     :return:
     """
 
@@ -110,7 +110,7 @@ def categorize_cdr(cdr_record, call_tree):
                     cdr_call.cdr_record = cdr_record
 
     ### 1801 Call Tree
-    elif call_tree == "shannon":
+    elif call_tree == "1801":
         if is_cdr_date(date, call_tree):
             if called_num == "5810":
                 if called_num == "5810" and final_called_num == "5810" and last_redirect_num == "5810" and int(duration) == 0:
@@ -179,41 +179,41 @@ def categorize_cdr_general(cdr_file_list, call_tree):
                     if categorized_call is not None:
                         categorized_calls.append(categorized_call)
 
-                    ### Further categorize CDR calls, that where answered by call-tree
-                    ### Presently it is done only for Shannon
-                    if call_tree == "shannon":
-                        if categorized_call.type == "aa":
-                            fd_tmp = open(file, "r")
-                            found_1st_time = False
-                            found_2nd_time = False
-                            my_line = ""
-                            ### Re-parse CDR file to search for AA global ID
-                            for line_tmp in fd_tmp:
-                                try:
-                                    list_tmp = line_tmp.split(',')
-                                    if list_tmp[2] == list[2] and not found_1st_time and not found_2nd_time:
-                                        found_1st_time = True
-                                        continue
-                                    if list_tmp[2] == list[2] and found_1st_time and not found_2nd_time:
-                                        found_2nd_time = True
-                                        my_line = line_tmp
-                                        break
-                                except Exception as ex:
-                                    pass
-                            fd_tmp.close()
-
-                            if found_2nd_time:
-                                list_tmp = my_line.split(',')
-                                cdr_record_tmp = classes.CDRRecord(list_tmp[2], datetime.datetime.fromtimestamp(int(list_tmp[4])), list_tmp[8].strip("\""),
-                                                                   list_tmp[29].strip("\""),
-                                                                   list_tmp[30].strip("\""), list_tmp[49].strip("\""),
-                                                                   list_tmp[55], list_tmp[56].strip("\""), list_tmp[57].strip("\""))
-                                categorized_call_tmp = categorize_cdr_aa(cdr_record_tmp)
-
-                                categorized_call.handle = categorized_call_tmp.handle
-                                categorized_call.answered_by = categorized_call_tmp.answered_by
-                                categorized_call.option = categorized_call_tmp.option
-                                categorized_call.cdr_record_aa = categorized_call_tmp.cdr_record_aa
+                    # ### Further categorize CDR calls, that where answered by call-tree
+                    # ### Presently it is done only for 1801
+                    # if call_tree == "1801":
+                    #     if categorized_call.type == "aa":
+                    #         fd_tmp = open(file, "r")
+                    #         found_1st_time = False
+                    #         found_2nd_time = False
+                    #         my_line = ""
+                    #         ### Re-parse CDR file to search for AA global ID
+                    #         for line_tmp in fd_tmp:
+                    #             try:
+                    #                 list_tmp = line_tmp.split(',')
+                    #                 if list_tmp[2] == list[2] and not found_1st_time and not found_2nd_time:
+                    #                     found_1st_time = True
+                    #                     continue
+                    #                 if list_tmp[2] == list[2] and found_1st_time and not found_2nd_time:
+                    #                     found_2nd_time = True
+                    #                     my_line = line_tmp
+                    #                     break
+                    #             except Exception as ex:
+                    #                 pass
+                    #         fd_tmp.close()
+                    #
+                    #         if found_2nd_time:
+                    #             list_tmp = my_line.split(',')
+                    #             cdr_record_tmp = classes.CDRRecord(list_tmp[2], datetime.datetime.fromtimestamp(int(list_tmp[4])), list_tmp[8].strip("\""),
+                    #                                                list_tmp[29].strip("\""),
+                    #                                                list_tmp[30].strip("\""), list_tmp[49].strip("\""),
+                    #                                                list_tmp[55], list_tmp[56].strip("\""), list_tmp[57].strip("\""))
+                    #             categorized_call_tmp = categorize_cdr_aa(cdr_record_tmp)
+                    #
+                    #             categorized_call.handle = categorized_call_tmp.handle
+                    #             categorized_call.answered_by = categorized_call_tmp.answered_by
+                    #             categorized_call.option = categorized_call_tmp.option
+                    #             categorized_call.cdr_record_aa = categorized_call_tmp.cdr_record_aa
 
                 except Exception as ex:
                     pass

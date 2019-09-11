@@ -14,16 +14,17 @@ call_tree1 = "main"
 filename1_1 = "/home/gfot/cucm-cdr-analyzer/data/output/" + call_tree1 + "_daily_" + my_month + "_" + my_year + ".csv"
 filename1_2 = "/home/gfot/cucm-cdr-analyzer/data/output/" + call_tree1 + "_hourly_" + my_month + "_" + my_year + ".csv"
 
-call_tree2 = "shannon"
+call_tree2 = "1801"
 filename2_1 = "/home/gfot/cucm-cdr-analyzer/data/output/" + call_tree1 + "_daily_" + my_month + "_" + my_year + ".csv"
 filename2_2 = "/home/gfot/cucm-cdr-analyzer/data/output/" + call_tree1 + "_hourly_" + my_month + "_" + my_year + ".csv"
 
-STARTDATE = "201905010001"
-ENDDATE = "201905312359"
+STARTDATE = "201909100001"
+ENDDATE = "201909102359"
 
 cdr_file_list = module_funcs.get_cdr_files(STARTDATE, ENDDATE)
-print(cdr_file_list)
-# categorized_calls1 = module_funcs.categorize_cdr_general(cdr_file_list, call_tree1)
+[print(cdr_file) for cdr_file in cdr_file_list]
+
+categorized_calls1 = module_funcs.categorize_cdr_general(cdr_file_list, call_tree1)
 # counted_calls_daily1, counted_calls_hourly1 = module_funcs.count_categorized_calls(categorized_calls1)
 # module_funcs.create_reports_csv(filename1_1, my_type1, counted_calls_daily1)
 # module_funcs.create_reports_csv(filename1_2, my_type2, counted_calls_hourly1)
