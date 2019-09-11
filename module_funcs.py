@@ -136,7 +136,7 @@ def categorize_cdr_aa(cdr_record):
 
     cdr_call = None
 
-    if is_call_tree_option(cdr_record.called_num) > -1:
+    if is_call_tree_option(cdr_record.get_cdr_files) > -1:
         if is_call_tree_option(cdr_record.called_num) > -1 and is_call_tree_option(cdr_record.final_called_num) > -1 and cdr_record.last_redirect_num == "5500" and int(
                 cdr_record.duration) == 0:
             cdr_call = classes.CategorizedCall("aa", "missed")
@@ -479,7 +479,7 @@ def get_cdr_records(cdr_file_list, filters):
 def get_cdr_files(startdate, enddate):
     CDR_CURRENT = '/home/gfot/cdr/cdr_data/'
     CDR_ARCHIVE = '/home/gfot/cdr/cdr_archive/'
-    TIMEZONE = +5
+    TIMEZONE = +5   # Time shift from GMT (which is the default for CDR filenames)
 
     now = datetime.datetime.now()
     nowdate = now.strftime("%Y%m")

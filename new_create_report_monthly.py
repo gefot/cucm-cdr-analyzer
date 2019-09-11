@@ -22,16 +22,16 @@ STARTDATE = "201905010001"
 ENDDATE = "201905312359"
 
 cdr_file_list = module_funcs.get_cdr_files(STARTDATE, ENDDATE)
-
-categorized_calls1 = module_funcs.categorize_cdr_general(cdr_file_list, call_tree1)
-counted_calls_daily1, counted_calls_hourly1 = module_funcs.count_categorized_calls(categorized_calls1)
-module_funcs.create_reports_csv(filename1_1, my_type1, counted_calls_daily1)
-module_funcs.create_reports_csv(filename1_2, my_type2, counted_calls_hourly1)
-
-categorized_calls2 = module_funcs.categorize_cdr_general(cdr_file_list, call_tree2)
-counted_calls_daily2, counted_calls_hourly2 = module_funcs.count_categorized_calls(categorized_calls2)
-module_funcs.create_reports_csv(filename2_1, my_type1, counted_calls_daily2)
-module_funcs.create_reports_csv(filename2_2, my_type2, counted_calls_hourly2)
+print(cdr_file_list)
+# categorized_calls1 = module_funcs.categorize_cdr_general(cdr_file_list, call_tree1)
+# counted_calls_daily1, counted_calls_hourly1 = module_funcs.count_categorized_calls(categorized_calls1)
+# module_funcs.create_reports_csv(filename1_1, my_type1, counted_calls_daily1)
+# module_funcs.create_reports_csv(filename1_2, my_type2, counted_calls_hourly1)
+#
+# categorized_calls2 = module_funcs.categorize_cdr_general(cdr_file_list, call_tree2)
+# counted_calls_daily2, counted_calls_hourly2 = module_funcs.count_categorized_calls(categorized_calls2)
+# module_funcs.create_reports_csv(filename2_1, my_type1, counted_calls_daily2)
+# module_funcs.create_reports_csv(filename2_2, my_type2, counted_calls_hourly2)
 
 
 print("\n--->Runtime = {} \n\n\n".format(datetime.datetime.now() - start))
