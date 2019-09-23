@@ -1,6 +1,8 @@
-import os
 import re
+import os
 import datetime
+import sqlite3
+import csv
 
 import smtplib
 from email.mime.multipart import MIMEMultipart
@@ -10,19 +12,94 @@ from email import encoders
 import ftplib
 
 import classes
-import csv
 
 
-# Starting from index 1:
-# 3:  globalCallID_callId
-# 5:  Date (in UTC timezone)
-# 9:  calling number
-# 30: called number
-# 31: final called number
-# 50: lastRedirectDn
-# 56: duration
-# 57: origDeviceName
-# 58: destDeviceName
+
+CDR_REPO = '/home/gfot/cdr/cdr_repo/'
+CDR_ARCHIVE = '/home/gfot/cdr/cdr_archive/'
+CDR_DB = "cucm.db"
+
+
+####################################################################################################
+def populate_db():
+    try:
+        conn = sqlite3.connect(CDR_DB)
+        cursor = conn.cursor()
+
+        for filename in os.listdir(CDR_REPO):
+            # if filename.startswith("cdr") and "_01_" in filename:
+            if filename.startswith("cdr"):
+                fd = open(CDR_REPO + filename, "r")
+                for line in fd:
+                    try:
+                        my_list = line.split(',')
+                        # recordType = my_list[0]
+                        # globalCallID_callManagerId = my_list[1]
+                        globalCallID_callId = my_list[2]
+                        # Ignore line if it is the beginning of a file
+                        if not globalCallID_callId.isnumeric():
+                            continue
+                        origLegCallIdentifier = my_list[3]
+                        destLegIdentifier = my_list[25]
+                        dateTimeOrigination = my_list[4]
+                        callingPartyNumber = my_list[8].strip("\"")
+                        originalCalledPartyNumber = my_list[29].strip("\"")
+                        finalCalledPartyNumber = my_list[30].strip("\"")
+                        lastRedirectDn = my_list[49].strip("\"")
+                        duration = my_list[55].strip("\"")
+                        origDeviceName = my_list[56].strip("\"")
+                        destDeviceName = my_list[57].strip("\"")
+                        huntPilotDN = my_list[102].strip("\"")
+
+                        # origNodeId = my_list[5]
+                        # origSpan = my_list[6]         # Not needed
+                        # origIpAddr = my_list[7]       # Not needed (hex)
+                        # destNodeId = my_list[26]
+                        # destSpan = my_list[27]        # Not needed
+                        # destIpAddr = my_list[28]      # Not needed (hex)
+                        # globalCallId_ClusterID = my_list[65]  # Always the same
+
+                        print("{},{},{},{},{},{},{},{},{},{},{},{}".format(
+                            globalCallID_callId,
+                            origLegCallIdentifier,
+                            destLegIdentifier,
+                            dateTimeOrigination,
+                            callingPartyNumber,
+                            originalCalledPartyNumber,
+                            finalCalledPartyNumber,
+                            lastRedirectDn,
+                            duration,
+                            origDeviceName,
+                            destDeviceName,
+                            huntPilotDN)
+                        )
+                        try:
+                            insert = "INSERT INTO CDR VALUES ('{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}')".format(
+                                globalCallID_callId,
+                                origLegCallIdentifier,
+                                destLegIdentifier,
+                                dateTimeOrigination,
+                                callingPartyNumber,
+                                originalCalledPartyNumber,
+                                finalCalledPartyNumber,
+                                lastRedirectDn,
+                                duration,
+                                origDeviceName,
+                                destDeviceName,
+                                huntPilotDN)
+                            cursor.execute(insert)
+                        except:
+                            print("Primary Key Error:", globalCallID_callId)
+                            continue
+                    except Exception as ex:
+                        continue
+
+                fd.close()
+        conn.commit()
+        conn.close()
+
+    except Exception as ex:
+        print(ex)
 
 
 ###########################################################################################################################################
@@ -36,7 +113,7 @@ def is_cdr_date(date, clinic):
         return True
 
     ### 1801 Clinic Business Hours
-    if (clinic == "1801" and (
+    if (clinic == "shannon" and (
             ((weekday == 0 or weekday == 1 or weekday == 2 or weekday == 3) and (hour >= 8 and hour <= 16)) or ((weekday == 4) and (hour >= 8 and hour <= 11)))):
         return True
 

@@ -99,7 +99,7 @@ unanswered_calls_per_list_hourly = {'main': [0 for i in range(24)], 'shannon': [
 # Calculate CDR Statistics
 for file in cdr_list:
     fd = open(CDR_FOLDER + file, "r")
-    # print(file)
+    print(file)
     for line in fd:
         try:
             list = line.split(',')
