@@ -1,6 +1,8 @@
-import os
 import re
+import os
 import datetime
+import sqlite3
+import csv
 
 import smtplib
 from email.mime.multipart import MIMEMultipart
@@ -10,45 +12,122 @@ from email import encoders
 import ftplib
 
 import classes
-import csv
 
 
-# Starting from index 1:
-# 3:  globalCallID_callId
-# 5:  Date (in UTC timezone)
-# 9:  calling number
-# 30: called number
-# 31: final called number
-# 50: lastRedirectDn
-# 56: duration
-# 57: origDeviceName
-# 58: destDeviceName
+CDR_REPO = '/home/gfot/cdr/cdr_repo/'
+CDR_ARCHIVE = '/home/gfot/cdr/cdr_archive/'
+CDR_DB = "cucm.db"
 
 
-###########################################################################################################################################
+####################################################################################################
+def populate_db():
+    try:
+        conn = sqlite3.connect(CDR_DB)
+        cursor = conn.cursor()
+
+        for filename in os.listdir(CDR_REPO):
+            # if filename.startswith("cdr") and "_01_" in filename:
+            if filename.startswith("cdr"):
+                fd = open(CDR_REPO + filename, "r")
+                for line in fd:
+                    try:
+                        my_list = line.split(',')
+                        # recordType = my_list[0]
+                        # globalCallID_callManagerId = my_list[1]
+                        globalCallID_callId = my_list[2]
+                        # Ignore line if it is the beginning of a file
+                        if not globalCallID_callId.isnumeric():
+                            continue
+                        origLegCallIdentifier = my_list[3]
+                        destLegIdentifier = my_list[25]
+                        dateTimeOrigination = my_list[4]
+                        callingPartyNumber = my_list[8].strip("\"")
+                        originalCalledPartyNumber = my_list[29].strip("\"")
+                        finalCalledPartyNumber = my_list[30].strip("\"")
+                        lastRedirectDn = my_list[49].strip("\"")
+                        duration = my_list[55].strip("\"")
+                        origDeviceName = my_list[56].strip("\"")
+                        destDeviceName = my_list[57].strip("\"")
+                        huntPilotDN = my_list[102].strip("\"")
+
+                        # origNodeId = my_list[5]
+                        # origSpan = my_list[6]         # Not needed
+                        # origIpAddr = my_list[7]       # Not needed (hex)
+                        # destNodeId = my_list[26]
+                        # destSpan = my_list[27]        # Not needed
+                        # destIpAddr = my_list[28]      # Not needed (hex)
+                        # globalCallId_ClusterID = my_list[65]  # Always the same
+
+                        print("{},{},{},{},{},{},{},{},{},{},{},{}".format(
+                            globalCallID_callId,
+                            origLegCallIdentifier,
+                            destLegIdentifier,
+                            dateTimeOrigination,
+                            callingPartyNumber,
+                            originalCalledPartyNumber,
+                            finalCalledPartyNumber,
+                            lastRedirectDn,
+                            duration,
+                            origDeviceName,
+                            destDeviceName,
+                            huntPilotDN)
+                        )
+                        try:
+                            insert = "INSERT INTO CDR VALUES ('{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}')".format(
+                                globalCallID_callId,
+                                origLegCallIdentifier,
+                                destLegIdentifier,
+                                dateTimeOrigination,
+                                callingPartyNumber,
+                                originalCalledPartyNumber,
+                                finalCalledPartyNumber,
+                                lastRedirectDn,
+                                duration,
+                                origDeviceName,
+                                destDeviceName,
+                                huntPilotDN)
+                            cursor.execute(insert)
+                        except:
+                            print("Primary Key Error:", globalCallID_callId)
+                            continue
+                    except Exception as ex:
+                        continue
+
+                fd.close()
+        conn.commit()
+        conn.close()
+
+    except Exception as ex:
+        print(ex)
+
+
+####################################################################################################
 def is_cdr_date(date, clinic):
     hour = int(date.strftime('%H'))
     weekday = date.weekday()
 
     ### Main Hospital Business Hours
     if (clinic == "main" and (
-            weekday == 0 or weekday == 1 or weekday == 2 or weekday == 3 or weekday == 4 or weekday == 5 or weekday == 6) and (hour >= 6 and hour <= 21)):
+            weekday == 0 or weekday == 1 or weekday == 2 or weekday == 3 or weekday == 4 or weekday == 5 or weekday == 6) and (
+            hour >= 6 and hour <= 21)):
         return True
 
     ### Shannon Clinic Business Hours
     if (clinic == "shannon" and (
-            ((weekday == 0 or weekday == 1 or weekday == 2 or weekday == 3) and (hour >= 8 and hour <= 16)) or ((weekday == 4) and (hour >= 8 and hour <= 11)))):
+            ((weekday == 0 or weekday == 1 or weekday == 2 or weekday == 3) and (hour >= 8 and hour <= 16)) or (
+            (weekday == 4) and (hour >= 8 and hour <= 11)))):
         return True
 
     ### Lyndsey Clinic Business Hours
     if (clinic == "lyndsey" and (
-            ((weekday == 0 or weekday == 1 or weekday == 2 or weekday == 3) and (hour >= 8 and hour <= 16)) or ((weekday == 4) and (hour >= 8 and hour <= 15)))):
+            ((weekday == 0 or weekday == 1 or weekday == 2 or weekday == 3) and (hour >= 8 and hour <= 16)) or (
+            (weekday == 4) and (hour >= 8 and hour <= 15)))):
         return True
 
     return False
 
 
-###########################################################################################################################################
+####################################################################################################
 def is_call_tree_option(hunt_pilot):
     """
     :param hunt_pilot: Hunt-pilot to categorize; it has to be unique so as to differentiate call trees
@@ -76,7 +155,7 @@ def is_call_tree_option(hunt_pilot):
     return aa_option
 
 
-###########################################################################################################################################
+####################################################################################################
 def categorize_cdr(cdr_record, call_tree):
     """
     :param cdr_record: the CDR record to analyze
@@ -113,10 +192,12 @@ def categorize_cdr(cdr_record, call_tree):
     elif call_tree == "shannon":
         if is_cdr_date(date, call_tree):
             if called_num == "5810":
-                if called_num == "5810" and final_called_num == "5810" and last_redirect_num == "5810" and int(duration) == 0:
+                if called_num == "5810" and final_called_num == "5810" and last_redirect_num == "5810" and int(
+                        duration) == 0:
                     cdr_call = classes.CategorizedCall("1st", "missed")
                     cdr_call.cdr_record = cdr_record
-                elif called_num == "5810" and final_called_num == "5810" and last_redirect_num == "5810" and int(duration) > 0:
+                elif called_num == "5810" and final_called_num == "5810" and last_redirect_num == "5810" and int(
+                        duration) > 0:
                     cdr_call = classes.CategorizedCall("1st", "answered")
                     cdr_call.answered_by = cdr_record.destDeviceName
                     cdr_call.cdr_record = cdr_record
@@ -127,7 +208,7 @@ def categorize_cdr(cdr_record, call_tree):
     return cdr_call
 
 
-###########################################################################################################################################
+####################################################################################################
 def categorize_cdr_aa(cdr_record):
     """
     :param cdr_record: class CDRRecord
@@ -137,12 +218,14 @@ def categorize_cdr_aa(cdr_record):
     cdr_call = None
 
     if is_call_tree_option(cdr_record.get_cdr_files) > -1:
-        if is_call_tree_option(cdr_record.called_num) > -1 and is_call_tree_option(cdr_record.final_called_num) > -1 and cdr_record.last_redirect_num == "5500" and int(
-                cdr_record.duration) == 0:
+        if is_call_tree_option(cdr_record.called_num) > -1 and is_call_tree_option(
+                cdr_record.final_called_num) > -1 and cdr_record.last_redirect_num == "5500" and int(
+            cdr_record.duration) == 0:
             cdr_call = classes.CategorizedCall("aa", "missed")
             cdr_call.cdr_record_aa = cdr_record
-        elif is_call_tree_option(cdr_record.called_num) > -1 and is_call_tree_option(cdr_record.final_called_num) > -1 and cdr_record.last_redirect_num == "5500" and int(
-                cdr_record.duration) > 0:
+        elif is_call_tree_option(cdr_record.called_num) > -1 and is_call_tree_option(
+                cdr_record.final_called_num) > -1 and cdr_record.last_redirect_num == "5500" and int(
+            cdr_record.duration) > 0:
             cdr_call = classes.CategorizedCall("aa", "answered")
             cdr_call.answered_by = cdr_record.destDeviceName
             cdr_call.option = is_call_tree_option(cdr_record.called_num)
@@ -156,7 +239,7 @@ def categorize_cdr_aa(cdr_record):
     return cdr_call
 
 
-###########################################################################################################################################
+####################################################################################################
 def categorize_cdr_general(cdr_file_list, call_tree):
     """
     :param cdr_file_list: files of files with cdr records
@@ -171,7 +254,8 @@ def categorize_cdr_general(cdr_file_list, call_tree):
             for line in fd:
                 try:
                     list = line.split(',')
-                    cdr_record = classes.CDRRecord(list[2], datetime.datetime.fromtimestamp(int(list[4])), list[8].strip("\""), list[29].strip("\""),
+                    cdr_record = classes.CDRRecord(list[2], datetime.datetime.fromtimestamp(int(list[4])),
+                                                   list[8].strip("\""), list[29].strip("\""),
                                                    list[30].strip("\""), list[49].strip("\""),
                                                    list[55], list[56].strip("\""), list[57].strip("\""))
                     categorized_call = categorize_cdr(cdr_record, call_tree)
@@ -204,10 +288,13 @@ def categorize_cdr_general(cdr_file_list, call_tree):
 
                             if found_2nd_time:
                                 list_tmp = my_line.split(',')
-                                cdr_record_tmp = classes.CDRRecord(list_tmp[2], datetime.datetime.fromtimestamp(int(list_tmp[4])), list_tmp[8].strip("\""),
+                                cdr_record_tmp = classes.CDRRecord(list_tmp[2],
+                                                                   datetime.datetime.fromtimestamp(int(list_tmp[4])),
+                                                                   list_tmp[8].strip("\""),
                                                                    list_tmp[29].strip("\""),
                                                                    list_tmp[30].strip("\""), list_tmp[49].strip("\""),
-                                                                   list_tmp[55], list_tmp[56].strip("\""), list_tmp[57].strip("\""))
+                                                                   list_tmp[55], list_tmp[56].strip("\""),
+                                                                   list_tmp[57].strip("\""))
                                 categorized_call_tmp = categorize_cdr_aa(cdr_record_tmp)
 
                                 categorized_call.handle = categorized_call_tmp.handle
@@ -226,12 +313,13 @@ def categorize_cdr_general(cdr_file_list, call_tree):
     return categorized_calls
 
 
-###########################################################################################################################################
+####################################################################################################
 def count_categorized_calls(categorized_calls):
-
-    counted_calls_daily = {'total': [0 for i in range(32)], 'answered_1st': [0 for i in range(32)], 'answered_aa': [0 for i in range(32)],
+    counted_calls_daily = {'total': [0 for i in range(32)], 'answered_1st': [0 for i in range(32)],
+                           'answered_aa': [0 for i in range(32)],
                            'missed': [0 for i in range(32)], 'missed_aa_vm': [0 for i in range(32)]}
-    counted_calls_hourly = {'total': [0 for i in range(25)], 'answered_1st': [0 for i in range(25)], 'answered_aa': [0 for i in range(32)],
+    counted_calls_hourly = {'total': [0 for i in range(25)], 'answered_1st': [0 for i in range(25)],
+                            'answered_aa': [0 for i in range(32)],
                             'missed': [0 for i in range(25)], 'missed_aa_vm': [0 for i in range(25)]}
 
     for call in categorized_calls:
@@ -280,9 +368,8 @@ def count_categorized_calls(categorized_calls):
     return counted_calls_daily, counted_calls_hourly
 
 
-###########################################################################################################################################
+####################################################################################################
 def create_reports_csv(filename, report_type, counted_calls):
-
     # print(counted_calls['answered_1st'])
     # print(counted_calls['answered_aa'])
     # print(counted_calls['missed'])
@@ -300,7 +387,7 @@ def create_reports_csv(filename, report_type, counted_calls):
         a1_tmp = list(range(0, 33))
         for i in range(32):
             try:
-                a1_tmp[i] = int((counted_calls['answered_1st'][i] / counted_calls['total'][i])*100)
+                a1_tmp[i] = int((counted_calls['answered_1st'][i] / counted_calls['total'][i]) * 100)
             except:
                 a1_tmp[i] = 0
         a1_percent = ["Answered 1st (%)"] + a1_tmp[1:32] + a1_tmp[0:1]
@@ -310,7 +397,7 @@ def create_reports_csv(filename, report_type, counted_calls):
         a2_tmp = list(range(0, 33))
         for i in range(32):
             try:
-                a2_tmp[i] = int((counted_calls['answered_aa'][i] / counted_calls['total'][i])*100)
+                a2_tmp[i] = int((counted_calls['answered_aa'][i] / counted_calls['total'][i]) * 100)
             except:
                 a2_tmp[i] = 0
         a2_percent = ["Answered AA(%)"] + a2_tmp[1:32] + a2_tmp[0:1]
@@ -320,7 +407,7 @@ def create_reports_csv(filename, report_type, counted_calls):
         a3_tmp = list(range(0, 33))
         for i in range(32):
             try:
-                a3_tmp[i] = int((counted_calls['missed'][i] / counted_calls['total'][i])*100)
+                a3_tmp[i] = int((counted_calls['missed'][i] / counted_calls['total'][i]) * 100)
             except:
                 a3_tmp[i] = 0
         a3_percent = ["Missed"] + a3_tmp[1:32] + a3_tmp[0:1]
@@ -330,7 +417,7 @@ def create_reports_csv(filename, report_type, counted_calls):
         a4_tmp = list(range(0, 33))
         for i in range(32):
             try:
-                a4_tmp[i] = int((counted_calls['missed_aa_vm'][i] / counted_calls['total'][i])*100)
+                a4_tmp[i] = int((counted_calls['missed_aa_vm'][i] / counted_calls['total'][i]) * 100)
             except:
                 a4_tmp[i] = 0
         a4_percent = ["Missed AA VM(%)"] + a4_tmp[1:32] + a4_tmp[0:1]
@@ -376,7 +463,7 @@ def create_reports_csv(filename, report_type, counted_calls):
         a1_tmp = list(range(0, 26))
         for i in range(25):
             try:
-                a1_tmp[i] = int((counted_calls['answered_1st'][i] / counted_calls['total'][i])*100)
+                a1_tmp[i] = int((counted_calls['answered_1st'][i] / counted_calls['total'][i]) * 100)
             except:
                 a1_tmp[i] = 0
         a1_percent = ["Answered 1st (%)"] + a1_tmp[1:25] + a1_tmp[0:1]
@@ -386,7 +473,7 @@ def create_reports_csv(filename, report_type, counted_calls):
         a2_tmp = list(range(0, 26))
         for i in range(25):
             try:
-                a2_tmp[i] = int((counted_calls['answered_aa'][i] / counted_calls['total'][i])*100)
+                a2_tmp[i] = int((counted_calls['answered_aa'][i] / counted_calls['total'][i]) * 100)
             except:
                 a2_tmp[i] = 0
         a2_percent = ["Answered AA(%)"] + a2_tmp[1:25] + a2_tmp[0:1]
@@ -396,7 +483,7 @@ def create_reports_csv(filename, report_type, counted_calls):
         a3_tmp = list(range(0, 26))
         for i in range(25):
             try:
-                a3_tmp[i] = int((counted_calls['missed'][i] / counted_calls['total'][i])*100)
+                a3_tmp[i] = int((counted_calls['missed'][i] / counted_calls['total'][i]) * 100)
             except:
                 a3_tmp[i] = 0
         a3_percent = ["Missed"] + a3_tmp[1:25] + a3_tmp[0:1]
@@ -406,7 +493,7 @@ def create_reports_csv(filename, report_type, counted_calls):
         a4_tmp = list(range(0, 26))
         for i in range(25):
             try:
-                a4_tmp[i] = int((counted_calls['missed_aa_vm'][i] / counted_calls['total'][i])*100)
+                a4_tmp[i] = int((counted_calls['missed_aa_vm'][i] / counted_calls['total'][i]) * 100)
             except:
                 a4_tmp[i] = 0
         a4_percent = ["Missed AA VM(%)"] + a4_tmp[1:25] + a4_tmp[0:1]
@@ -440,7 +527,7 @@ def create_reports_csv(filename, report_type, counted_calls):
         fd.close()
 
 
-###########################################################################################################################################
+####################################################################################################
 def get_cdr_records(cdr_file_list, filters):
     extensions = filters['extensions']
 
@@ -456,12 +543,14 @@ def get_cdr_records(cdr_file_list, filters):
                     list = line.split(',')
                     for extension in extensions:
                         if extension == "*":
-                            cdr_record = classes.CDRRecord(list[2], datetime.datetime.fromtimestamp(int(list[4])), list[8].strip("\""), list[29].strip("\""),
+                            cdr_record = classes.CDRRecord(list[2], datetime.datetime.fromtimestamp(int(list[4])),
+                                                           list[8].strip("\""), list[29].strip("\""),
                                                            list[30].strip("\""), list[49].strip("\""),
                                                            list[55], list[56].strip("\""), list[57].strip("\""))
                             cdr_records.append(cdr_record)
                         elif list[8] == "\"" + extension + "\"" or list[29] == "\"" + extension + "\"":
-                            cdr_record = classes.CDRRecord(list[2], datetime.datetime.fromtimestamp(int(list[4])), list[8].strip("\""), list[29].strip("\""),
+                            cdr_record = classes.CDRRecord(list[2], datetime.datetime.fromtimestamp(int(list[4])),
+                                                           list[8].strip("\""), list[29].strip("\""),
                                                            list[30].strip("\""), list[49].strip("\""),
                                                            list[55], list[56].strip("\""), list[57].strip("\""))
                             cdr_records.append(cdr_record)
@@ -475,11 +564,11 @@ def get_cdr_records(cdr_file_list, filters):
     return cdr_records
 
 
-###########################################################################################################################################
+####################################################################################################
 def get_cdr_files(startdate, enddate):
     CDR_CURRENT = '/home/gfot/cdr/cdr_data/'
     CDR_ARCHIVE = '/home/gfot/cdr/cdr_archive/'
-    TIMEZONE = +5   # Time shift from GMT (which is the default for CDR filenames)
+    TIMEZONE = +5  # Time shift from GMT (which is the default for CDR filenames)
 
     now = datetime.datetime.now()
     nowdate = now.strftime("%Y%m")
@@ -516,7 +605,7 @@ def get_cdr_files(startdate, enddate):
     return cdr_file_list
 
 
-###########################################################################################################################################
+####################################################################################################
 def send_mail(username, password, mail_server, toaddr, subject, body, attachments, login, tls):
     fromaddr = username
     # text = "This will be sent as text"
@@ -558,7 +647,7 @@ def send_mail(username, password, mail_server, toaddr, subject, body, attachment
     mailserver.quit()
 
 
-###########################################################################################################################################
+####################################################################################################
 def get_files_ftp(server, username, password, source_path, dest_path, pattern):
     ftp = ftplib.FTP(server, username, password)
     ftp.cwd(source_path)
@@ -571,12 +660,11 @@ def get_files_ftp(server, username, password, source_path, dest_path, pattern):
     ftp.quit()
 
 
-###########################################################################################################################################
+####################################################################################################
 
-
-###########################################################################################################################################
-###########################################################################################################################################
-###########################################################################################################################################
+####################################################################################################
+####################################################################################################
+####################################################################################################
 def create_html_file(total_calls, answered_calls, aa_calls, unanswered_calls, total_calls_list, answered_calls_list,
                      aa_calls_list, unanswered_calls_list, answered_calls_per_list, aa_calls_per_list,
                      unanswered_calls_per_list, filename, clinic_names, start, end):
@@ -665,7 +753,7 @@ td {
     return 0
 
 
-###########################################################################################################################################
+####################################################################################################
 def create_csv_file(total_calls, answered_calls, aa_calls, unanswered_calls, total_calls_list, answered_calls_list,
                     aa_calls_list, unanswered_calls_list, answered_calls_per_list, aa_calls_per_list,
                     unanswered_calls_per_list, filename, clinic_names, start, end):
@@ -726,6 +814,6 @@ def create_csv_file(total_calls, answered_calls, aa_calls, unanswered_calls, tot
 
     return 0
 
-###########################################################################################################################################
-###########################################################################################################################################
-###########################################################################################################################################
+####################################################################################################
+####################################################################################################
+####################################################################################################
