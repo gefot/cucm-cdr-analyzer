@@ -22,8 +22,8 @@ class CDRRecord:
 
 class CategorizedCall:
 
-    def __init__(self, type, handle):
-        self.type = type
+    def __init__(self, call_type, handle):
+        self.call_type = call_type
         self.handle = handle
 
         self.answered_by = "unknown"
@@ -33,4 +33,5 @@ class CategorizedCall:
         self.cdr_record_aa = "unknown"
 
     def __str__(self):
-        return "{}, {}, {}, {}".format(self.type, self.handle, self.answered_by, self.option)
+        return "{}, {}, {}, {}".format(self.call_type, self.handle, self.answered_by, self.option)
+
