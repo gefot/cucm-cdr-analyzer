@@ -14,8 +14,8 @@ timestamp = module_funcs.date_to_timestamp(date)
 print(timestamp)
 print(module_funcs.timestamp_to_date(timestamp))
 
-start_date = "20190924060000"
-end_date   = "20190926230000"
+start_date = "20190923060000"
+end_date   = "20190926235900"
 # start_date = "20190920060000"
 # end_date   = "20190922230000"
 start_timestamp = module_funcs.date_to_timestamp(start_date)
@@ -24,8 +24,8 @@ end_timestamp = module_funcs.date_to_timestamp(end_date)
 print(module_funcs.weekday_from_timestamp(start_timestamp))
 print(module_funcs.hour_from_timestamp(start_timestamp))
 
-result = module_funcs.get_cdr(start_timestamp, end_timestamp, "*", "*")
-# result = module_funcs.get_cdr_by_department(start_timestamp, end_timestamp, "specialty")
+# result = module_funcs.get_cdr(start_timestamp, end_timestamp, "*", "*")
+result = module_funcs.get_cdr_by_department(start_timestamp, end_timestamp, "specialty")
 
 print("\n\nRutime = ", datetime.datetime.now() - run_start)
 
