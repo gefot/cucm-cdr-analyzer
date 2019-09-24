@@ -1,6 +1,7 @@
 import re
 import os
 import datetime
+import time
 import sqlite3
 import csv
 
@@ -12,8 +13,6 @@ from email import encoders
 import ftplib
 
 import classes
-
-
 
 CDR_REPO = '/home/gfot/cdr/cdr_repo/'
 CDR_ARCHIVE = '/home/gfot/cdr/cdr_archive/'
@@ -59,20 +58,20 @@ def populate_db():
                         # destIpAddr = my_list[28]      # Not needed (hex)
                         # globalCallId_ClusterID = my_list[65]  # Always the same
 
-                        print("{},{},{},{},{},{},{},{},{},{},{},{}".format(
-                            globalCallID_callId,
-                            origLegCallIdentifier,
-                            destLegIdentifier,
-                            dateTimeOrigination,
-                            callingPartyNumber,
-                            originalCalledPartyNumber,
-                            finalCalledPartyNumber,
-                            lastRedirectDn,
-                            duration,
-                            origDeviceName,
-                            destDeviceName,
-                            huntPilotDN)
-                        )
+                        # print("{},{},{},{},{},{},{},{},{},{},{},{}".format(
+                        #     globalCallID_callId,
+                        #     origLegCallIdentifier,
+                        #     destLegIdentifier,
+                        #     dateTimeOrigination,
+                        #     callingPartyNumber,
+                        #     originalCalledPartyNumber,
+                        #     finalCalledPartyNumber,
+                        #     lastRedirectDn,
+                        #     duration,
+                        #     origDeviceName,
+                        #     destDeviceName,
+                        #     huntPilotDN)
+                        # )
                         try:
                             insert = "INSERT INTO CDR VALUES ('{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','{}')".format(
                                 globalCallID_callId,
@@ -89,7 +88,7 @@ def populate_db():
                                 huntPilotDN)
                             cursor.execute(insert)
                         except:
-                            print("Primary Key Error:", globalCallID_callId)
+                            # print("Primary Key Error:", globalCallID_callId)
                             continue
                     except Exception as ex:
                         continue
@@ -102,6 +101,138 @@ def populate_db():
         print(ex)
 
 
+###########################################################################################################################################
+def timestamp_to_date(ts):
+    return datetime.datetime.fromtimestamp(ts)
+
+
+###########################################################################################################################################
+def date_to_timestamp(date):
+    return time.mktime(datetime.datetime.strptime(date, "%Y%m%d%H%M%S").timetuple())
+
+
+###########################################################################################################################################
+def weekday_from_timestamp(ts):
+    return datetime.datetime.fromtimestamp(ts).strftime('%a')
+
+
+###########################################################################################################################################
+def hour_from_timestamp(ts):
+    return datetime.datetime.fromtimestamp(ts).strftime('%H')
+
+
+###########################################################################################################################################
+def get_cdr(start_timestamp, end_timestamp, callingNumber, calledNumber):
+    conn = sqlite3.connect(CDR_DB)
+    my_cursor = conn.cursor()
+
+    if callingNumber == "*" and calledNumber == "*":
+        my_select = "SELECT * from CDR where dateTimeOrigination > '{}' and dateTimeOrigination < '{}' ORDER BY dateTimeOrigination ASC".format(start_timestamp, end_timestamp)
+    elif callingNumber == "*":
+        my_select = "SELECT * from CDR where dateTimeOrigination > '{}' and dateTimeOrigination < '{}' and originalCalledPartyNumber = '{}' ORDER BY dateTimeOrigination ASC".format(
+            start_timestamp, end_timestamp, calledNumber)
+    elif calledNumber == "*":
+        my_select = "SELECT * from CDR where dateTimeOrigination > '{}' and dateTimeOrigination < '{}' and callingPartyNumber = '{}' ORDER BY dateTimeOrigination ASC".format(
+            start_timestamp, end_timestamp, callingNumber)
+    else:
+        my_select = "SELECT * from CDR where dateTimeOrigination > '{}' and dateTimeOrigination < '{}' and callingPartyNumber = '{}' and originalCalledPartyNumber = '{}' ORDER BY dateTimeOrigination ASC".format(
+            start_timestamp, end_timestamp, callingNumber, calledNumber)
+
+    my_cursor.execute(my_select)
+
+    rows = my_cursor.fetchall()
+    conn.close()
+
+    return rows
+
+
+###########################################################################################################################################
+def is_cdr_timestamp(ts, department):
+
+    if department == "main":
+        if weekday_from_timestamp(ts) == "Mon" or weekday_from_timestamp(ts) == "Tue" or weekday_from_timestamp(ts) == "Wed" or weekday_from_timestamp(ts) == "Thu" or weekday_from_timestamp(ts) == "Fri":
+            if int(hour_from_timestamp(ts)) >= 6 and int(hour_from_timestamp(ts)) < 22:
+                return True
+
+    if department == "1801":
+        if weekday_from_timestamp(ts) == "Mon" or weekday_from_timestamp(ts) == "Tue" or weekday_from_timestamp(ts) == "Wed" or weekday_from_timestamp(ts) == "Thu":
+            if int(hour_from_timestamp(ts)) >= 8 and int(hour_from_timestamp(ts)) < 17:
+                return True
+        elif weekday_from_timestamp(ts) == "Fri":
+            if (int(hour_from_timestamp(ts)) >= 8 and int(hour_from_timestamp(ts)) < 12) or (int(hour_from_timestamp(ts)) >= 13 and int(hour_from_timestamp(ts)) < 16):
+                return True
+
+    if department == "specialty":
+        if weekday_from_timestamp(ts) == "Mon" or weekday_from_timestamp(ts) == "Tue" or weekday_from_timestamp(ts) == "Wed" or weekday_from_timestamp(ts) == "Thu":
+            if (int(hour_from_timestamp(ts)) >= 8 and int(hour_from_timestamp(ts)) < 12) or (int(hour_from_timestamp(ts)) >= 13 and int(hour_from_timestamp(ts)) < 17):
+                return True
+        elif weekday_from_timestamp(ts) == "Fri":
+            if (int(hour_from_timestamp(ts)) >= 8 and int(hour_from_timestamp(ts)) < 12):
+                return True
+
+    if department == "ortho":
+        if weekday_from_timestamp(ts) == "Mon" or weekday_from_timestamp(ts) == "Tue" or weekday_from_timestamp(ts) == "Wed" or weekday_from_timestamp(ts) == "Thu":
+            if (int(hour_from_timestamp(ts)) >= 8 and int(hour_from_timestamp(ts)) < 17):
+                return True
+        elif weekday_from_timestamp(ts) == "Fri":
+            if (int(hour_from_timestamp(ts)) >= 8 and int(hour_from_timestamp(ts)) < 12):
+                return True
+
+    if department == "urology":
+        if weekday_from_timestamp(ts) == "Mon" or weekday_from_timestamp(ts) == "Tue" or weekday_from_timestamp(ts) == "Wed" or weekday_from_timestamp(ts) == "Thu":
+            if (int(hour_from_timestamp(ts)) >= 8 and int(hour_from_timestamp(ts)) < 12) or (int(hour_from_timestamp(ts)) >= 13 and int(hour_from_timestamp(ts)) < 17):
+                return True
+        elif weekday_from_timestamp(ts) == "Fri":
+            if (int(hour_from_timestamp(ts)) >= 8 and int(hour_from_timestamp(ts)) < 12):
+                return True
+
+    if department == "it-helpdesk":
+        if weekday_from_timestamp(ts) == "Mon" or weekday_from_timestamp(ts) == "Tue" or weekday_from_timestamp(ts) == "Wed" or weekday_from_timestamp(ts) == "Thu" or weekday_from_timestamp(ts) == "Fri":
+            if (int(hour_from_timestamp(ts)) >= 9 and int(hour_from_timestamp(ts)) < 17):
+                return True
+
+    return False
+
+
+###########################################################################################################################################
+def get_cdr_by_department(start_timestamp, end_timestamp, department):
+
+    conn = sqlite3.connect(CDR_DB)
+    my_cursor = conn.cursor()
+
+    my_select = ""
+    if department == "main":
+        my_select = "SELECT * from CDR where dateTimeOrigination > '{}' and dateTimeOrigination < '{}' and originalCalledPartyNumber = '{}' ORDER BY dateTimeOrigination ASC".format(
+        start_timestamp, end_timestamp, "1001")
+
+    elif department == "1801":
+        my_select = "SELECT * from CDR where dateTimeOrigination > '{}' and dateTimeOrigination < '{}' and originalCalledPartyNumber = '{}' ORDER BY dateTimeOrigination ASC".format(
+        start_timestamp, end_timestamp, "5810")
+
+    elif department == "specialty":
+        my_select = "SELECT * from CDR where dateTimeOrigination > '{}' and dateTimeOrigination < '{}' and originalCalledPartyNumber = '{}' ORDER BY dateTimeOrigination ASC".format(
+        start_timestamp, end_timestamp, "5850")
+
+    my_cursor.execute(my_select)
+    rows = my_cursor.fetchall()
+    conn.close()
+
+    cdr_records = []
+    for row in rows:
+        if is_cdr_timestamp(int(row[3]), department):
+            # print(datetime.datetime.fromtimestamp(int(row[3])), weekday_from_timestamp(int(row[3])))
+            # print(row)
+            cdr_records.append(row)
+
+    return cdr_records
+
+
+
+
+
+
+###########################################################################################################################################
+###########################################################################################################################################
 ###########################################################################################################################################
 def is_cdr_date(date, clinic):
     hour = int(date.strftime('%H'))
@@ -305,7 +436,6 @@ def categorize_cdr_general(cdr_file_list, call_tree):
 
 ###########################################################################################################################################
 def count_categorized_calls(categorized_calls):
-
     counted_calls_daily = {'total': [0 for i in range(32)], 'answered_1st': [0 for i in range(32)], 'answered_aa': [0 for i in range(32)],
                            'missed': [0 for i in range(32)], 'missed_aa_vm': [0 for i in range(32)]}
     counted_calls_hourly = {'total': [0 for i in range(25)], 'answered_1st': [0 for i in range(25)], 'answered_aa': [0 for i in range(32)],
@@ -359,7 +489,6 @@ def count_categorized_calls(categorized_calls):
 
 ###########################################################################################################################################
 def create_reports_csv(filename, report_type, counted_calls):
-
     # print(counted_calls['answered_1st'])
     # print(counted_calls['answered_aa'])
     # print(counted_calls['missed'])
@@ -377,7 +506,7 @@ def create_reports_csv(filename, report_type, counted_calls):
         a1_tmp = list(range(0, 33))
         for i in range(32):
             try:
-                a1_tmp[i] = int((counted_calls['answered_1st'][i] / counted_calls['total'][i])*100)
+                a1_tmp[i] = int((counted_calls['answered_1st'][i] / counted_calls['total'][i]) * 100)
             except:
                 a1_tmp[i] = 0
         a1_percent = ["Answered 1st (%)"] + a1_tmp[1:32] + a1_tmp[0:1]
@@ -387,7 +516,7 @@ def create_reports_csv(filename, report_type, counted_calls):
         a2_tmp = list(range(0, 33))
         for i in range(32):
             try:
-                a2_tmp[i] = int((counted_calls['answered_aa'][i] / counted_calls['total'][i])*100)
+                a2_tmp[i] = int((counted_calls['answered_aa'][i] / counted_calls['total'][i]) * 100)
             except:
                 a2_tmp[i] = 0
         a2_percent = ["Answered AA(%)"] + a2_tmp[1:32] + a2_tmp[0:1]
@@ -397,7 +526,7 @@ def create_reports_csv(filename, report_type, counted_calls):
         a3_tmp = list(range(0, 33))
         for i in range(32):
             try:
-                a3_tmp[i] = int((counted_calls['missed'][i] / counted_calls['total'][i])*100)
+                a3_tmp[i] = int((counted_calls['missed'][i] / counted_calls['total'][i]) * 100)
             except:
                 a3_tmp[i] = 0
         a3_percent = ["Missed"] + a3_tmp[1:32] + a3_tmp[0:1]
@@ -407,7 +536,7 @@ def create_reports_csv(filename, report_type, counted_calls):
         a4_tmp = list(range(0, 33))
         for i in range(32):
             try:
-                a4_tmp[i] = int((counted_calls['missed_aa_vm'][i] / counted_calls['total'][i])*100)
+                a4_tmp[i] = int((counted_calls['missed_aa_vm'][i] / counted_calls['total'][i]) * 100)
             except:
                 a4_tmp[i] = 0
         a4_percent = ["Missed AA VM(%)"] + a4_tmp[1:32] + a4_tmp[0:1]
@@ -453,7 +582,7 @@ def create_reports_csv(filename, report_type, counted_calls):
         a1_tmp = list(range(0, 26))
         for i in range(25):
             try:
-                a1_tmp[i] = int((counted_calls['answered_1st'][i] / counted_calls['total'][i])*100)
+                a1_tmp[i] = int((counted_calls['answered_1st'][i] / counted_calls['total'][i]) * 100)
             except:
                 a1_tmp[i] = 0
         a1_percent = ["Answered 1st (%)"] + a1_tmp[1:25] + a1_tmp[0:1]
@@ -463,7 +592,7 @@ def create_reports_csv(filename, report_type, counted_calls):
         a2_tmp = list(range(0, 26))
         for i in range(25):
             try:
-                a2_tmp[i] = int((counted_calls['answered_aa'][i] / counted_calls['total'][i])*100)
+                a2_tmp[i] = int((counted_calls['answered_aa'][i] / counted_calls['total'][i]) * 100)
             except:
                 a2_tmp[i] = 0
         a2_percent = ["Answered AA(%)"] + a2_tmp[1:25] + a2_tmp[0:1]
@@ -473,7 +602,7 @@ def create_reports_csv(filename, report_type, counted_calls):
         a3_tmp = list(range(0, 26))
         for i in range(25):
             try:
-                a3_tmp[i] = int((counted_calls['missed'][i] / counted_calls['total'][i])*100)
+                a3_tmp[i] = int((counted_calls['missed'][i] / counted_calls['total'][i]) * 100)
             except:
                 a3_tmp[i] = 0
         a3_percent = ["Missed"] + a3_tmp[1:25] + a3_tmp[0:1]
@@ -483,7 +612,7 @@ def create_reports_csv(filename, report_type, counted_calls):
         a4_tmp = list(range(0, 26))
         for i in range(25):
             try:
-                a4_tmp[i] = int((counted_calls['missed_aa_vm'][i] / counted_calls['total'][i])*100)
+                a4_tmp[i] = int((counted_calls['missed_aa_vm'][i] / counted_calls['total'][i]) * 100)
             except:
                 a4_tmp[i] = 0
         a4_percent = ["Missed AA VM(%)"] + a4_tmp[1:25] + a4_tmp[0:1]
@@ -556,7 +685,7 @@ def get_cdr_records(cdr_file_list, filters):
 def get_cdr_files(startdate, enddate):
     CDR_CURRENT = '/home/gfot/cdr/cdr_data/'
     CDR_ARCHIVE = '/home/gfot/cdr/cdr_archive/'
-    TIMEZONE = +5   # Time shift from GMT (which is the default for CDR filenames)
+    TIMEZONE = +5  # Time shift from GMT (which is the default for CDR filenames)
 
     now = datetime.datetime.now()
     nowdate = now.strftime("%Y%m")
