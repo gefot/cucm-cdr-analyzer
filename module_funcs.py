@@ -16,11 +16,12 @@ import classes
 
 CDR_REPO = '/home/gfot/cdr/cdr_repo/'
 CDR_ARCHIVE = '/home/gfot/cdr/cdr_archive/'
-CDR_DB = "cucm.db"
+CDR_DB = "/home/gfot/cucm-cdr-analyzer/cucm.db"
 
 
 ####################################################################################################
 def populate_db():
+
     try:
         conn = sqlite3.connect(CDR_DB)
         cursor = conn.cursor()
@@ -88,17 +89,28 @@ def populate_db():
                                 huntPilotDN)
                             cursor.execute(insert)
                         except:
-                            # print("Primary Key Error:", globalCallID_callId)
+                            print("Primary Key Error:", globalCallID_callId)
                             continue
                     except Exception as ex:
                         continue
 
                 fd.close()
+
         conn.commit()
         conn.close()
 
     except Exception as ex:
         print(ex)
+
+    # Move file from REPO to ARCHIVE
+    print("Moving Files!!!")
+    for filename in os.listdir(CDR_REPO):
+        try:
+            os_command = "mv {}/{} {}".format(CDR_REPO, filename, CDR_ARCHIVE)
+            os.system(os_command)
+        except:
+            print("Error moving file {}".format(filename))
+            continue
 
 
 ###########################################################################################################################################
@@ -148,9 +160,9 @@ def get_cdr(start_timestamp, end_timestamp, callingNumber, calledNumber):
 
 ###########################################################################################################################################
 def is_cdr_timestamp(ts, department):
-
     if department == "main":
-        if weekday_from_timestamp(ts) == "Mon" or weekday_from_timestamp(ts) == "Tue" or weekday_from_timestamp(ts) == "Wed" or weekday_from_timestamp(ts) == "Thu" or weekday_from_timestamp(ts) == "Fri":
+        if weekday_from_timestamp(ts) == "Mon" or weekday_from_timestamp(ts) == "Tue" or weekday_from_timestamp(ts) == "Wed" or weekday_from_timestamp(
+                ts) == "Thu" or weekday_from_timestamp(ts) == "Fri":
             if int(hour_from_timestamp(ts)) >= 6 and int(hour_from_timestamp(ts)) < 22:
                 return True
 
@@ -187,7 +199,8 @@ def is_cdr_timestamp(ts, department):
                 return True
 
     if department == "it-helpdesk":
-        if weekday_from_timestamp(ts) == "Mon" or weekday_from_timestamp(ts) == "Tue" or weekday_from_timestamp(ts) == "Wed" or weekday_from_timestamp(ts) == "Thu" or weekday_from_timestamp(ts) == "Fri":
+        if weekday_from_timestamp(ts) == "Mon" or weekday_from_timestamp(ts) == "Tue" or weekday_from_timestamp(ts) == "Wed" or weekday_from_timestamp(
+                ts) == "Thu" or weekday_from_timestamp(ts) == "Fri":
             if (int(hour_from_timestamp(ts)) >= 9 and int(hour_from_timestamp(ts)) < 17):
                 return True
 
@@ -196,22 +209,21 @@ def is_cdr_timestamp(ts, department):
 
 ###########################################################################################################################################
 def get_cdr_by_department(start_timestamp, end_timestamp, department):
-
     conn = sqlite3.connect(CDR_DB)
     my_cursor = conn.cursor()
 
     my_select = ""
     if department == "main":
         my_select = "SELECT * from CDR where dateTimeOrigination > '{}' and dateTimeOrigination < '{}' and originalCalledPartyNumber = '{}' ORDER BY dateTimeOrigination ASC".format(
-        start_timestamp, end_timestamp, "1001")
+            start_timestamp, end_timestamp, "1001")
 
     elif department == "1801":
         my_select = "SELECT * from CDR where dateTimeOrigination > '{}' and dateTimeOrigination < '{}' and originalCalledPartyNumber = '{}' ORDER BY dateTimeOrigination ASC".format(
-        start_timestamp, end_timestamp, "5810")
+            start_timestamp, end_timestamp, "5810")
 
     elif department == "specialty":
         my_select = "SELECT * from CDR where dateTimeOrigination > '{}' and dateTimeOrigination < '{}' and originalCalledPartyNumber = '{}' ORDER BY dateTimeOrigination ASC".format(
-        start_timestamp, end_timestamp, "5850")
+            start_timestamp, end_timestamp, "5850")
 
     my_cursor.execute(my_select)
     rows = my_cursor.fetchall()
@@ -225,10 +237,6 @@ def get_cdr_by_department(start_timestamp, end_timestamp, department):
             cdr_records.append(row)
 
     return cdr_records
-
-
-
-
 
 
 ###########################################################################################################################################
