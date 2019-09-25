@@ -240,6 +240,21 @@ def get_cdr_by_department(start_timestamp, end_timestamp, department):
 
 
 ###########################################################################################################################################
+def count_calls(my_DepartmentStats, cdr_records):
+
+    for cdr_record in cdr_records:
+        # print(cdr_record)
+        date = datetime.datetime.fromtimestamp(int(cdr_record[3]))
+        day = int(date.strftime('%d'))
+        hour = int(date.strftime('%H'))
+
+        my_DepartmentStats.total += 1
+        my_DepartmentStats.total_perDay[day] += 1
+        my_DepartmentStats.total_perHour[hour] += 1
+
+
+
+###########################################################################################################################################
 ###########################################################################################################################################
 ###########################################################################################################################################
 def is_cdr_date(date, clinic):
