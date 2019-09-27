@@ -14,37 +14,48 @@ end_timestamp = module_funcs.date_to_timestamp(end_date)
 
 # result = module_funcs.get_cdr(start_timestamp, end_timestamp, "*", "*")
 
-# result = module_funcs.get_cdr_by_department(start_timestamp, end_timestamp, "main")
+# print("\n\n\n----->Main Hospital")
+# result = module_funcs.get_cdr_by_called_number(start_timestamp, end_timestamp, "1001")
 # departmentStats_main = classes.DepartmentStats("main")
-# module_funcs.count_calls(departmentStats_main, result)
+# module_funcs.count_calls_by_call_tree(departmentStats_main, result)
 # print(departmentStats_main)
 #
-# result = module_funcs.get_cdr_by_department(start_timestamp, end_timestamp, "1801")
+# print("\n\n\n----->1801 Clinic")
+# result = module_funcs.get_cdr_by_called_number(start_timestamp, end_timestamp, "5810")
 # departmentStats_1801 = classes.DepartmentStats("1801")
-# module_funcs.count_calls(departmentStats_1801, result)
+# module_funcs.count_calls_by_call_tree(departmentStats_1801, result)
 # print(departmentStats_1801)
 #
-# result = module_funcs.get_cdr_by_department(start_timestamp, end_timestamp, "1200")
+# print("\n\n\n----->1200 Clinic")
+# result = module_funcs.get_cdr_by_called_number(start_timestamp, end_timestamp, "5850")
 # departmentStats_1200 = classes.DepartmentStats("1200")
-# module_funcs.count_calls(departmentStats_1200, result)
+# module_funcs.count_calls_by_call_tree(departmentStats_1200, result)
 # print(departmentStats_1200)
 
-result = module_funcs.get_cdr_by_department(start_timestamp, end_timestamp, "ortho")
-departmentStats_ortho = classes.DepartmentStats("ortho")
-module_funcs.count_calls(departmentStats_ortho, result)
-print(departmentStats_ortho)
+# print("\n\n\n----->Ortho Clinic")
+# result = module_funcs.get_cdr_by_called_number(start_timestamp, end_timestamp, "7002")
+# extensionStats_ortho = classes.ExtensionStats("7002")
+# module_funcs.count_calls_by_extension(extensionStats_ortho, result)
+# print(extensionStats_ortho)
+#
+# print("\n\n\n----->Uro Clinic")
+# result = module_funcs.get_cdr_by_called_number(start_timestamp, end_timestamp, "1733")
+# extensionStats_uro = classes.ExtensionStats("1733")
+# module_funcs.count_calls_by_extension(extensionStats_uro, result)
+# print(extensionStats_uro)
 
-result = module_funcs.get_cdr_by_department(start_timestamp, end_timestamp, "uro")
-departmentStats_uro = classes.DepartmentStats("uro")
-module_funcs.count_calls(departmentStats_uro, result)
-print(departmentStats_uro)
+result = module_funcs.get_cdr_by_called_number(start_timestamp, end_timestamp, "3333")
+huntpilotStats_it = classes.HuntPilotStats("3333")
+module_funcs.count_calls_by_hunt_pilot(huntpilotStats_it, result)
+print(huntpilotStats_it)
+
 
 print("\n\nRutime = ", datetime.datetime.now() - run_start)
 
-# result = module_funcs.get_cdr_record_by_callID("15265399")
-# for row in result:
-#     print(datetime.datetime.fromtimestamp(int(row[3])))
-#     print(row)
+result = module_funcs.get_cdr_record_by_callID("15261548")
+for row in result:
+    print(datetime.datetime.fromtimestamp(int(row[3])))
+    print(row)
 
 
 

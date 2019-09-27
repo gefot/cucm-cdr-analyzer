@@ -179,15 +179,17 @@ def get_cdr_record_by_callID(callID):
 
 
 ###########################################################################################################################################
-def is_cdr_timestamp(ts, department):
+def get_cdr_by_schedule(ts, extension):
 
-    if department == "main":
+    # Main Hospital Extension -> AA
+    if extension == "1001":
         if weekday_from_timestamp(ts) == "Mon" or weekday_from_timestamp(ts) == "Tue" or weekday_from_timestamp(ts) == "Wed" or weekday_from_timestamp(
                 ts) == "Thu" or weekday_from_timestamp(ts) == "Fri":
             if int(hour_from_timestamp(ts)) >= 6 and int(hour_from_timestamp(ts)) < 22:
                 return True
 
-    if department == "1801":
+    # 1801 Clinic Hunt Pilot -> AA
+    if extension == "5810":
         if weekday_from_timestamp(ts) == "Mon" or weekday_from_timestamp(ts) == "Tue" or weekday_from_timestamp(ts) == "Wed" or weekday_from_timestamp(ts) == "Thu":
             if int(hour_from_timestamp(ts)) >= 8 and int(hour_from_timestamp(ts)) < 17:
                 return True
@@ -195,7 +197,8 @@ def is_cdr_timestamp(ts, department):
             if (int(hour_from_timestamp(ts)) >= 8 and int(hour_from_timestamp(ts)) < 12) or (int(hour_from_timestamp(ts)) >= 13 and int(hour_from_timestamp(ts)) < 16):
                 return True
 
-    if department == "1200":
+    # 1200 Clinic Hunt Pilot -> AA
+    if extension == "5850":
         if weekday_from_timestamp(ts) == "Mon" or weekday_from_timestamp(ts) == "Tue" or weekday_from_timestamp(ts) == "Wed" or weekday_from_timestamp(ts) == "Thu":
             if (int(hour_from_timestamp(ts)) >= 8 and int(hour_from_timestamp(ts)) < 12) or (int(hour_from_timestamp(ts)) >= 13 and int(hour_from_timestamp(ts)) < 17):
                 return True
@@ -203,7 +206,8 @@ def is_cdr_timestamp(ts, department):
             if (int(hour_from_timestamp(ts)) >= 8 and int(hour_from_timestamp(ts)) < 12):
                 return True
 
-    if department == "ortho":
+    # Orthopedic Clinic Extension
+    if extension == "7002":
         if weekday_from_timestamp(ts) == "Mon" or weekday_from_timestamp(ts) == "Tue" or weekday_from_timestamp(ts) == "Wed" or weekday_from_timestamp(ts) == "Thu":
             if (int(hour_from_timestamp(ts)) >= 8 and int(hour_from_timestamp(ts)) < 17):
                 return True
@@ -211,7 +215,8 @@ def is_cdr_timestamp(ts, department):
             if (int(hour_from_timestamp(ts)) >= 8 and int(hour_from_timestamp(ts)) < 12):
                 return True
 
-    if department == "uro":
+    # Urology Clinic Extension
+    if extension == "1733":
         if weekday_from_timestamp(ts) == "Mon" or weekday_from_timestamp(ts) == "Tue" or weekday_from_timestamp(ts) == "Wed" or weekday_from_timestamp(ts) == "Thu":
             if (int(hour_from_timestamp(ts)) >= 8 and int(hour_from_timestamp(ts)) < 12) or (int(hour_from_timestamp(ts)) >= 13 and int(hour_from_timestamp(ts)) < 17):
                 return True
@@ -219,7 +224,8 @@ def is_cdr_timestamp(ts, department):
             if (int(hour_from_timestamp(ts)) >= 8 and int(hour_from_timestamp(ts)) < 12):
                 return True
 
-    if department == "it-helpdesk":
+    # IT Helpdesk Hunt Pilot
+    if extension == "3333":
         if weekday_from_timestamp(ts) == "Mon" or weekday_from_timestamp(ts) == "Tue" or weekday_from_timestamp(ts) == "Wed" or weekday_from_timestamp(
                 ts) == "Thu" or weekday_from_timestamp(ts) == "Fri":
             if (int(hour_from_timestamp(ts)) >= 9 and int(hour_from_timestamp(ts)) < 17):
@@ -229,31 +235,13 @@ def is_cdr_timestamp(ts, department):
 
 
 ###########################################################################################################################################
-def get_cdr_by_department(start_timestamp, end_timestamp, department):
+def get_cdr_by_called_number(start_timestamp, end_timestamp, extension):
 
     conn = sqlite3.connect(CDR_DB)
     my_cursor = conn.cursor()
 
-    my_select = ""
-    if department == "main":
-        my_select = "SELECT * from CDR where dateTimeOrigination > '{}' and dateTimeOrigination < '{}' and originalCalledPartyNumber = '{}' ORDER BY dateTimeOrigination ASC".format(
-            start_timestamp, end_timestamp, "1001")
-
-    elif department == "1801":
-        my_select = "SELECT * from CDR where dateTimeOrigination > '{}' and dateTimeOrigination < '{}' and originalCalledPartyNumber = '{}' ORDER BY dateTimeOrigination ASC".format(
-            start_timestamp, end_timestamp, "5810")
-
-    elif department == "1200":
-        my_select = "SELECT * from CDR where dateTimeOrigination > '{}' and dateTimeOrigination < '{}' and originalCalledPartyNumber = '{}' ORDER BY dateTimeOrigination ASC".format(
-            start_timestamp, end_timestamp, "5850")
-
-    elif department == "ortho":
-        my_select = "SELECT * from CDR where dateTimeOrigination > '{}' and dateTimeOrigination < '{}' and originalCalledPartyNumber = '{}' ORDER BY dateTimeOrigination ASC".format(
-            start_timestamp, end_timestamp, "7002")
-
-    elif department == "uro":
-        my_select = "SELECT * from CDR where dateTimeOrigination > '{}' and dateTimeOrigination < '{}' and originalCalledPartyNumber = '{}' ORDER BY dateTimeOrigination ASC".format(
-            start_timestamp, end_timestamp, "1733")
+    my_select = "SELECT * from CDR where dateTimeOrigination > '{}' and dateTimeOrigination < '{}' and originalCalledPartyNumber = '{}' ORDER BY dateTimeOrigination ASC".format(
+        start_timestamp, end_timestamp, extension)
 
     my_cursor.execute(my_select)
     rows = my_cursor.fetchall()
@@ -261,16 +249,14 @@ def get_cdr_by_department(start_timestamp, end_timestamp, department):
 
     cdr_records = []
     for row in rows:
-        if is_cdr_timestamp(int(row[3]), department):
-            # print(datetime.datetime.fromtimestamp(int(row[3])), weekday_from_timestamp(int(row[3])))
-            # print(row)
+        if get_cdr_by_schedule(int(row[3]), extension):
             cdr_records.append(row)
 
     return cdr_records
 
 
 ###########################################################################################################################################
-def count_calls(my_DepartmentStats, cdr_records):
+def count_calls_by_call_tree(my_departmentStats, cdr_records):
 
     for cdr_record in cdr_records:
         # print(cdr_record)
@@ -278,9 +264,9 @@ def count_calls(my_DepartmentStats, cdr_records):
         day = int(date.strftime('%d'))
         hour = int(date.strftime('%H'))
 
-        my_DepartmentStats.total += 1
-        my_DepartmentStats.total_perDay[day] += 1
-        my_DepartmentStats.total_perHour[hour] += 1
+        my_departmentStats.total += 1
+        my_departmentStats.total_perDay[day] += 1
+        my_departmentStats.total_perHour[hour] += 1
 
         callID = cdr_record[0]
         callingNumber = cdr_record[4]
@@ -293,111 +279,174 @@ def count_calls(my_DepartmentStats, cdr_records):
 
         ############################################################
         # Main Hospital Calls (this means that calledNumber is 1001) - 8307758566
-        if my_DepartmentStats.department == "main":
+        if my_departmentStats.department == "main":
             # Answered and missed from 1001
             if finalCalledNumber in ["1001", "5701", "5702", "5703", "5704", "5705"] and lastRedirectNumber == "1001":
                 if duration != "0":
-                    my_DepartmentStats.answered_1stLevel += 1
-                    my_DepartmentStats.answered_1stLevel_perDay[day] += 1
-                    my_DepartmentStats.answered_1stLevel_perHour[hour] += 1
+                    my_departmentStats.answered_1stLevel += 1
+                    my_departmentStats.answered_1stLevel_perDay[day] += 1
+                    my_departmentStats.answered_1stLevel_perHour[hour] += 1
                 else:
-                    my_DepartmentStats.missed_1stLevel += 1
-                    my_DepartmentStats.missed_1stLevel_perDay[day] += 1
-                    my_DepartmentStats.missed_1stLevel_perHour[hour] += 1
+                    my_departmentStats.missed_1stLevel += 1
+                    my_departmentStats.missed_1stLevel_perDay[day] += 1
+                    my_departmentStats.missed_1stLevel_perHour[hour] += 1
             # Answered and missed forwarded from 1001 to other extensions
             elif finalCalledNumber not in ["1001", "5701", "5702", "5703", "5704", "5705"] and lastRedirectNumber == "1001":
                 if duration != "0":
-                    my_DepartmentStats.answered_1stLevel += 1
-                    my_DepartmentStats.answered_1stLevel_perDay[day] += 1
-                    my_DepartmentStats.answered_1stLevel_perHour[hour] += 1
+                    my_departmentStats.answered_1stLevel += 1
+                    my_departmentStats.answered_1stLevel_perDay[day] += 1
+                    my_departmentStats.answered_1stLevel_perHour[hour] += 1
                 else:
-                    my_DepartmentStats.missed_1stLevel += 1
-                    my_DepartmentStats.missed_1stLevel_perDay[day] += 1
-                    my_DepartmentStats.missed_1stLevel_perHour[hour] += 1
+                    my_departmentStats.missed_1stLevel += 1
+                    my_departmentStats.missed_1stLevel_perDay[day] += 1
+                    my_departmentStats.missed_1stLevel_perHour[hour] += 1
             # Calls redirected to AA (not known in finally answered or not) - This can be further categorized
             elif finalCalledNumber == "5500" and lastRedirectNumber == "5800":
-                my_DepartmentStats.answered_aa += 1
-                my_DepartmentStats.answered_aa_perDay[day] += 1
-                my_DepartmentStats.answered_aa_perHour[hour] += 1
+                my_departmentStats.answered_aa += 1
+                my_departmentStats.answered_aa_perDay[day] += 1
+                my_departmentStats.answered_aa_perHour[hour] += 1
             # Uncategorized calls (eg. calls returned to 1001 from AA - counted as answered)
             else:
-                my_DepartmentStats.answered_1stLevel += 1
-                my_DepartmentStats.answered_1stLevel_perDay[day] += 1
-                my_DepartmentStats.answered_1stLevel_perHour[hour] += 1
+                my_departmentStats.answered_1stLevel += 1
+                my_departmentStats.answered_1stLevel_perDay[day] += 1
+                my_departmentStats.answered_1stLevel_perHour[hour] += 1
 
         ##########################################################
         # 1801 Clinic Calls (this means that calledNumber is 5810) - 8307689200
-        if my_DepartmentStats.department == "1801":
+        if my_departmentStats.department == "1801":
             # Answered and missed from a member of the Hunt Pilot 5810
             if finalCalledNumber == "5810" and lastRedirectNumber == "5810":
                 if duration != "0":
-                    my_DepartmentStats.answered_1stLevel += 1
-                    my_DepartmentStats.answered_1stLevel_perDay[day] += 1
-                    my_DepartmentStats.answered_1stLevel_perHour[hour] += 1
+                    my_departmentStats.answered_1stLevel += 1
+                    my_departmentStats.answered_1stLevel_perDay[day] += 1
+                    my_departmentStats.answered_1stLevel_perHour[hour] += 1
                 else:
-                    my_DepartmentStats.missed_1stLevel += 1
-                    my_DepartmentStats.missed_1stLevel_perDay[day] += 1
-                    my_DepartmentStats.missed_1stLevel_perHour[hour] += 1
+                    my_departmentStats.missed_1stLevel += 1
+                    my_departmentStats.missed_1stLevel_perDay[day] += 1
+                    my_departmentStats.missed_1stLevel_perHour[hour] += 1
             # Calls redirected to AA (not known in finally answered or not) - This can be further categorized
             elif finalCalledNumber == "5500" and lastRedirectNumber == "5811":
-                my_DepartmentStats.answered_aa += 1
-                my_DepartmentStats.answered_aa_perDay[day] += 1
-                my_DepartmentStats.answered_aa_perHour[hour] += 1
+                my_departmentStats.answered_aa += 1
+                my_departmentStats.answered_aa_perDay[day] += 1
+                my_departmentStats.answered_aa_perHour[hour] += 1
             # Uncategorized calls
             else:
-                my_DepartmentStats.answered_1stLevel += 1
-                my_DepartmentStats.answered_1stLevel_perDay[day] += 1
-                my_DepartmentStats.answered_1stLevel_perHour[hour] += 1
+                my_departmentStats.answered_1stLevel += 1
+                my_departmentStats.answered_1stLevel_perDay[day] += 1
+                my_departmentStats.answered_1stLevel_perHour[hour] += 1
 
         ##########################################################
         # 1200 Clinic Calls (this means that calledNumber is 5850) - 8307742505
-        if my_DepartmentStats.department == "1200":
+        if my_departmentStats.department == "1200":
             # Answered and missed from a member of the Hunt Pilot 5850
             if finalCalledNumber == "5850" and lastRedirectNumber == "5850":
                 if duration != "0":
-                    my_DepartmentStats.answered_1stLevel += 1
-                    my_DepartmentStats.answered_1stLevel_perDay[day] += 1
-                    my_DepartmentStats.answered_1stLevel_perHour[hour] += 1
+                    my_departmentStats.answered_1stLevel += 1
+                    my_departmentStats.answered_1stLevel_perDay[day] += 1
+                    my_departmentStats.answered_1stLevel_perHour[hour] += 1
                 else:
-                    my_DepartmentStats.missed_1stLevel += 1
-                    my_DepartmentStats.missed_1stLevel_perDay[day] += 1
-                    my_DepartmentStats.missed_1stLevel_perHour[hour] += 1
+                    my_departmentStats.missed_1stLevel += 1
+                    my_departmentStats.missed_1stLevel_perDay[day] += 1
+                    my_departmentStats.missed_1stLevel_perHour[hour] += 1
             # Calls redirected to AA (not known in finally answered or not) - This can be further categorized
             elif finalCalledNumber == "5500" and lastRedirectNumber == "5851":
-                my_DepartmentStats.answered_aa += 1
-                my_DepartmentStats.answered_aa_perDay[day] += 1
-                my_DepartmentStats.answered_aa_perHour[hour] += 1
+                my_departmentStats.answered_aa += 1
+                my_departmentStats.answered_aa_perDay[day] += 1
+                my_departmentStats.answered_aa_perHour[hour] += 1
             # Uncategorized calls
             else:
-                my_DepartmentStats.answered_1stLevel += 1
-                my_DepartmentStats.answered_1stLevel_perDay[day] += 1
-                my_DepartmentStats.answered_1stLevel_perHour[hour] += 1
+                my_departmentStats.answered_1stLevel += 1
+                my_departmentStats.answered_1stLevel_perDay[day] += 1
+                my_departmentStats.answered_1stLevel_perHour[hour] += 1
 
-        ##########################################################
-        # Ortho Clinic Calls (this means that calledNumber is 7002 - single number) - 8307742505
-        if my_DepartmentStats.department == "ortho":
+
+###########################################################################################################################################
+def count_calls_by_extension(my_extensionStats, cdr_records):
+
+    for cdr_record in cdr_records:
+        date = datetime.datetime.fromtimestamp(int(cdr_record[3]))
+        day = int(date.strftime('%d'))
+        hour = int(date.strftime('%H'))
+
+        my_extensionStats.total += 1
+        my_extensionStats.total_perDay[day] += 1
+        my_extensionStats.total_perHour[hour] += 1
+
+        callID = cdr_record[0]
+        callingNumber = cdr_record[4]
+        calledNumber = cdr_record[5]
+        finalCalledNumber = cdr_record[6]
+        lastRedirectNumber = cdr_record[7]
+        duration = cdr_record[8]
+        origDevice = cdr_record[9]
+        destDevice = cdr_record[10]
+
+        # Answered and missed calls to the corresponding extension
+        if finalCalledNumber == my_extensionStats.extension and lastRedirectNumber == my_extensionStats.extension:
             if duration != "0":
-                my_DepartmentStats.answered_1stLevel += 1
-                my_DepartmentStats.answered_1stLevel_perDay[day] += 1
-                my_DepartmentStats.answered_1stLevel_perHour[hour] += 1
+                my_extensionStats.answered += 1
+                my_extensionStats.answered_perDay[day] += 1
+                my_extensionStats.answered_perHour[hour] += 1
             else:
-                my_DepartmentStats.missed_1stLevel += 1
-                my_DepartmentStats.missed_1stLevel_perDay[day] += 1
-                my_DepartmentStats.missed_1stLevel_perHour[hour] += 1
+                my_extensionStats.missed += 1
+                my_extensionStats.missed_perDay[day] += 1
+                my_extensionStats.missed_perHour[hour] += 1
 
-        ##########################################################
-        # Urology Clinic Calls (this means that calledNumber is 1733 - single number) - 8307031733
-        if my_DepartmentStats.department == "uro":
+        # Calls forwarded to VM
+        elif finalCalledNumber == "5500" and lastRedirectNumber == my_extensionStats.extension:
+            my_extensionStats.answered_vm += 1
+            my_extensionStats.answered_vm_perDay[day] += 1
+            my_extensionStats.answered_vm_perHour[hour] += 1
+
+        # Calls arrives to extension by another extension
+        else:
+            my_extensionStats.forwarded += 1
+            my_extensionStats.forwarded_perDay[day] += 1
+            my_extensionStats.forwarded_perHour[hour] += 1
+
+
+###########################################################################################################################################
+def count_calls_by_hunt_pilot(my_huntpilotStats, cdr_records):
+
+    for cdr_record in cdr_records:
+        date = datetime.datetime.fromtimestamp(int(cdr_record[3]))
+        day = int(date.strftime('%d'))
+        hour = int(date.strftime('%H'))
+
+        my_huntpilotStats.total += 1
+        my_huntpilotStats.total_perDay[day] += 1
+        my_huntpilotStats.total_perHour[hour] += 1
+
+        callID = cdr_record[0]
+        callingNumber = cdr_record[4]
+        calledNumber = cdr_record[5]
+        finalCalledNumber = cdr_record[6]
+        lastRedirectNumber = cdr_record[7]
+        duration = cdr_record[8]
+        origDevice = cdr_record[9]
+        destDevice = cdr_record[10]
+
+        # Answered and missed calls to the corresponding extension
+        if finalCalledNumber == my_huntpilotStats.huntpilot and lastRedirectNumber == my_huntpilotStats.huntpilot:
             if duration != "0":
-                print(cdr_record)
-                my_DepartmentStats.answered_1stLevel += 1
-                my_DepartmentStats.answered_1stLevel_perDay[day] += 1
-                my_DepartmentStats.answered_1stLevel_perHour[hour] += 1
+                my_huntpilotStats.answered += 1
+                my_huntpilotStats.answered_perDay[day] += 1
+                my_huntpilotStats.answered_perHour[hour] += 1
             else:
-                my_DepartmentStats.missed_1stLevel += 1
-                my_DepartmentStats.missed_1stLevel_perDay[day] += 1
-                my_DepartmentStats.missed_1stLevel_perHour[hour] += 1
-
+                my_huntpilotStats.missed += 1
+                my_huntpilotStats.missed_perDay[day] += 1
+                my_huntpilotStats.missed_perHour[hour] += 1
+        # Calls forwarded to VM
+        elif finalCalledNumber == "5500":
+            my_huntpilotStats.answered_vm += 1
+            my_huntpilotStats.answered_vm_perDay[day] += 1
+            my_huntpilotStats.answered_vm_perHour[hour] += 1
+        elif finalCalledNumber == "3336":
+            my_huntpilotStats.answered += 1
+            my_huntpilotStats.answered_perDay[day] += 1
+            my_huntpilotStats.answered_perHour[hour] += 1
+        else:
+            print(cdr_record)
 
 
 ###########################################################################################################################################
