@@ -1,5 +1,6 @@
 import time
 
+class DepartmentStats:
     def __init__(self, department):
         self.department = department
 
