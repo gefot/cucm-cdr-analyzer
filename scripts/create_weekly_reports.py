@@ -13,12 +13,8 @@ date = datetime.datetime.today().strftime('%Y%m%d%H%M%S')
 # end_timestamp = module_funcs.date_to_timestamp(end_date)
 
 week_timestamp_range = module_funcs.week_timestamp_range_from_date(date)
-day_timestamp_range = module_funcs.day_timestamp_range_from_date(date)
-
 start_timestamp = week_timestamp_range[0]
 end_timestamp   = week_timestamp_range[1]
-start_timestamp = day_timestamp_range[0]
-end_timestamp   = day_timestamp_range[1]
 
 print("\n\n\n----->Main Hospital")
 cdr_records = module_funcs.get_cdr_by_called_number(start_timestamp, end_timestamp, "1001")

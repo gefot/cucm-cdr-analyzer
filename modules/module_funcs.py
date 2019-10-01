@@ -132,6 +132,26 @@ def hour_from_timestamp(my_timestamp):
 
 
 ###########################################################################################################################################
+def get_last_day_of_month(my_date):
+
+    last_day_of_the_month = 0
+    # last_day_of_the_month = datetime.datetime(my_date.year, (my_date + relativedelta(months=1)).month, 1) - datetime.timedelta(days=1)
+    return last_day_of_the_month
+
+
+###########################################################################################################################################
+def day_timestamp_range_from_date(my_date):
+    dt = datetime.datetime.strptime(my_date, '%Y%m%d%H%M%S')
+
+    my_start = dt.replace(hour=0, minute=1, second=0).strftime('%Y%m%d%H%M%S')
+    my_end = dt.replace(hour=23, minute=59, second=0).strftime('%Y%m%d%H%M%S')
+    print("inside day_timestamp_range_from_date: ", my_start, my_end)
+    day_range = [date_to_timestamp(my_start), date_to_timestamp(my_end)]
+
+    return day_range
+
+
+###########################################################################################################################################
 def week_timestamp_range_from_date(my_date):
     dt = datetime.datetime.strptime(my_date, '%Y%m%d%H%M%S')
 
@@ -142,22 +162,23 @@ def week_timestamp_range_from_date(my_date):
     my_end = end.replace(hour=23, minute=59, second=0).strftime('%Y%m%d%H%M%S')
     print("inside week_timestamp_range_from_date: ", my_start, my_end)
     week_range = [date_to_timestamp(my_start), date_to_timestamp(my_end)]
-    # print(week_range)
 
     return week_range
 
 
 ###########################################################################################################################################
-def day_timestamp_range_from_date(my_date):
+def month_timestamp_range_from_date(my_date):
     dt = datetime.datetime.strptime(my_date, '%Y%m%d%H%M%S')
 
-    my_start = dt.replace(hour=0, minute=1, second=0).strftime('%Y%m%d%H%M%S')
-    my_end = dt.replace(hour=23, minute=59, second=0).strftime('%Y%m%d%H%M%S')
-    print(my_start, my_end)
-    day_range = [date_to_timestamp(my_start), date_to_timestamp(my_end)]
-    # print(day_range)
+    start = dt - datetime.timedelta(days=dt.weekday())
+    end = start + datetime.timedelta(days=6)
 
-    return day_range
+    my_start = start.replace(day=1, hour=0, minute=1, second=0).strftime('%Y%m%d%H%M%S')
+    my_end = end.replace(hour=23, minute=59, second=0).strftime('%Y%m%d%H%M%S')
+    print("inside week_timestamp_range_from_date: ", my_start, my_end)
+    week_range = [date_to_timestamp(my_start), date_to_timestamp(my_end)]
+
+    return week_range
 
 
 ###########################################################################################################################################
