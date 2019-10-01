@@ -1,5 +1,6 @@
 import time
 
+
 class DepartmentStats:
     def __init__(self, department):
         self.department = department
@@ -58,21 +59,15 @@ class ExtensionStats:
         self.answered_vm_perDay = [0 for i in range(32)]
         self.answered_vm_perHour = [0 for i in range(24)]
 
-        self.forwarded = 0
-        self.forwarded_perDay = [0 for i in range(32)]
-        self.forwarded_perHour = [0 for i in range(24)]
-
     def __str__(self):
         return "\ntotal: {}\ntotal_perDay: {}\ntotal_perHour: {}" \
                "\n\nanswered: {}\nanswered_perDay: {}\nanswered_perHour: {}" \
                "\n\nmissed: {}\nmissed_perDay: {}\nmissed_perHour: {}" \
-               "\n\nanswered_vm: {}\nanswered_vm_perDay: {}\nanswered_vm_perHour: {}" \
-               "\n\nforwarded: {}\nforwarded_perDay: {}\nforwarded_perHour: {}".format(
+               "\n\nanswered_vm: {}\nanswered_vm_perDay: {}\nanswered_vm_perHour: {}".format(
             self.total, self.total_perDay, self.total_perHour,
             self.answered, self.answered_perDay, self.answered_perHour,
             self.missed, self.missed_perDay, self.missed_perHour,
-            self.answered_vm, self.answered_vm_perDay, self.answered_vm_perHour,
-            self.forwarded, self.forwarded_perDay, self.forwarded_perHour)
+            self.answered_vm, self.answered_vm_perDay, self.answered_vm_perHour)
 
 
 ###########################################################################################################################################
@@ -96,57 +91,19 @@ class HuntPilotStats:
         self.answered_vm_perDay = [0 for i in range(32)]
         self.answered_vm_perHour = [0 for i in range(24)]
 
-        self.forwarded = 0
-        self.forwarded_perDay = [0 for i in range(32)]
-        self.forwarded_perHour = [0 for i in range(24)]
+        self.answeredBy = {}
 
     def __str__(self):
         return "\ntotal: {}\ntotal_perDay: {}\ntotal_perHour: {}" \
                "\n\nanswered: {}\nanswered_perDay: {}\nanswered_perHour: {}" \
                "\n\nmissed: {}\nmissed_perDay: {}\nmissed_perHour: {}" \
                "\n\nanswered_vm: {}\nanswered_vm_perDay: {}\nanswered_vm_perHour: {}" \
-               "\n\nforwarded: {}\nforwarded_perDay: {}\nforwarded_perHour: {}".format(
+               "\n\nansweredBy: {}".format(
             self.total, self.total_perDay, self.total_perHour,
             self.answered, self.answered_perDay, self.answered_perHour,
             self.missed, self.missed_perDay, self.missed_perHour,
             self.answered_vm, self.answered_vm_perDay, self.answered_vm_perHour,
-            self.forwarded, self.forwarded_perDay, self.forwarded_perHour)
-
-###########################################################################################################################################
-class CDRRecord:
-
-    def __init__(self, global_id, date, calling_num, called_num, final_called_num, last_redirect_num, duration, origDeviceName, destDeviceName):
-        self.global_id = global_id
-        self.date = date
-        self.calling_num = calling_num
-        self.called_num = called_num
-        self.final_called_num = final_called_num
-        self.last_redirect_num = last_redirect_num
-        self.duration = duration
-        self.origDeviceName = origDeviceName
-        self.destDeviceName = destDeviceName
-
-    def __str__(self):
-        return "{}, {}, {}, {}, {}, {}, {}, {}, {}".format(self.global_id, self.date, self.calling_num, self.called_num,
-                                                           self.final_called_num, self.last_redirect_num,
-                                                           time.strftime("%M:%S", time.gmtime(int(int(self.duration)))), self.origDeviceName, self.destDeviceName)
-
-
-###########################################################################################################################################
-class CategorizedCall:
-
-    def __init__(self, call_type, handle):
-        self.call_type = call_type
-        self.handle = handle
-
-        self.answered_by = "unknown"
-        self.option = "unknown"
-
-        self.cdr_record = "unknown"
-        self.cdr_record_aa = "unknown"
-
-    def __str__(self):
-        return "{}, {}, {}, {}".format(self.call_type, self.handle, self.answered_by, self.option)
+            self.answeredBy)
 
 
 ###########################################################################################################################################
