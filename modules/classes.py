@@ -28,6 +28,7 @@ class DepartmentStats:
         self.answered_aa_perHour = [0 for i in range(24)]
         self.answered_aa_perHour_percent = [0 for i in range(24)]
 
+
         # TODO
         self.missed_aa = 0
         self.missed_aa_perDay = [0 for i in range(32)]
@@ -89,6 +90,11 @@ class DepartmentStats:
             except:
                 self.answered_aa_perHour_percent[i] = str(0.0) + "%"
 
+    def create_csv_file(self, filename):
+
+        f = open(filename, "w")
+        f.write("lala")
+        f.close()
 
 ###########################################################################################################################################
 class ExtensionStats:

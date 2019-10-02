@@ -132,13 +132,6 @@ def hour_from_timestamp(my_timestamp):
 
 
 ###########################################################################################################################################
-def get_last_day_of_month(my_date):
-    last_day_of_the_month = 0
-    # last_day_of_the_month = datetime.datetime(my_date.year, (my_date + relativedelta(months=1)).month, 1) - datetime.timedelta(days=1)
-    return last_day_of_the_month
-
-
-###########################################################################################################################################
 def day_timestamp_range_from_date(my_date):
     dt = datetime.datetime.strptime(my_date, '%Y%m%d%H%M%S')
 
