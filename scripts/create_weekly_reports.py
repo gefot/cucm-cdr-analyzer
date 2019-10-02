@@ -4,8 +4,8 @@ from modules import module_funcs
 from modules import classes
 
 
-# date = "20190911000000"
-date = datetime.datetime.today().strftime('%Y%m%d%H%M%S')
+date = "20190911000000"
+# date = datetime.datetime.today().strftime('%Y%m%d%H%M%S')
 
 # start_date = "20190916060000"
 # end_date   = "20190920235900"

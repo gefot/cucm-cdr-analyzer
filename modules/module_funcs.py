@@ -133,7 +133,6 @@ def hour_from_timestamp(my_timestamp):
 
 ###########################################################################################################################################
 def get_last_day_of_month(my_date):
-
     last_day_of_the_month = 0
     # last_day_of_the_month = datetime.datetime(my_date.year, (my_date + relativedelta(months=1)).month, 1) - datetime.timedelta(days=1)
     return last_day_of_the_month
@@ -167,18 +166,22 @@ def week_timestamp_range_from_date(my_date):
 
 
 ###########################################################################################################################################
+def last_day_of_month(any_day):
+    next_month = any_day.replace(day=28) + datetime.timedelta(days=4)  # this will never fail
+    return next_month - datetime.timedelta(days=next_month.day)
+
+
+###########################################################################################################################################
 def month_timestamp_range_from_date(my_date):
     dt = datetime.datetime.strptime(my_date, '%Y%m%d%H%M%S')
 
-    start = dt - datetime.timedelta(days=dt.weekday())
-    end = start + datetime.timedelta(days=6)
-
-    my_start = start.replace(day=1, hour=0, minute=1, second=0).strftime('%Y%m%d%H%M%S')
-    my_end = end.replace(hour=23, minute=59, second=0).strftime('%Y%m%d%H%M%S')
+    last_day = last_day_of_month(dt)
+    my_start = dt.replace(day=1, hour=0, minute=1, second=0).strftime('%Y%m%d%H%M%S')
+    my_end = dt.replace(day=int(last_day.strftime('%d')), hour=23, minute=59, second=0).strftime('%Y%m%d%H%M%S')
     print("inside week_timestamp_range_from_date: ", my_start, my_end)
-    week_range = [date_to_timestamp(my_start), date_to_timestamp(my_end)]
+    month_range = [date_to_timestamp(my_start), date_to_timestamp(my_end)]
 
-    return week_range
+    return month_range
 
 
 ###########################################################################################################################################
