@@ -308,9 +308,9 @@ def count_calls_by_call_tree(my_departmentStats, cdr_records):
         my_departmentStats.total_perHour[hour] += 1
 
         # Main Hospital Calls (this means that calledNumber is 1001) - 8307758566
-        if my_departmentStats.department == "main":
+        if my_departmentStats.department == "Main_Hospital":
             # Answered and missed from 1001
-            if finalCalledNumber in ["1001", "5701", "5702", "5703", "5704", "5705"] and lastRedirectNumber == "1001":
+            if finalCalledNumber in ["1001", "5701", "5702", "5703", "5704", "5705"] and lastRedirectNumber == my_departmentStats.extension:
                 if duration != "0":
                     my_departmentStats.answered_1stLevel += 1
                     my_departmentStats.answered_1stLevel_perDay[day] += 1
@@ -320,7 +320,7 @@ def count_calls_by_call_tree(my_departmentStats, cdr_records):
                     my_departmentStats.missed_1stLevel_perDay[day] += 1
                     my_departmentStats.missed_1stLevel_perHour[hour] += 1
             # Answered and missed forwarded from 1001 to other extensions
-            elif finalCalledNumber not in ["1001", "5701", "5702", "5703", "5704", "5705"] and lastRedirectNumber == "1001":
+            elif finalCalledNumber not in ["1001", "5701", "5702", "5703", "5704", "5705"] and lastRedirectNumber == my_departmentStats.extension:
                 if duration != "0":
                     my_departmentStats.answered_1stLevel += 1
                     my_departmentStats.answered_1stLevel_perDay[day] += 1
@@ -341,9 +341,9 @@ def count_calls_by_call_tree(my_departmentStats, cdr_records):
                 my_departmentStats.answered_1stLevel_perHour[hour] += 1
 
         # 1801 Clinic Calls (this means that calledNumber is 5810) - 8307689200
-        if my_departmentStats.department == "1801":
+        if my_departmentStats.department == "1801_Clinic":
             # Answered and missed from a member of the Hunt Pilot 5810
-            if finalCalledNumber == "5810" and lastRedirectNumber == "5810":
+            if finalCalledNumber == my_departmentStats.extension and lastRedirectNumber == my_departmentStats.extension:
                 if duration != "0":
                     my_departmentStats.answered_1stLevel += 1
                     my_departmentStats.answered_1stLevel_perDay[day] += 1
@@ -364,9 +364,9 @@ def count_calls_by_call_tree(my_departmentStats, cdr_records):
                 my_departmentStats.answered_1stLevel_perHour[hour] += 1
 
         # 1200 Clinic Calls (this means that calledNumber is 5850) - 8307742505
-        if my_departmentStats.department == "1200":
+        if my_departmentStats.department == "Specialty_Clinic":
             # Answered and missed from a member of the Hunt Pilot 5850
-            if finalCalledNumber == "5850" and lastRedirectNumber == "5850":
+            if finalCalledNumber == my_departmentStats.extension and lastRedirectNumber == my_departmentStats.extension:
                 if duration != "0":
                     my_departmentStats.answered_1stLevel += 1
                     my_departmentStats.answered_1stLevel_perDay[day] += 1
@@ -501,4 +501,48 @@ def count_calls_by_hunt_pilot(my_huntpilotStats, cdr_records):
             my_huntpilotStats.total_perDay[day] -= 1
             my_huntpilotStats.total_perHour[hour] -= 1
 
+
 ###########################################################################################################################################
+def send_mail(username, password, mail_server, toaddr, subject, body, attachments, login, tls):
+    fromaddr = username
+    # text = "This will be sent as text"
+
+    msg = MIMEMultipart()
+    msg['To'] = ", ".join(toaddr)
+    msg['From'] = fromaddr
+    msg['Subject'] = subject
+
+    ### Attach e-mail body
+    # part1 = MIMEText(text, 'plain')
+    part1 = MIMEText(body, 'html')
+    msg.attach(part1)
+
+    ### Attach e-mail attachments
+    for attachment in attachments:
+        # my_attachment = open(attachment, "rb")
+        # file_name = os.path.basename(attachment)
+        part2 = MIMEBase('application', 'octet-stream')
+        part2.set_payload(open(attachment, "rb").read())
+        part2.add_header('Content-Disposition', 'attachment', filename=os.path.basename(attachment))
+        encoders.encode_base64(part2)
+        msg.attach(part2)
+        # part2.set_payload(open(attachment, "rb").read())
+        # print(attachment)
+        # part2.add_header('Content-Disposition', 'attachment; filename="%s"' % os.path.basename(attachment))
+        # encoders.encode_base64(part2)
+        # msg.attach(part2)
+        # print(part2)
+
+    mailserver = smtplib.SMTP(mail_server)
+    # mailserver.ehlo()
+    if tls:
+        mailserver.starttls()
+    # mailserver.ehlo()
+    if login:
+        mailserver.login(username, password)
+    mailserver.sendmail(fromaddr, toaddr, msg.as_string())
+    mailserver.quit()
+
+
+###########################################################################################################################################
+

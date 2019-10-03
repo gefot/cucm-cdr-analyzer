@@ -14,19 +14,19 @@ end_timestamp = module_funcs.date_to_timestamp(end_date)
 
 print("\n\n\n----->Main Hospital")
 cdr_records = module_funcs.get_cdr_by_called_number(start_timestamp, end_timestamp, "1001")
-departmentStats_main = classes.DepartmentStats("main")
+departmentStats_main = classes.callTreeStats("main")
 module_funcs.count_calls_by_call_tree(departmentStats_main, cdr_records)
 print(departmentStats_main)
 
 print("\n\n\n----->1801 Clinic")
 cdr_records = module_funcs.get_cdr_by_called_number(start_timestamp, end_timestamp, "5810")
-departmentStats_1801 = classes.DepartmentStats("1801")
+departmentStats_1801 = classes.callTreeStats("1801")
 module_funcs.count_calls_by_call_tree(departmentStats_1801, cdr_records)
 print(departmentStats_1801)
 
 print("\n\n\n----->1200 Clinic")
 cdr_records = module_funcs.get_cdr_by_called_number(start_timestamp, end_timestamp, "5850")
-departmentStats_1200 = classes.DepartmentStats("1200")
+departmentStats_1200 = classes.callTreeStats("1200")
 module_funcs.count_calls_by_call_tree(departmentStats_1200, cdr_records)
 print(departmentStats_1200)
 
