@@ -53,16 +53,16 @@ for department, extension in DEPARTMENTS.items():
 
     if REPORT_TYPE == "daily":
         callTreeStats.full_filename = OUTPUT_PATH + "Daily_Report_" + datetime.datetime.strptime(date, '%Y%m%d%H%M%S').strftime('%Y_%m_%d') + "_" + department + ".csv"
-        callTreeStats.email_subject = "{}: Daily Call Report for {}".format(datetime.datetime.strptime(date, '%Y%m%d%H%M%S').strftime('%Y_%m_%d'), department)
+        callTreeStats.email_subject = "NEW: {}: Daily Call Report for {}".format(datetime.datetime.strptime(date, '%Y%m%d%H%M%S').strftime('%Y_%m_%d'), department)
     elif REPORT_TYPE == "weekly":
         callTreeStats.full_filename = "{}Weekly_Report_Week_{}__{}-{}__{}.csv".format(
             OUTPUT_PATH, week_number, start_date, end_date, department)
-        callTreeStats.email_subject = "{}: Weekly Call Report (Week {} - {}-{} ) for {}".format(
+        callTreeStats.email_subject = "NEW: {}: Weekly Call Report (Week {} - {}-{} ) for {}".format(
             datetime.datetime.strptime(date, '%Y%m%d%H%M%S').strftime('%Y_%m_%d'), week_number, start_date, end_date, department)
     elif REPORT_TYPE == "monthly":
         callTreeStats.full_filename = "{}Monthly_Report_{}_{}.csv".format(
             OUTPUT_PATH, year, month_name, department)
-        callTreeStats.email_subject = "{}: Monthly Call Report ({}_{}) for {}".format(
+        callTreeStats.email_subject = "NEW: {}: Monthly Call Report ({}_{}) for {}".format(
             datetime.datetime.strptime(date, '%Y%m%d%H%M%S').strftime('%Y_%m_%d'), year, month_name, department)
 
     callTreeStats.create_csv_file()
