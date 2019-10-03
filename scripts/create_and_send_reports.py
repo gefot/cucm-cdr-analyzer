@@ -1,3 +1,6 @@
+import sys
+
+sys.path.append('/home/gfot/cucm-cdr-analyzer')
 
 import datetime
 import json
@@ -7,15 +10,18 @@ from modules import classes
 
 access = json.load(open('/home/gfot/cucm-cdr-analyzer/data/security/access.json'))  # Linux
 SEND_EMAILS = True
-REPORT_TYPE = "monthly"
+try:
+    REPORT_TYPE = sys.argv[1]
+except:
+    REPORT_TYPE = "daily"
 
 OUTPUT_PATH = '/home/gfot/cucm-cdr-analyzer/data/output/'
 DEPARTMENTS = {'Main_Hospital': '1001', '1801_Clinic': '5810', 'Specialty_Clinic': '5850'}
 EXTENSIONS = {'Orthopediatric_Clinic': '7002', 'Urology_Clinic': '1733'}
 HUNTPILOTS = {'IT_Helpdesk': '3333'}
 
-date = "20190913000000"
-# date = datetime.datetime.today().strftime('%Y%m%d%H%M%S')
+# date = "20190913000000"
+date = datetime.datetime.today().strftime('%Y%m%d%H%M%S')
 
 if REPORT_TYPE == "daily":
     day_timestamp_range = module_funcs.day_timestamp_range_from_date(date)
@@ -76,7 +82,6 @@ for department, extension in DEPARTMENTS.items():
         #           "georgios.fotiadis@whitehatvirtual.com"]
         toaddr = ["georgios.fotiadis@whitehatvirtual.com"]
         module_funcs.send_mail(USERNAME, PASSWORD, MAIL_SERVER, toaddr, callTreeStats.email_subject, callTreeStats.html_content, [callTreeStats.full_filename], False, False)
-
 
 ## EXTENSIONS
 for department, extension in EXTENSIONS.items():
@@ -154,5 +159,3 @@ for department, extension in HUNTPILOTS.items():
         # toaddr = ["val.king@whitehatvirtual.com", "georgios.fotiadis@whitehatvirtual.com"]
         toaddr = ["georgios.fotiadis@whitehatvirtual.com"]
         module_funcs.send_mail(USERNAME, PASSWORD, MAIL_SERVER, toaddr, huntpilotStats.email_subject, huntpilotStats.html_content, [huntpilotStats.full_filename], False, False)
-
-
