@@ -13,7 +13,7 @@ SEND_EMAILS = True
 try:
     REPORT_TYPE = sys.argv[1]
 except:
-    REPORT_TYPE = "daily"
+    REPORT_TYPE = "weekly"
 
 OUTPUT_PATH = '/home/gfot/cucm-cdr-analyzer/data/output/'
 DEPARTMENTS = {'Main_Hospital': '1001', '1801_Clinic': '5810', 'Specialty_Clinic': '5850'}
@@ -53,11 +53,11 @@ for department, extension in DEPARTMENTS.items():
 
     if REPORT_TYPE == "daily":
         callTreeStats.full_filename = OUTPUT_PATH + "Daily_Report_" + datetime.datetime.strptime(date, '%Y%m%d%H%M%S').strftime('%Y_%m_%d') + "_" + department + ".csv"
-        callTreeStats.email_subject = "NEW: {}: Daily Call Report for {}".format(datetime.datetime.strptime(date, '%Y%m%d%H%M%S').strftime('%Y_%m_%d'), department)
+        callTreeStats.email_subject = "{}: Daily Call Report for {}".format(datetime.datetime.strptime(date, '%Y%m%d%H%M%S').strftime('%Y_%m_%d'), department)
     elif REPORT_TYPE == "weekly":
         callTreeStats.full_filename = "{}Weekly_Report_Week_{}__{}-{}__{}.csv".format(
             OUTPUT_PATH, week_number, start_date, end_date, department)
-        callTreeStats.email_subject = "NEW: {}: Weekly Call Report (Week {} - {}-{} ) for {}".format(
+        callTreeStats.email_subject = "{}: Weekly Call Report (Week {} - {}-{}) for {}".format(
             datetime.datetime.strptime(date, '%Y%m%d%H%M%S').strftime('%Y_%m_%d'), week_number, start_date, end_date, department)
     elif REPORT_TYPE == "monthly":
         callTreeStats.full_filename = "{}Monthly_Report_{}_{}.csv".format(
@@ -97,7 +97,7 @@ for department, extension in EXTENSIONS.items():
     elif REPORT_TYPE == "weekly":
         extensionStats.full_filename = "{}Weekly_Report_Week_{}__{}-{}__{}.csv".format(
             OUTPUT_PATH, week_number, start_date, end_date, department)
-        extensionStats.email_subject = "{}: Weekly Call Report (Week {} - {}-{} ) for {}".format(
+        extensionStats.email_subject = "{}: Weekly Call Report (Week {} - {}-{}) for {}".format(
             datetime.datetime.strptime(date, '%Y%m%d%H%M%S').strftime('%Y_%m_%d'), week_number, start_date, end_date, department)
     elif REPORT_TYPE == "monthly":
         extensionStats.full_filename = "{}Monthly_Report_{}_{}.csv".format(
@@ -137,7 +137,7 @@ for department, extension in HUNTPILOTS.items():
     elif REPORT_TYPE == "weekly":
         huntpilotStats.full_filename = "{}Weekly_Report_Week_{}__{}-{}__{}.csv".format(
             OUTPUT_PATH, week_number, start_date, end_date, department)
-        huntpilotStats.email_subject = "{}: Weekly Call Report (Week {} - {}-{} ) for {}".format(
+        huntpilotStats.email_subject = "{}: Weekly Call Report (Week {} - {}-{}) for {}".format(
             datetime.datetime.strptime(date, '%Y%m%d%H%M%S').strftime('%Y_%m_%d'), week_number, start_date, end_date, department)
     elif REPORT_TYPE == "monthly":
         huntpilotStats.full_filename = "{}Monthly_Report_{}_{}.csv".format(

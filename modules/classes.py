@@ -457,7 +457,11 @@ class HuntPilotStats:
         self.html_content = "Total Calls: {}<br>".format(self.total)
         self.html_content += "Answered 1st Level: {} ({})<br>".format(self.answered, self.answered_percent)
         self.html_content += "Missed 1st Level: {} ({})<br>".format(self.missed, self.missed_percent)
-        self.html_content += "Asnwered VM: {} ({})<br>".format(self.answered_vm, self.answered_vm_percent)
+        self.html_content += "Asnwered VM: {} ({})<br><br><br>".format(self.answered_vm, self.answered_vm_percent)
+
+        self.html_content += "Answered calls:<br>"
+        for name, calls in self.answeredBy.items():
+            self.html_content += "{}: {}<br>".format(name, calls)
 
 
 ###########################################################################################################################################

@@ -460,9 +460,9 @@ def count_calls_by_hunt_pilot(my_huntpilotStats, cdr_records):
                 my_huntpilotStats.answered_perDay[day] += 1
                 my_huntpilotStats.answered_perHour[hour] += 1
                 try:
-                    my_huntpilotStats.answeredBy[destDevice] += 1
+                    my_huntpilotStats.answeredBy[map_device_to_user(destDevice)] += 1
                 except:
-                    my_huntpilotStats.answeredBy[destDevice] = 1
+                    my_huntpilotStats.answeredBy[map_device_to_user(destDevice)] = 1
             else:
                 my_huntpilotStats.missed += 1
                 my_huntpilotStats.missed_perDay[day] += 1
@@ -487,9 +487,9 @@ def count_calls_by_hunt_pilot(my_huntpilotStats, cdr_records):
                     my_huntpilotStats.answered_perDay[day] += 1
                     my_huntpilotStats.answered_perHour[hour] += 1
                     try:
-                        my_huntpilotStats.answeredBy[destDevice] += 1
+                        my_huntpilotStats.answeredBy[map_device_to_user(destDevice)] += 1
                     except:
-                        my_huntpilotStats.answeredBy[destDevice] = 1
+                        my_huntpilotStats.answeredBy[map_device_to_user(destDevice)] = 1
                 else:
                     my_huntpilotStats.missed += 1
                     my_huntpilotStats.missed_perDay[day] += 1
@@ -500,6 +500,20 @@ def count_calls_by_hunt_pilot(my_huntpilotStats, cdr_records):
             my_huntpilotStats.total -= 1
             my_huntpilotStats.total_perDay[day] -= 1
             my_huntpilotStats.total_perHour[hour] -= 1
+
+
+###########################################################################################################################################
+def map_device_to_user(device_name):
+    if device_name == "SEPBC16F516B359":
+        return "Rogelio Rodriguez (x3891)"
+    elif device_name == "SEPBC16F516D030":
+        return "Tovar Gilbert (x3730)"
+    elif device_name == "SEP34A84EA6A74E":
+        return "IT Helpdesk (x3334)"
+    elif device_name == "SEP7426AC635AAF":
+        return "IT Wireless (x2547)"
+    else:
+        return device_name
 
 
 ###########################################################################################################################################
