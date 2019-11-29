@@ -135,8 +135,8 @@ def hour_from_timestamp(my_timestamp):
 def day_timestamp_range_from_date(my_date):
     dt = datetime.datetime.strptime(my_date, '%Y%m%d%H%M%S')
 
-    my_start = dt.replace(hour=0, minute=1, second=0).strftime('%Y%m%d%H%M%S')
-    my_end = dt.replace(hour=23, minute=59, second=0).strftime('%Y%m%d%H%M%S')
+    my_start = dt.replace(hour=0, minute=0, second=1).strftime('%Y%m%d%H%M%S')
+    my_end = dt.replace(hour=23, minute=59, second=59).strftime('%Y%m%d%H%M%S')
     print("inside day_timestamp_range_from_date: ", my_start, my_end)
     day_range = [date_to_timestamp(my_start), date_to_timestamp(my_end)]
 
@@ -150,8 +150,8 @@ def week_timestamp_range_from_date(my_date):
     start = dt - datetime.timedelta(days=dt.weekday())
     end = start + datetime.timedelta(days=6)
 
-    my_start = start.replace(hour=0, minute=1, second=0).strftime('%Y%m%d%H%M%S')
-    my_end = end.replace(hour=23, minute=59, second=0).strftime('%Y%m%d%H%M%S')
+    my_start = start.replace(hour=0, minute=0, second=1).strftime('%Y%m%d%H%M%S')
+    my_end = end.replace(hour=23, minute=59, second=59).strftime('%Y%m%d%H%M%S')
     print("inside week_timestamp_range_from_date: ", my_start, my_end)
     week_range = [date_to_timestamp(my_start), date_to_timestamp(my_end)]
 
@@ -169,8 +169,8 @@ def month_timestamp_range_from_date(my_date):
     dt = datetime.datetime.strptime(my_date, '%Y%m%d%H%M%S')
 
     last_day = last_day_of_month(dt)
-    my_start = dt.replace(day=1, hour=0, minute=1, second=0).strftime('%Y%m%d%H%M%S')
-    my_end = dt.replace(day=int(last_day.strftime('%d')), hour=23, minute=59, second=0).strftime('%Y%m%d%H%M%S')
+    my_start = dt.replace(day=1, hour=0, minute=0, second=1).strftime('%Y%m%d%H%M%S')
+    my_end = dt.replace(day=int(last_day.strftime('%d')), hour=23, minute=59, second=59).strftime('%Y%m%d%H%M%S')
     print("inside week_timestamp_range_from_date: ", my_start, my_end)
     month_range = [date_to_timestamp(my_start), date_to_timestamp(my_end)]
 
@@ -512,6 +512,8 @@ def map_device_to_user(device_name):
         return "IT Helpdesk (x3334)"
     elif device_name == "SEP7426AC635AAF":
         return "IT Wireless (x2547)"
+    elif device_name == "SEPBC16F516C834":
+        return "IT Network Engineer (x3992)"
     else:
         return device_name
 
