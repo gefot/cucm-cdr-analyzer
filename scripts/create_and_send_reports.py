@@ -5,18 +5,23 @@ import json
 from modules import module_funcs
 from modules import classes
 
+import sys
+# This is needed so as to be run on CLI
+sys.path.append('/home/gfot/cucm-cdr-analyzer')
+
 access = json.load(open('/home/gfot/cucm-cdr-analyzer/data/security/access.json'))  # Linux
 SEND_EMAILS = True
+REPORT_TYPE = "daily"
 # REPORT_TYPE = "weekly"
-REPORT_TYPE = "monthly"
+# REPORT_TYPE = "monthly"
 
 OUTPUT_PATH = '/home/gfot/cucm-cdr-analyzer/data/output/'
 DEPARTMENTS = {'Main_Hospital': '1001', '1801_Clinic': '5810', 'Specialty_Clinic': '5850'}
 EXTENSIONS = {'Orthopediatric_Clinic': '7002', 'Urology_Clinic': '1733'}
 HUNTPILOTS = {'IT_Helpdesk': '3333'}
 
-# date = "20190913000000"
-date = datetime.datetime.today().strftime('%Y%m%d%H%M%S')
+date = "20191203000000"
+# date = datetime.datetime.today().strftime('%Y%m%d%H%M%S')
 
 if REPORT_TYPE == "daily":
     day_timestamp_range = module_funcs.day_timestamp_range_from_date(date)
@@ -75,8 +80,8 @@ for department, extension in DEPARTMENTS.items():
         #           "dgalma01@vvrmc.org", "maricela.sandoval@amistadmp.org", "melanie.torres@vvrmc.org", \
         #           "Albert.Lattimer@vvrmc.org", "letty.ortiz@vvrmc.org",
         #           "georgios.fotiadis@whitehatvirtual.com"]
+        # toaddr = ["georgios.fotiadis@whitehatvirtual.com", "Maricela.Sandoval@vvrmc.org"]
         toaddr = ["georgios.fotiadis@whitehatvirtual.com"]
-        toaddr = ["georgios.fotiadis@whitehatvirtual.com", "Maricela.Sandoval@vvrmc.org"]
         module_funcs.send_mail(USERNAME, PASSWORD, MAIL_SERVER, toaddr, callTreeStats.email_subject, callTreeStats.html_content, [callTreeStats.full_filename], False, False)
 
 
@@ -117,45 +122,45 @@ for department, extension in EXTENSIONS.items():
         #           "dgalma01@vvrmc.org", "maricela.sandoval@amistadmp.org", "melanie.torres@vvrmc.org", \
         #           "Albert.Lattimer@vvrmc.org", "letty.ortiz@vvrmc.org",
         #           "georgios.fotiadis@whitehatvirtual.com"]
+        # toaddr = ["georgios.fotiadis@whitehatvirtual.com", "Maricela.Sandoval@vvrmc.org"]
         toaddr = ["georgios.fotiadis@whitehatvirtual.com"]
-        toaddr = ["georgios.fotiadis@whitehatvirtual.com", "Maricela.Sandoval@vvrmc.org"]
         module_funcs.send_mail(USERNAME, PASSWORD, MAIL_SERVER, toaddr, extensionStats.email_subject, extensionStats.html_content, [extensionStats.full_filename], False, False)
 
-# ## Hunt Pilots
-# print("\n\n\n----->IT Helpdesk")
-# for department, extension in HUNTPILOTS.items():
-#     cdr_records = module_funcs.get_cdr_by_called_number(start_timestamp, end_timestamp, extension)
-#     huntpilotStats = classes.HuntPilotStats(extension, department)
-#     module_funcs.count_calls_by_hunt_pilot(huntpilotStats, cdr_records)
-#     huntpilotStats.populate_percentages()
-#
-#     if REPORT_TYPE == "daily":
-#         huntpilotStats.full_filename = OUTPUT_PATH + "Daily_Report_" + datetime.datetime.strptime(date, '%Y%m%d%H%M%S').strftime('%Y_%m_%d') + "_" + department + ".csv"
-#         huntpilotStats.email_subject = "{}: Daily Call Report for {}".format(datetime.datetime.strptime(date, '%Y%m%d%H%M%S').strftime('%Y_%m_%d'), department)
-#     elif REPORT_TYPE == "weekly":
-#         huntpilotStats.full_filename = "{}Weekly_Report_Week_{}__{}-{}__{}.csv".format(
-#             OUTPUT_PATH, week_number, start_date, end_date, department)
-#         huntpilotStats.email_subject = "{}: Weekly Call Report (Week {} - {}-{} ) for {}".format(
-#             datetime.datetime.strptime(date, '%Y%m%d%H%M%S').strftime('%Y_%m_%d'), week_number, start_date, end_date, department)
-#     elif REPORT_TYPE == "monthly":
-#         huntpilotStats.full_filename = "{}Monthly_Report_{}_{}.csv".format(
-#             OUTPUT_PATH, year, month_name, department)
-#         huntpilotStats.email_subject = "{}: Monthly Call Report ({}_{}) for {}".format(
-#             datetime.datetime.strptime(date, '%Y%m%d%H%M%S').strftime('%Y_%m_%d'), year, month_name, department)
-#
-#     huntpilotStats.create_csv_file()
-#     huntpilotStats.create_html_content()
-#     print(huntpilotStats.full_filename)
-#     print(huntpilotStats.email_subject)
-#     print(huntpilotStats.html_content)
-#     print(huntpilotStats)
-#
-#     if SEND_EMAILS:
-#         USERNAME = str(access["o365"]["username"])
-#         PASSWORD = str(access["o365"]["password"])
-#         MAIL_SERVER = str(access["o365"]["mail_server"])
-#         # toaddr = ["val.king@whitehatvirtual.com", "georgios.fotiadis@whitehatvirtual.com"]
-#         toaddr = ["georgios.fotiadis@whitehatvirtual.com"]
-#         module_funcs.send_mail(USERNAME, PASSWORD, MAIL_SERVER, toaddr, huntpilotStats.email_subject, huntpilotStats.html_content, [huntpilotStats.full_filename], False, False)
-#
+## Hunt Pilots
+print("\n\n\n----->IT Helpdesk")
+for department, extension in HUNTPILOTS.items():
+    cdr_records = module_funcs.get_cdr_by_called_number(start_timestamp, end_timestamp, extension)
+    huntpilotStats = classes.HuntPilotStats(extension, department)
+    module_funcs.count_calls_by_hunt_pilot(huntpilotStats, cdr_records)
+    huntpilotStats.populate_percentages()
+
+    if REPORT_TYPE == "daily":
+        huntpilotStats.full_filename = OUTPUT_PATH + "Daily_Report_" + datetime.datetime.strptime(date, '%Y%m%d%H%M%S').strftime('%Y_%m_%d') + "_" + department + ".csv"
+        huntpilotStats.email_subject = "{}: Daily Call Report for {}".format(datetime.datetime.strptime(date, '%Y%m%d%H%M%S').strftime('%Y_%m_%d'), department)
+    elif REPORT_TYPE == "weekly":
+        huntpilotStats.full_filename = "{}Weekly_Report_Week_{}__{}-{}__{}.csv".format(
+            OUTPUT_PATH, week_number, start_date, end_date, department)
+        huntpilotStats.email_subject = "{}: Weekly Call Report (Week {} - {}-{} ) for {}".format(
+            datetime.datetime.strptime(date, '%Y%m%d%H%M%S').strftime('%Y_%m_%d'), week_number, start_date, end_date, department)
+    elif REPORT_TYPE == "monthly":
+        huntpilotStats.full_filename = "{}Monthly_Report_{}_{}.csv".format(
+            OUTPUT_PATH, year, month_name, department)
+        huntpilotStats.email_subject = "{}: Monthly Call Report ({}_{}) for {}".format(
+            datetime.datetime.strptime(date, '%Y%m%d%H%M%S').strftime('%Y_%m_%d'), year, month_name, department)
+
+    huntpilotStats.create_csv_file()
+    huntpilotStats.create_html_content()
+    print(huntpilotStats.full_filename)
+    print(huntpilotStats.email_subject)
+    print(huntpilotStats.html_content)
+    print(huntpilotStats)
+
+    if SEND_EMAILS:
+        USERNAME = str(access["o365"]["username"])
+        PASSWORD = str(access["o365"]["password"])
+        MAIL_SERVER = str(access["o365"]["mail_server"])
+        # toaddr = ["val.king@whitehatvirtual.com", "georgios.fotiadis@whitehatvirtual.com"]
+        toaddr = ["georgios.fotiadis@whitehatvirtual.com"]
+        module_funcs.send_mail(USERNAME, PASSWORD, MAIL_SERVER, toaddr, huntpilotStats.email_subject, huntpilotStats.html_content, [huntpilotStats.full_filename], False, False)
+
 
