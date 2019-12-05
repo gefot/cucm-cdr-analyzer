@@ -6,7 +6,7 @@ import module_funcs
 ####################################################################################################
 #  MAIN
 
-access = json.load(open('/home/gfot/cucm-cdr-analyzer/data/access.json'))  # Linux
+access = json.load(open('/home/gfot/cucm-cdr-analyzer/data/security/access.json'))  # Linux
 body_file1 = '/home/gfot/cucm-cdr-analyzer/data/output/hourly_html.txt'
 attachments1 = ['/home/gfot/cucm-cdr-analyzer/data/output/hourly_report.csv']
 body_file2 = '/home/gfot/cucm-cdr-analyzer/data/output/daily_html.txt'
@@ -28,10 +28,10 @@ fd2.close()
 USERNAME = str(access["o365"]["username"])
 PASSWORD = str(access["o365"]["password"])
 MAIL_SERVER = str(access["o365"]["mail_server"])
-toaddr = ["abhijit.dhar@whitehatvirtual.com", "val.king@whitehatvirtual.com", \
-          "dgalma01@vvrmc.org", "maricela.sandoval@amistadmp.org", "melanie.torres@vvrmc.org", \
-          "Albert.Lattimer@vvrmc.org", "letty.ortiz@vvrmc.org",
-          "georgios.fotiadis@whitehatvirtual.com"]
-# toaddr = ["georgios.fotiadis@whitehatvirtual.com"]
+# toaddr = ["abhijit.dhar@whitehatvirtual.com", "val.king@whitehatvirtual.com", \
+#           "dgalma01@vvrmc.org", "maricela.sandoval@amistadmp.org", "melanie.torres@vvrmc.org", \
+#           "Albert.Lattimer@vvrmc.org", "letty.ortiz@vvrmc.org",
+#           "georgios.fotiadis@whitehatvirtual.com"]
+toaddr = ["georgios.fotiadis@whitehatvirtual.com"]
 module_funcs.send_mail(USERNAME, PASSWORD, MAIL_SERVER, toaddr, subject1, body1, attachments1, False, False)
 module_funcs.send_mail(USERNAME, PASSWORD, MAIL_SERVER, toaddr, subject2, body2, attachments2, False, False)
