@@ -15,11 +15,13 @@ attachments2 = ['/home/gfot/cucm-cdr-analyzer/data/output/daily_report.csv']
 current_date = datetime.datetime.now().strftime('%B %Y')
 
 subject1 = "Hourly Call Report (Month Aggregate) - {}".format(current_date)
+# subject1 = "Hourly Call Report (Month Aggregate) - November"
 fd1 = open(body_file1, 'r')
 body1 = fd1.read()
 fd1.close()
 
 subject2 = "Daily Call Report - {}".format(current_date)
+# subject2 = "Daily Call Report - November"
 fd2 = open(body_file2, 'r')
 body2 = fd2.read()
 fd2.close()

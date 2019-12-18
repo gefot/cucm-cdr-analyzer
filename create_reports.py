@@ -29,6 +29,7 @@ import module_funcs
 start = datetime.datetime.now()
 
 CDR_FOLDER = '/home/gfot/cdr/cdr_data/'  # Linux
+# CDR_FOLDER = '/home/gfot/cdr/cdr_archive/201911/'  # Linux
 MONTHLY_REPORT_TXT_FILE = '/home/gfot/cucm-cdr-analyzer/data/output/daily_html.txt'
 MONTHLY_REPORT_CSV_FILE = '/home/gfot/cucm-cdr-analyzer/data/output/daily_report.csv'
 HOURLY_REPORT_TXT_FILE = '/home/gfot/cucm-cdr-analyzer/data/output/hourly_html.txt'
@@ -99,7 +100,7 @@ unanswered_calls_per_list_hourly = {'main': [0 for i in range(24)], 'shannon': [
 # Calculate CDR Statistics
 for file in cdr_list:
     fd = open(CDR_FOLDER + file, "r")
-    print(file)
+    # print(file)
     for line in fd:
         try:
             list = line.split(',')
